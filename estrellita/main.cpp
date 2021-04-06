@@ -1,7 +1,22 @@
+/*****
+ Computacion Grafica : CCOMP 7-1
+ * Gonzales Navarrete Mateo
+ * Nieto Rosas Miguel
+ * Palma Ugarte Joaquin
+ *****/
+
 #include "glad/glad.h"
 #include <glfw/glfw3.h>
+#include <math.h>
 
 #include <iostream>
+
+#define PI 3.14159265
+#define MUL 0.3819660f // sin(18)/sin(54)
+
+float deg(float num) {
+  return (num * PI / 180);
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -16,18 +31,18 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 const char* vertexShaderSource =
-  "#version 330 core\n"
-  "layout (location = 0) in vec3 aPos;\n"
-  "void main() {\n"
-  " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
-  "}\0";
+    "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main() {\n"
+    " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
+    "}\0";
 
 const char* fragmentShaderSource =
-  "#version 330 core\n"
-  "out vec4 FragColor;\n"
-  "void main() {\n"
-  " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-  "}\n";
+    "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main() {\n"
+    " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n";
 
 int main() {
   glfwInit();
@@ -71,7 +86,7 @@ int main() {
   if (!success) {
     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
-              infoLog << std::endl;
+        infoLog << std::endl;
   }
 
   unsigned int fragmentShader;
@@ -84,7 +99,7 @@ int main() {
   if (!success) {
     glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
-              infoLog << std::endl;
+        infoLog << std::endl;
   }
 
   unsigned int shaderProgram;
@@ -98,7 +113,7 @@ int main() {
   if (!success) {
     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::PROGRAM::LINK_FAILED\n" <<
-              infoLog << std::endl;
+        infoLog << std::endl;
   }
 
   glUseProgram(shaderProgram);
@@ -106,30 +121,32 @@ int main() {
   glDeleteShader(fragmentShader);
 
   float vertices_points[] = {
-    -0.35f, 0.15f, 0.0f,
-      -0.0587f, 0.15f, 0.0f,
-      0.0f, 0.35f, 0.0f,
-      0.0587f, 0.15f, 0.0f,
-      0.35f, 0.15f, 0.0f,
-      0.12f, -0.05f, 0.0f,
-      0.20f, -0.33f, 0.0f,
-      0.0f, -0.1554f, 0.0f,
-      -0.20f, -0.33f, 0.0f,
-      -0.12f, -0.05f, 0.0f,
-      -0.35f, 0.15f, 0.0f
-    };
+    cos(deg(18)), sin(deg(18)), 0.0f,
+    MUL * cos(deg(54)), MUL * sin(deg(54)), 0.0f,
+    cos(deg(90)), sin(deg(90)), 0.0f,
+    MUL * cos(deg(126)), MUL * sin(deg(126)), 0.0f,
+    cos(deg(162)), sin(deg(162)), 0.0f,
+    MUL * cos(deg(198)), MUL * sin(deg(198)), 0.0f,
+    cos(deg(234)), sin(deg(234)), 0.0f,
+    MUL * cos(deg(270)), MUL * sin(deg(270)), 0.0f,
+    cos(deg(306)), sin(deg(306)), 0.0f,
+    MUL * cos(deg(342)), MUL * sin(deg(342)), 0.0f,
+    cos(deg(18)), sin(deg(18)), 0.0f
+  };
 
   float vertices_triangles[] = {
-    -0.35f, 0.15f, 0.0f,
-      0.35f, 0.15f, 0.0f,
-      0.0f, -0.1554f, 0.0f,
-      0.0f, 0.35f, 0.0f,
-      0.20f, -0.33f, 0.0f,
-      -0.12f, -0.05f, 0.0f,
-      0.35f, 0.15f, 0.0f,
-      -0.20f, -0.33f, 0.0f,
-      -0.07f, 0.15f, 0.0f
-    };
+    cos(deg(18)), sin(deg(18)), 0.0f,
+    cos(deg(162)), sin(deg(162)), 0.0f,
+    MUL * cos(deg(270)), MUL * sin(deg(270)), 0.0f,
+
+    cos(deg(90)), sin(deg(90)), 0.0f,
+    cos(deg(234)), sin(deg(234)), 0.0f,
+    MUL * cos(deg(342)), MUL * sin(deg(342)), 0.0f,
+
+    cos(deg(162)), sin(deg(162)), 0.0f,
+    cos(deg(306)), sin(deg(306)), 0.0f,
+    MUL * cos(deg(54)), MUL * sin(deg(54)), 0.0f
+  };
 
   unsigned int VAOs[2], VBOs[2];
   glGenBuffers(2, VBOs);
