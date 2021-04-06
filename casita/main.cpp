@@ -1,3 +1,10 @@
+/*****
+ Computacion Grafica : CCOMP 7-1
+ * Gonzales Navarrete Mateo
+ * Nieto Rosas Miguel
+ * Palma Ugarte Joaquin
+ *****/
+
 #include "glad/glad.h"
 #include <glfw/glfw3.h>
 

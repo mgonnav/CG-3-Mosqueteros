@@ -1,4 +1,4 @@
-project( star )
+project( estrellita )
 
 message( "Configuring main application - ${PROJECT_NAME} : " )
 

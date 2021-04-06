@@ -3,6 +3,11 @@
  * Gonzales Navarrete Mateo
  * Nieto Rosas Miguel
  * Palma Ugarte Joaquin
+ 
+ Presionar tecla:
+ * Z: Dibujar con POINTS
+ * X: Dibujar con LINE_STRIP
+ * C: Dibujar con TRIANGLES
  *****/
 
 #include "glad/glad.h"

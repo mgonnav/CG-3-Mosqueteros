@@ -1,4 +1,4 @@
-project( arrow )
+project( casita )
 
 message( "Configuring main application - ${PROJECT_NAME} : " )
 
