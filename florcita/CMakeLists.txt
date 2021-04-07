@@ -1,4 +1,4 @@
-project( flor )
+project( florcita )
 
 message( "Configuring main application - ${PROJECT_NAME} : " )
 
