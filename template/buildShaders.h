@@ -2,6 +2,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 
 void BuildShaders(unsigned int shaderProgram, const std::string vertexShaderFile,
                   const std::string fragmentShaderFile) {
