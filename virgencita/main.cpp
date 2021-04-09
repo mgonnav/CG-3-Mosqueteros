@@ -12,7 +12,7 @@ const unsigned int SCR_WIDTH = 700;
 const unsigned int SCR_HEIGHT = 700;
 
 const int N = 20; // number of figures
-const int MV = 75; // maximum number of vertexs in one figure
+const int MV = 175; // maximum number of vertexs in one figure
 
 unsigned int VBO, VAO, EBO[N];
 
@@ -312,6 +312,14 @@ unsigned int figures[N][MV] = {
     66, 40, 67,
     41
   }, // Chest
+  {
+    0,1, 1,2, 1,3, 1,16, 1,4, 4,5, 4,7, 6,7, 8,7, 7,10, 9,10, 10,11, 10,13, 12,13,
+    13,15, 13,35, 16,17, 17,18, 18,19, 19,20, 20,21, 21,22, 22,24, 24,23, 23,21,
+    24,26, 26,27, 27,28, 28,29, 29,7, 17,25, 23,17, 36,38, 38,37, 38,39, 38,31,
+    39,31, 40,42, 41,42, 42,43, 42,47, 46,45, 42,44, 57,56, 56,55, 55,44, 44,53,
+    53,52, 52,51, 51,48, 50,51, 50,49, 25,49, 51,54, 31,32, 40,32, 42,32, 0,59,
+    0,14, 14,37, 37,59
+  },//Lines
 };
 
 void drawWithEBO(int EBOindex, int vertexNumber,
@@ -411,6 +419,9 @@ int main()
   unsigned int skinProgram = glCreateProgram();
   BuildShaders(skinProgram, "shaders/default.vs", "shaders/skin.fs");
 
+  unsigned int blackProgram = glCreateProgram();
+  BuildShaders(blackProgram, "shaders/default.vs", "shaders/black.fs");
+
   for(int i = 9; i < 15; ++i){
     for(int j = 0; j < MV; j++) figures[i][j] += 60;
   }
@@ -455,6 +466,13 @@ int main()
     glUseProgram(P09);
     drawWithEBO(8, MV);
 
+    // Lines
+    glUseProgram(blackProgram);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_LINE_WIDTH);
+    glLineWidth(100);
+    drawWithEBO(15, MV, GL_LINES);
+
     // Virgencita
 
     glUseProgram(defaultProgram);
@@ -493,7 +511,7 @@ int main()
   glDeleteProgram(blueishProgram);
   glDeleteProgram(brownProgram);
   glDeleteProgram(skinProgram);
-
+  glDeleteProgram(blackProgram);
   glfwTerminate();
   return 0;
 }
