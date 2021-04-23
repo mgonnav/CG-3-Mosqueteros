@@ -55,6 +55,7 @@ const char* fragmentShaderSource =
   "}\n";
 
 glm::vec3 translationVector;
+bool randomMove;
 
 int main() {
   glfwInit();
@@ -190,6 +191,10 @@ int main() {
   glfwSetKeyCallback(window, key_callback);
 
   while (!glfwWindowShouldClose(window)) {
+    if (randomMove) {
+      translationVector.x += ((rand()%2)*-0.02) + 0.01f;
+      translationVector.y += ((rand()%2)*-0.02) + 0.01f;
+    }
     processInput(window);
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -288,5 +293,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
   if (key == GLFW_KEY_D && action == GLFW_PRESS) {
     translationVector.x += 0.01f;
     translationVector.y += -0.01f;
+  }
+
+  if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+    randomMove ^= 1;
   }
 }
