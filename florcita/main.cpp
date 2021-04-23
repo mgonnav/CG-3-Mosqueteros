@@ -7,7 +7,7 @@
 
 #include "glad/glad.h"
 #include <glfw/glfw3.h>
-#include "shaders.cpp"
+#include "shaders.hpp"
 
 #include <iostream>
 
