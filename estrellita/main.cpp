@@ -3,7 +3,7 @@
  * Gonzales Navarrete Mateo
  * Nieto Rosas Miguel
  * Palma Ugarte Joaquin
- 
+
  Presionar tecla:
  * Z: Dibujar con POINTS
  * X: Dibujar con LINE_STRIP
@@ -13,6 +13,10 @@
 #include "glad/glad.h"
 #include <glfw/glfw3.h>
 #include <math.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -29,25 +33,29 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
                   int mods);
 
 enum primitives {POINTS, LINE_STRIP, TRIANGLES};
-primitives PRIMITIVE_TYPE = primitives::POINTS;
+primitives PRIMITIVE_TYPE = primitives::TRIANGLES;
 
 // Settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 const char* vertexShaderSource =
-    "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main() {\n"
-    " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
-    "}\0";
+  "#version 330 core\n"
+  "layout (location = 0) in vec3 aPos;\n"
+  "uniform mat4 transform;\n"
+  "void main() {\n"
+  " gl_Position = transform * vec4(aPos, 1.0f);\n"
+  "}\0";
 
 const char* fragmentShaderSource =
-    "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main() {\n"
-    " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n";
+  "#version 330 core\n"
+  "out vec4 FragColor;\n"
+  "void main() {\n"
+  " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+  "}\n";
+
+glm::vec3 translationVector;
+bool randomMove;
 
 int main() {
   glfwInit();
@@ -91,7 +99,7 @@ int main() {
   if (!success) {
     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" <<
-        infoLog << std::endl;
+              infoLog << std::endl;
   }
 
   unsigned int fragmentShader;
@@ -104,7 +112,7 @@ int main() {
   if (!success) {
     glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" <<
-        infoLog << std::endl;
+              infoLog << std::endl;
   }
 
   unsigned int shaderProgram;
@@ -118,7 +126,7 @@ int main() {
   if (!success) {
     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
     std::cout << "ERROR::SHADER::PROGRAM::LINK_FAILED\n" <<
-        infoLog << std::endl;
+              infoLog << std::endl;
   }
 
   glUseProgram(shaderProgram);
@@ -153,6 +161,14 @@ int main() {
     MUL * cos(deg(54)), MUL * sin(deg(54)), 0.0f
   };
 
+  for (int i = 0; i < 33; ++i) {
+    vertices_points[i] *= 0.5f;
+  }
+  
+  for (int i = 0; i < 27; ++i) {
+    vertices_triangles[i] *= 0.5f;
+  }
+
   unsigned int VAOs[2], VBOs[2];
   glGenBuffers(2, VBOs);
   glGenVertexArrays(2, VAOs);
@@ -161,7 +177,7 @@ int main() {
   glBindVertexArray(VAOs[0]);
   glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_points), vertices_points,
-               GL_STATIC_DRAW);
+               GL_DYNAMIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
@@ -183,12 +199,22 @@ int main() {
   glfwSetKeyCallback(window, key_callback);
 
   while (!glfwWindowShouldClose(window)) {
+    if (randomMove) {
+      translationVector.x += ((rand()%2)*-0.02) + 0.01f;
+      translationVector.y += ((rand()%2)*-0.02) + 0.01f;
+    }
     processInput(window);
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(shaderProgram);
+    glm::mat4 transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, translationVector);
+    // transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
     switch (PRIMITIVE_TYPE) {
       case primitives::POINTS:
@@ -244,4 +270,56 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
 
   if (key == GLFW_KEY_C && action == GLFW_PRESS)
     PRIMITIVE_TYPE = primitives::TRIANGLES;
+
+  if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+    if (translationVector.x < 0.5f)
+      translationVector.x += 0.01f;
+  }
+
+  if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+    if (translationVector.x > -0.5f)
+      translationVector.x += -0.01f;
+  }
+
+  if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+    if (translationVector.y < 0.5f)
+      translationVector.y += 0.01f;
+  }
+
+  if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+    if (translationVector.y > -0.5)
+      translationVector.y += -0.01f;
+  }
+
+  if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+    if (translationVector.x > -0.5f && translationVector.y < 0.5f) {
+      translationVector.x += -0.01f;
+      translationVector.y += 0.01f;
+    }
+  }
+
+  if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+    if (translationVector.x < 0.5f && translationVector.y < 0.5f) {
+      translationVector.x += 0.01f;
+      translationVector.y += 0.01f;
+    }
+  }
+
+  if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+    if (translationVector.x > -0.5f && translationVector.y > -0.5f) {
+      translationVector.x += -0.01f;
+      translationVector.y += -0.01f;
+    }
+  }
+
+  if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+    if (translationVector.x < 0.5f && translationVector.y > -0.5f) {
+      translationVector.x += 0.01f;
+      translationVector.y += -0.01f;
+    }
+  }
+
+  if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+    randomMove ^= 1;
+  }
 }
