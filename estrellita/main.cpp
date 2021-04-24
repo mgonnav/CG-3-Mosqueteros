@@ -161,6 +161,14 @@ int main() {
     MUL * cos(deg(54)), MUL * sin(deg(54)), 0.0f
   };
 
+  for (int i = 0; i < 33; ++i) {
+    vertices_points[i] *= 0.5f;
+  }
+  
+  for (int i = 0; i < 27; ++i) {
+    vertices_triangles[i] *= 0.5f;
+  }
+
   unsigned int VAOs[2], VBOs[2];
   glGenBuffers(2, VBOs);
   glGenVertexArrays(2, VAOs);
