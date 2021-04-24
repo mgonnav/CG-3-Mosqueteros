@@ -271,36 +271,52 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
   if (key == GLFW_KEY_C && action == GLFW_PRESS)
     PRIMITIVE_TYPE = primitives::TRIANGLES;
 
-  if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
-    translationVector.x += 0.01f;
+  if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+    if (translationVector.x < 0.5f)
+      translationVector.x += 0.01f;
+  }
 
-  if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
-    translationVector.x += -0.01f;
+  if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+    if (translationVector.x > -0.5f)
+      translationVector.x += -0.01f;
+  }
 
-  if (key == GLFW_KEY_UP && action == GLFW_PRESS)
-    translationVector.y += 0.01f;
+  if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+    if (translationVector.y < 0.5f)
+      translationVector.y += 0.01f;
+  }
 
-  if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
-    translationVector.y += -0.01f;
+  if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+    if (translationVector.y > -0.5)
+      translationVector.y += -0.01f;
+  }
 
   if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
-    translationVector.x += -0.01f;
-    translationVector.y += 0.01f;
+    if (translationVector.x > -0.5f && translationVector.y < 0.5f) {
+      translationVector.x += -0.01f;
+      translationVector.y += 0.01f;
+    }
   }
 
   if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-    translationVector.x += 0.01f;
-    translationVector.y += 0.01f;
+    if (translationVector.x < 0.5f && translationVector.y < 0.5f) {
+      translationVector.x += 0.01f;
+      translationVector.y += 0.01f;
+    }
   }
 
   if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-    translationVector.x += -0.01f;
-    translationVector.y += -0.01f;
+    if (translationVector.x > -0.5f && translationVector.y > -0.5f) {
+      translationVector.x += -0.01f;
+      translationVector.y += -0.01f;
+    }
   }
 
   if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-    translationVector.x += 0.01f;
-    translationVector.y += -0.01f;
+    if (translationVector.x < 0.5f && translationVector.y > -0.5f) {
+      translationVector.x += 0.01f;
+      translationVector.y += -0.01f;
+    }
   }
 
   if (key == GLFW_KEY_R && action == GLFW_PRESS) {
