@@ -1,3 +1,13 @@
+/*
+ * Integrantes:
+ *    Gonzales Navarrete, Mateo
+ *    Nieto, Miguel
+ *    Palma Ugarte, Joaquin
+ *
+ * Keyboard callbacks:
+ *    Press down C: Reload colors array
+ */
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -16,9 +26,12 @@
 #define ANIMATION_ACTIVATION_TIME 20
 #define MAX_DEPTH 7
 #define TRANSLATION_SPEED 0.005f
+#define OFFSET 1.2f
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+void key_callback(GLFWwindow* window, int key, int scancode, int action,
+                  int mods);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -30,6 +43,7 @@ float vertices[10000];   // [9 per triangle] - 3 coords | (x, y, z)
 float centers[4000];    // [3 per triangle] - 1 coord  | (x, y, z)
 short int levels[1500];  // [1 per triangle] - 1 number |
 short int parents[1500]; // [1 per triangle] - 1 number | 0 = up, 1 = left, 2 = rigth
+bool reload_colors = false;
 
 unsigned int VBO, VAO;
 int cnt = 0, last_idx = 0;
@@ -122,6 +136,14 @@ void create_triangle_bfs(Node cur) {
 // ========================== Main ==========================
 
 int main() {
+  std::cout << "Integrantes:\n" <<
+            "   Gonzales Navarrete, Mateo\n" <<
+            "   Nieto, Miguel\n" <<
+            "   Palma Ugarte, Joaquin\n" <<
+            "\n" <<
+            "Keyboard callbacks:\n" <<
+            "   Press down C: Reload colors array\n" << std::endl;
+
   srand(time(NULL));
 
   glfwInit();
@@ -201,7 +223,7 @@ int main() {
 
   create_triangle_bfs(Node(MAX_DEPTH, 0.9f, 0.0f, 0.0f));
   // create_triangle_dfs(Node(6, 0.9, 0.0f, 0.0f));
-  std::cout << cnt << " " << last_idx << std::endl;
+  // std::cout << cnt << " " << last_idx << std::endl;
 
   // ====================================================================
 
@@ -215,9 +237,6 @@ int main() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(1);
-
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // uncomment this call to draw in wireframe polygons.
@@ -229,12 +248,9 @@ int main() {
   int timer = 0;
   int static_cnt = 1;
   glm::vec3 translation_vec[3] = {
-    // glm::vec3(0.0f, 0.5f, 0.0f),
-    // glm::vec3(-0.5f, -0.5f, 0.0f),
-    // glm::vec3(0.5f, -0.5f, 0.0f)
-    glm::vec3(0.0f, 1.2f, 0.0f),
-    glm::vec3(-1.2f, -1.2f, 0.0f),
-    glm::vec3(1.2f, -1.2f, 0.0f)
+    glm::vec3(0.0f, OFFSET, 0.0f),
+    glm::vec3(-OFFSET, -OFFSET, 0.0f),
+    glm::vec3(OFFSET, -OFFSET, 0.0f)
   };
   bool animating = false;
   int elems_in_level = 1;
@@ -250,7 +266,17 @@ int main() {
   unsigned int color_loc = glGetUniformLocation(shaderProgram, "vColor");
   unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
 
+  glfwSetKeyCallback(window, key_callback);
+
   while (!glfwWindowShouldClose(window)) {
+    if (reload_colors) {
+      for (int i = 0; i < MAX_DEPTH; ++i)
+        colors[i] = glm::vec4((float)rand() / RAND_MAX, (float)rand() / RAND_MAX,
+                              (float)rand() / RAND_MAX, 1.0f);
+
+      reload_colors = false;
+    }
+
     // input
     // -----
     processInput(window);
@@ -351,6 +377,12 @@ int main() {
   // ------------------------------------------------------------------
   glfwTerminate();
   return 0;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action,
+                  int mods) {
+  if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    reload_colors = true;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
