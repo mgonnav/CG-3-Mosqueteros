@@ -14,7 +14,8 @@
 #define rad(deg) deg * PI / 180
 #define EPSILON 0.0001f
 #define ANIMATION_ACTIVATION_TIME 20
-#define MAX_DEPTH 5
+#define MAX_DEPTH 7
+#define TRANSLATION_SPEED 0.005f
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -25,10 +26,10 @@ const unsigned int SCR_HEIGHT = 600;
 
 float angle[3] = {rad(90), rad(210), rad(330)};  // up, left, right
 
-float vertices[5000];   // [9 per triangle] - 3 coords | (x, y, z)
-float centers[2000];    // [3 per triangle] - 1 coord  | (x, y, z)
-short int levels[1000];  // [1 per triangle] - 1 number |
-short int parents[1000]; // [1 per triangle] - 1 number | 0 = up, 1 = left, 2 = rigth
+float vertices[10000];   // [9 per triangle] - 3 coords | (x, y, z)
+float centers[4000];    // [3 per triangle] - 1 coord  | (x, y, z)
+short int levels[1500];  // [1 per triangle] - 1 number |
+short int parents[1500]; // [1 per triangle] - 1 number | 0 = up, 1 = left, 2 = rigth
 
 unsigned int VBO, VAO;
 int cnt = 0, last_idx = 0;
@@ -42,10 +43,11 @@ const char* vertexShaderSource =
   "}\0";
 const char* fragmentShaderSource =
   "#version 330 core\n"
+  "uniform vec4 vColor;\n"
   "out vec4 FragColor;\n"
   "void main() {\n"
-  "  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-  "}\n\0";
+  "  FragColor = vColor;\n"
+  "}\0";
 
 
 // ========================== Sierpinski ==========================
@@ -120,6 +122,8 @@ void create_triangle_bfs(Node cur) {
 // ========================== Main ==========================
 
 int main() {
+  srand(time(NULL));
+
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -211,12 +215,13 @@ int main() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(1);
+
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  glBindVertexArray(0);
-
   // uncomment this call to draw in wireframe polygons.
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   // render loop
   // -----------
@@ -232,7 +237,17 @@ int main() {
     glm::vec3(1.2f, -1.2f, 0.0f)
   };
   bool animating = false;
-  int elems_in_level = 0;
+  int elems_in_level = 1;
+
+  glm::vec4 colors[MAX_DEPTH]; // 1 color per level in the tree:w
+
+  for (int i = 0; i < MAX_DEPTH; ++i)
+    colors[i] = glm::vec4((float)rand()/RAND_MAX, (float)rand()/RAND_MAX,
+                          (float)rand()/RAND_MAX, 1.0f);
+
+  glUseProgram(shaderProgram);
+  unsigned int color_loc = glGetUniformLocation(shaderProgram, "vColor");
+  unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
 
   while (!glfwWindowShouldClose(window)) {
     // input
@@ -244,26 +259,30 @@ int main() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
     glm::mat4 no_transform = glm::mat4(1.0f);
-    unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(no_transform));
 
-    // draw our first triangle
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3*static_cnt);
+    int drawn_cnt = 0;
+    int max_static_color_idx = int(log(static_cnt) / log(3)) + 1;
+
+    // Draw static triangles
+    for (int i = 0; i < max_static_color_idx; ++i) {
+      glUniform4fv(color_loc, 1, glm::value_ptr(colors[i]));
+      glDrawArrays(GL_TRIANGLES, drawn_cnt, 3*pow(3, i));
+      drawn_cnt += 3*pow(3, i);
+    }
 
     if (animating) {
+      glUniform4fv(color_loc, 1, glm::value_ptr(colors[max_static_color_idx]));
+
       glm::mat4 transform_top = glm::mat4(1.0f);
       transform_top = glm::translate(transform_top, translation_vec[0]);
-      transformLoc = glGetUniformLocation(shaderProgram, "transform");
       glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform_top));
 
       glDrawArrays(GL_TRIANGLES, 3*static_cnt, elems_in_level);
 
       glm::mat4 transform_left = glm::mat4(1.0f);
       transform_left = glm::translate(transform_left, translation_vec[1]);
-      transformLoc = glGetUniformLocation(shaderProgram, "transform");
       glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform_left));
 
       glDrawArrays(GL_TRIANGLES, 3*static_cnt + elems_in_level,
@@ -271,7 +290,6 @@ int main() {
 
       glm::mat4 transform_right = glm::mat4(1.0f);
       transform_right = glm::translate(transform_right, translation_vec[2]);
-      transformLoc = glGetUniformLocation(shaderProgram, "transform");
       glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform_right));
 
       glDrawArrays(GL_TRIANGLES, 3*static_cnt + 2*elems_in_level,
@@ -281,17 +299,14 @@ int main() {
         translation_vec[0] = glm::vec3(0.0f, 1.2f, 0.0f);
         translation_vec[1] = glm::vec3(-1.2f, -1.2f, 0.0f);
         translation_vec[2] = glm::vec3(1.2f, -1.2f, 0.0f);
-        // static_cnt += pow(3, depth - 1); // Efecto XD
         animating = false;
         static_cnt += pow(3, depth - 1);
+        continue;
       }
 
-      translation_vec[0] += glm::vec3(0.0f, -0.005f, 0.0f);
-      translation_vec[1] += glm::vec3(0.005f, 0.005f, 0.0f);
-      translation_vec[2] += glm::vec3(-0.005f, 0.005f, 0.0f);
-      // translation_vec[0] += glm::vec3(0.0f, -0.01f, 0.0f);
-      // translation_vec[1] += glm::vec3(0.01f, 0.01f, 0.0f);
-      // translation_vec[2] += glm::vec3(-0.01f, 0.01f, 0.0f);
+      translation_vec[0] += glm::vec3(0.0f, -TRANSLATION_SPEED, 0.0f);
+      translation_vec[1] += glm::vec3(TRANSLATION_SPEED, TRANSLATION_SPEED, 0.0f);
+      translation_vec[2] += glm::vec3(-TRANSLATION_SPEED, TRANSLATION_SPEED, 0.0f);
     }
     else {
       ++timer;
@@ -304,12 +319,10 @@ int main() {
       }
     }
 
-    std::cout << translation_vec[0].x << " " << translation_vec[0].y << "\n";
-    std::cout << translation_vec[1].x << " " << translation_vec[1].y << "\n";
-    std::cout << translation_vec[2].x << " " << translation_vec[2].y << "\n" <<
-              std::endl;
-
-    // glBindVertexArray(0); // no need to unbind it every time
+    // std::cout << translation_vec[0].x << " " << translation_vec[0].y << "\n";
+    // std::cout << translation_vec[1].x << " " << translation_vec[1].y << "\n";
+    // std::cout << translation_vec[2].x << " " << translation_vec[2].y << "\n" <<
+    // std::endl;
 
     // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
     // -------------------------------------------------------------------------------
