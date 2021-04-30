@@ -1,3 +1,13 @@
+/*
+ * Integrantes:
+ *    Gonzales Navarrete, Mateo
+ *    Nieto, Miguel
+ *    Palma Ugarte, Joaquin
+ *
+ * Keyboard callbacks:
+ *    Press down C: Reload colors array
+ */
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -16,6 +26,7 @@
 #define ANIMATION_ACTIVATION_TIME 20
 #define MAX_DEPTH 7
 #define TRANSLATION_SPEED 0.005f
+#define OFFSET 1.2f
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -125,6 +136,14 @@ void create_triangle_bfs(Node cur) {
 // ========================== Main ==========================
 
 int main() {
+  std::cout << "Integrantes:\n" <<
+            "   Gonzales Navarrete, Mateo\n" <<
+            "   Nieto, Miguel\n" <<
+            "   Palma Ugarte, Joaquin\n" <<
+            "\n" <<
+            "Keyboard callbacks:\n" <<
+            "   Press down C: Reload colors array\n" << std::endl;
+
   srand(time(NULL));
 
   glfwInit();
@@ -204,7 +223,7 @@ int main() {
 
   create_triangle_bfs(Node(MAX_DEPTH, 0.9f, 0.0f, 0.0f));
   // create_triangle_dfs(Node(6, 0.9, 0.0f, 0.0f));
-  std::cout << cnt << " " << last_idx << std::endl;
+  // std::cout << cnt << " " << last_idx << std::endl;
 
   // ====================================================================
 
@@ -229,12 +248,9 @@ int main() {
   int timer = 0;
   int static_cnt = 1;
   glm::vec3 translation_vec[3] = {
-    // glm::vec3(0.0f, 0.5f, 0.0f),
-    // glm::vec3(-0.5f, -0.5f, 0.0f),
-    // glm::vec3(0.5f, -0.5f, 0.0f)
-    glm::vec3(0.0f, 1.2f, 0.0f),
-    glm::vec3(-1.2f, -1.2f, 0.0f),
-    glm::vec3(1.2f, -1.2f, 0.0f)
+    glm::vec3(0.0f, OFFSET, 0.0f),
+    glm::vec3(-OFFSET, -OFFSET, 0.0f),
+    glm::vec3(OFFSET, -OFFSET, 0.0f)
   };
   bool animating = false;
   int elems_in_level = 1;
