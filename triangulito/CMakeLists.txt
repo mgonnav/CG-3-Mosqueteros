@@ -1,4 +1,4 @@
-project( casita )
+project( triangulito )
 
 message( "Configuring main application - ${PROJECT_NAME} : " )
 
