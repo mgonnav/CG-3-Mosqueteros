@@ -24,7 +24,7 @@ void processInput(GLFWwindow* window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-float angle[3] = {rad(90), rad(210), rad(330)};  // up, left, right
+float angle[3] = { rad(90), rad(210), rad(330) };  // up, left, right
 
 float vertices[10000];   // [9 per triangle] - 3 coords | (x, y, z)
 float centers[4000];    // [3 per triangle] - 1 coord  | (x, y, z)
@@ -69,9 +69,9 @@ struct Node {
     }
 
     // save center
-    centers[cnt*3] = x;
-    centers[cnt*3+1] = y;
-    centers[cnt*3+2] = 0.0f;
+    centers[cnt * 3] = x;
+    centers[cnt * 3 + 1] = y;
+    centers[cnt * 3 + 2] = 0.0f;
     // save depth
     levels[cnt] = lvl;
     // save parent
@@ -81,9 +81,9 @@ struct Node {
 
   void gen_children(Node* children) {
     for (int i = 0; i < 3; ++i) {
-      float newx = x + cos(angle[i]) * size/2;
-      float newy = y + sin(angle[i]) * size/2;
-      children[i] = Node(lvl-1, size/2, newx, newy, i);
+      float newx = x + cos(angle[i]) * size / 2;
+      float newy = y + sin(angle[i]) * size / 2;
+      children[i] = Node(lvl - 1, size / 2, newx, newy, i);
     }
   }
 };
@@ -238,12 +238,13 @@ int main() {
   };
   bool animating = false;
   int elems_in_level = 1;
+  float rotate_degree = 3.0f;
 
-  glm::vec4 colors[MAX_DEPTH]; // 1 color per level in the tree:w
+  glm::vec4 colors[MAX_DEPTH]; // 1 color per level in the tree
 
   for (int i = 0; i < MAX_DEPTH; ++i)
-    colors[i] = glm::vec4((float)rand()/RAND_MAX, (float)rand()/RAND_MAX,
-                          (float)rand()/RAND_MAX, 1.0f);
+    colors[i] = glm::vec4((float)rand() / RAND_MAX, (float)rand() / RAND_MAX,
+                          (float)rand() / RAND_MAX, 1.0f);
 
   glUseProgram(shaderProgram);
   unsigned int color_loc = glGetUniformLocation(shaderProgram, "vColor");
@@ -268,8 +269,8 @@ int main() {
     // Draw static triangles
     for (int i = 0; i < max_static_color_idx; ++i) {
       glUniform4fv(color_loc, 1, glm::value_ptr(colors[i]));
-      glDrawArrays(GL_TRIANGLES, drawn_cnt, 3*pow(3, i));
-      drawn_cnt += 3*pow(3, i);
+      glDrawArrays(GL_TRIANGLES, drawn_cnt, 3 * pow(3, i));
+      drawn_cnt += 3 * pow(3, i);
     }
 
     if (animating) {
@@ -277,22 +278,28 @@ int main() {
 
       glm::mat4 transform_top = glm::mat4(1.0f);
       transform_top = glm::translate(transform_top, translation_vec[0]);
+      transform_top = glm::rotate(transform_top, glm::radians(rotate_degree),
+                                  glm::vec3(0.0f, 0.0f, 1.0f));
       glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform_top));
 
-      glDrawArrays(GL_TRIANGLES, 3*static_cnt, elems_in_level);
+      glDrawArrays(GL_TRIANGLES, 3 * static_cnt, elems_in_level);
 
       glm::mat4 transform_left = glm::mat4(1.0f);
       transform_left = glm::translate(transform_left, translation_vec[1]);
+      transform_left = glm::rotate(transform_left, glm::radians(rotate_degree),
+                                   glm::vec3(0.0f, 0.0f, 1.0f));
       glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform_left));
 
-      glDrawArrays(GL_TRIANGLES, 3*static_cnt + elems_in_level,
+      glDrawArrays(GL_TRIANGLES, 3 * static_cnt + elems_in_level,
                    elems_in_level);
 
       glm::mat4 transform_right = glm::mat4(1.0f);
       transform_right = glm::translate(transform_right, translation_vec[2]);
+      transform_right = glm::rotate(transform_right, glm::radians(rotate_degree),
+                                    glm::vec3(0.0f, 0.0f, 1.0f));
       glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform_right));
 
-      glDrawArrays(GL_TRIANGLES, 3*static_cnt + 2*elems_in_level,
+      glDrawArrays(GL_TRIANGLES, 3 * static_cnt + 2 * elems_in_level,
                    elems_in_level);
 
       if (glm::all(glm::lessThan(glm::abs(translation_vec[0]), glm::vec3(EPSILON)))) {
@@ -301,12 +308,16 @@ int main() {
         translation_vec[2] = glm::vec3(1.2f, -1.2f, 0.0f);
         animating = false;
         static_cnt += pow(3, depth - 1);
+        rotate_degree = 3.0f;
         continue;
       }
 
       translation_vec[0] += glm::vec3(0.0f, -TRANSLATION_SPEED, 0.0f);
       translation_vec[1] += glm::vec3(TRANSLATION_SPEED, TRANSLATION_SPEED, 0.0f);
       translation_vec[2] += glm::vec3(-TRANSLATION_SPEED, TRANSLATION_SPEED, 0.0f);
+
+      // std::cout << "rotate: " << rotate_degree << std::endl;
+      rotate_degree += 3.0;
     }
     else {
       ++timer;
