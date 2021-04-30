@@ -19,6 +19,8 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+void key_callback(GLFWwindow* window, int key, int scancode, int action,
+                  int mods);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -30,6 +32,7 @@ float vertices[10000];   // [9 per triangle] - 3 coords | (x, y, z)
 float centers[4000];    // [3 per triangle] - 1 coord  | (x, y, z)
 short int levels[1500];  // [1 per triangle] - 1 number |
 short int parents[1500]; // [1 per triangle] - 1 number | 0 = up, 1 = left, 2 = rigth
+bool reload_colors = false;
 
 unsigned int VBO, VAO;
 int cnt = 0, last_idx = 0;
@@ -215,9 +218,6 @@ int main() {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(1);
-
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   // uncomment this call to draw in wireframe polygons.
@@ -250,7 +250,17 @@ int main() {
   unsigned int color_loc = glGetUniformLocation(shaderProgram, "vColor");
   unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
 
+  glfwSetKeyCallback(window, key_callback);
+
   while (!glfwWindowShouldClose(window)) {
+    if (reload_colors) {
+      for (int i = 0; i < MAX_DEPTH; ++i)
+        colors[i] = glm::vec4((float)rand() / RAND_MAX, (float)rand() / RAND_MAX,
+                              (float)rand() / RAND_MAX, 1.0f);
+
+      reload_colors = false;
+    }
+
     // input
     // -----
     processInput(window);
@@ -351,6 +361,12 @@ int main() {
   // ------------------------------------------------------------------
   glfwTerminate();
   return 0;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action,
+                  int mods) {
+  if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    reload_colors = true;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
