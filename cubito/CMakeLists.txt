@@ -1,4 +1,4 @@
-project( triangulito )
+project( cubito )
 
 message( "Configuring main application - ${PROJECT_NAME} : " )
 
