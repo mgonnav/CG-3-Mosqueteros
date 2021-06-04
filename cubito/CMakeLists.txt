@@ -6,8 +6,11 @@ message( "Configuring main application - ${PROJECT_NAME} : " )
 find_package(OpenGL REQUIRED)
 
 file(GLOB SOURCES "*.cpp" ${DEPENDENCY_DIR}/include/glad/glad/glad.c )
-file(GLOB HEADERS "*.h" )
+file(GLOB HEADERS "*.h" "*.hpp" )
 file(GLOB SHADERS "*.vert" "*.frag" "*.vs" "*.fs" )
+
+file(GLOB SRC_FOLDER "${CMAKE_CURRENT_SOURCE_DIR}/src")
+file(COPY ${SRC_FOLDER} DESTINATION "${CMAKE_BINARY_DIR}/src/CG-3-Mosqueteros/cubito") 
 
 include_directories( 
 ${DEPENDENCY_DIR}/include/glad/ 
@@ -16,7 +19,6 @@ ${DEPENDENCY_DIR}/include/freeimage/
 ${DEPENDENCY_DIR}/include/glew
 ${DEPENDENCY_DIR}/include/glm
 ${DEPENDENCY_DIR}/include/freeglut
-
 )
 
 message( "\nBuild mode test is: ${CMAKE_BUILD_TYPE}" )
@@ -43,7 +45,7 @@ else()
 	)
 endif ()
  
-add_executable( ${PROJECT_NAME}  ${HEADERS} ${SOURCES} ${SHADERS} )
+add_executable( ${PROJECT_NAME} ${HEADERS} ${SHADERS} ${SOURCES})
 
 if ( CMAKE_BUILD_TYPE STREQUAL "Debug")
 	if ( WIN32 )
@@ -74,8 +76,8 @@ if ( CMAKE_BUILD_TYPE STREQUAL "Debug")
 							-lm
 						   libglad.a
 	                       libglfw3.a
-							 # libGLEWd.a
-							 # libglut.a
+						   libGLEWd.a
+						   libglut.a
 						   libfreeimage.a
 						   libglm_static.a
 						    )
@@ -110,8 +112,8 @@ else()
 							-lm
 						   libglad.a
 	                       libglfw3.a
-               # libGLEW.a
-               # libglut.a
+						   libGLEW.a
+						   libglut.a
 						   libfreeimage.a
 						   libglm_static.a
 							)
