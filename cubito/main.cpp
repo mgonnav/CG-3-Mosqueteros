@@ -103,8 +103,8 @@ bool first_time_mouse = true;
 int main() {
   // ----- Test solver --- //
 
-  std::string solution = rubik::solve("R' F U' D2 R F R' L2 F' B2 U' F2 B' R2 B D2 B' U2 R2");
-  std::cout << "Solution: " << solution << std::endl;
+  // std::string solution = rubik::solve("R' F U' D2 R F R' L2 F' B2 U' F2 B' R2 B D2 B' U2 R2");
+  // std::cout << "Solution: " << solution << std::endl;
 
   // ----- Test solver --- //
   
@@ -141,24 +141,6 @@ int main() {
 
   // RANDOM COLOR TO INIT RUBICK CUBE
   std::vector<glm::vec3> input_colors;
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(RED);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
-  input_colors.push_back(GREEN);
   input_colors.push_back(BLUE);
   input_colors.push_back(BLUE);
   input_colors.push_back(BLUE);
@@ -168,34 +150,52 @@ int main() {
   input_colors.push_back(BLUE);
   input_colors.push_back(BLUE);
   input_colors.push_back(BLUE);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(YELLOW);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
-  input_colors.push_back(WHITE);
   input_colors.push_back(ORANGE);
   input_colors.push_back(ORANGE);
   input_colors.push_back(ORANGE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(RED);
+  input_colors.push_back(RED);
+  input_colors.push_back(RED);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(YELLOW);
   input_colors.push_back(ORANGE);
   input_colors.push_back(ORANGE);
   input_colors.push_back(ORANGE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(RED);
+  input_colors.push_back(RED);
+  input_colors.push_back(RED);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(YELLOW);
   input_colors.push_back(ORANGE);
   input_colors.push_back(ORANGE);
   input_colors.push_back(ORANGE);
-  std::random_shuffle(input_colors.begin(), input_colors.end());
+  input_colors.push_back(WHITE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(WHITE);
+  input_colors.push_back(RED);
+  input_colors.push_back(RED);
+  input_colors.push_back(RED);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(YELLOW);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  input_colors.push_back(GREEN);
+  // std::random_shuffle(input_colors.begin(), input_colors.end());
 
   // USER INPUT
   /*char c;
@@ -219,7 +219,7 @@ int main() {
   Cubito c_09(cubito_program, glm::vec3(0.5f, 0.5f, 0.0f),9, input_colors[18], input_colors[17], input_colors[2]);
   Cubito c_12(cubito_program, glm::vec3(-0.5f, 0.0f, 0.0f),12, input_colors[32], input_colors[21]);
   Cubito c_15(cubito_program, glm::vec3(0.0f, 0.0f, 0.0f),15, input_colors[31]);
-  Cubito c_18(cubito_program, glm::vec3(0.5f, 0.0f, 0.0f),18, input_colors[29], input_colors[30]);
+  Cubito c_18(cubito_program, glm::vec3(0.5f, 0.0f, 0.0f),18, input_colors[30], input_colors[29]);
   Cubito c_21(cubito_program, glm::vec3(-0.5f, -0.5f, 0.0f),21, input_colors[44], input_colors[33], input_colors[51]);
   Cubito c_24(cubito_program, glm::vec3(0.0f, -0.5f, 0.0f),24, input_colors[43], input_colors[52]);
   Cubito c_27(cubito_program, glm::vec3(0.5f, -0.5f, 0.0f),27, input_colors[42], input_colors[41], input_colors[53]);
