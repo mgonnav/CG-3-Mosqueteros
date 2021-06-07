@@ -5,11 +5,12 @@
 #include "Shader.h"
 
 #include <vector>
+#include <memory>
 
 class Cubo {
  public:
 	Cubo();
-	std::vector<Cubito*> cubitos;
+	std::vector<std::shared_ptr<Cubito>> cubitos;
 	void Draw(glm::mat4&, glm::mat4&, glm::mat4&);
 	void Move(int);
 };
