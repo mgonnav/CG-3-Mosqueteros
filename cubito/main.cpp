@@ -112,17 +112,35 @@ float angle_1 = 135.0f;
 float rota_1 = 0.0f;
 float rad_1 = 0.5f*sqrt(2);
 
+float angle_4 = 90.0f;
+float rota_4 = 0.0f;
+float rad_4 = 0.5f;
+
 float angle_7 = 45.0f;
 float rota_7 = 0.0f;
 float rad_7 = 0.5f * sqrt(2);
+
+float angle_16 = 0.0f;
+float rota_16 = 0.0f;
+float rad_16 = 0.5f;
 
 float angle_25 = 315.0f;
 float rota_25 = 0.0f;
 float rad_25 = 0.5f * sqrt(2);
 
+float angle_22 = 270.0f;
+float rota_22 = 0.0f;
+float rad_22 = 0.5f;
+
 float angle_19 = 225.0f;
 float rota_19 = 0.0f;
 float rad_19 = 0.5f * sqrt(2);
+
+float angle_10 = 180.0f;
+float rota_10 = 0.0f;
+float rad_10 = 0.5f;
+
+float rota_13 = 0.0f;
 
 int main() {
   // ----- Test solver --- //
@@ -285,14 +303,24 @@ int main() {
       else {
         angle_1 = 45.0f;
       }
-      //std::cout << "x "<< rad_1 * cos(deg(angle_1)) <<std::endl;
-      //std::cout << "x "<< rad_1 * sin(deg(angle_1)) <<std::endl << std::endl;
       rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1 * cos(deg(angle_1)), rad_1 * sin(deg(angle_1)), 1.0f));
 
       if (rota_1 > -90) { rota_1 -= 1.0f; }
       else rota_1 = -90.0f;
 
       rubick_cube.cubitos[1]->Rotate(rota_1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+      // CUBO 04
+      if (angle_4 > 0.0f) { /*type_of_move = false;*/ angle_4 -= 1.0f; }
+      else {
+        angle_4 = 0.0f;
+      }
+      rubick_cube.cubitos[4]->Translate(glm::vec3(rad_4 * cos(deg(angle_4)), rad_4 * sin(deg(angle_4)), 1.0f));
+
+      if (rota_4 > -90) { rota_4 -= 1.0f; }
+      else rota_4 = -90.0f;
+
+      rubick_cube.cubitos[4]->Rotate(rota_4, glm::vec3(0.0f, 0.0f, 1.0f));
 
       // CUBO 07
       if (angle_7 > -45.0f) { /*type_of_move = false;*/ angle_7 -= 1.0f; }
@@ -306,6 +334,18 @@ int main() {
 
       rubick_cube.cubitos[7]->Rotate(rota_7, glm::vec3(0.0f, 0.0f, 1.0f));
 
+      // CUBO 16
+      if (angle_16 > -90.0f) { /*type_of_move = false;*/ angle_16 -= 1.0f; }
+      else {
+        angle_16 = -90.0f;
+      }
+      rubick_cube.cubitos[16]->Translate(glm::vec3(rad_16* cos(deg(angle_16)), rad_16* sin(deg(angle_16)), 1.0f));
+
+      if (rota_16 > -90) { rota_16 -= 1.0f; }
+      else rota_16 = -90.0f;
+
+      rubick_cube.cubitos[16]->Rotate(rota_16, glm::vec3(0.0f, 0.0f, 1.0f));
+
       // CUBO 25
       if (angle_25 > 225.0f) { /*type_of_move = false;*/ angle_25 -= 1.0f; }
       else {
@@ -318,6 +358,18 @@ int main() {
 
       rubick_cube.cubitos[25]->Rotate(rota_25, glm::vec3(0.0f, 0.0f, 1.0f));
 
+      // CUBO 22
+      if (angle_22 > 180.0f) { /*type_of_move = false;*/ angle_22 -= 1.0f; }
+      else {
+        angle_22 = 180.0f;
+      }
+      rubick_cube.cubitos[22]->Translate(glm::vec3(rad_22 * cos(deg(angle_22)), rad_22 * sin(deg(angle_22)), 1.0f));
+
+      if (rota_22 > -90) { rota_22 -= 1.0f; }
+      else rota_22 = -90.0f;
+
+      rubick_cube.cubitos[22]->Rotate(rota_22, glm::vec3(0.0f, 0.0f, 1.0f));
+
       // CUBO 19
       if (angle_19 > 135.0f) { /*type_of_move = false;*/ angle_19 -= 1.0f; }
       else {
@@ -329,16 +381,40 @@ int main() {
       else rota_19 = -90.0f;
 
       rubick_cube.cubitos[19]->Rotate(rota_19, glm::vec3(0.0f, 0.0f, 1.0f));
+
+      // CUBO 10
+      if (angle_10 > 90.0f) { /*type_of_move = false;*/ angle_10 -= 1.0f; }
+      else {
+        angle_10 = 90.0f;
+      }
+      rubick_cube.cubitos[10]->Translate(glm::vec3(rad_10 * cos(deg(angle_10)), rad_10 * sin(deg(angle_10)), 1.0f));
+
+      if (rota_10 > -90) { rota_10 -= 1.0f; }
+      else rota_10 = -90.0f;
+
+      rubick_cube.cubitos[10]->Rotate(rota_10, glm::vec3(0.0f, 0.0f, 1.0f));
+
+      // CUBO 13
+      if (rota_13 > -90) { rota_13 -= 1.0f; }
+      else rota_13 = -90.0f;
+
+      rubick_cube.cubitos[13]->Rotate(rota_13, glm::vec3(0.0f, 0.0f, 1.0f));
     }
     
     // Testing one cube
-    rubick_cube.cubitos[1]->DrawSprite(model, view, projection);
-    rubick_cube.cubitos[7]->DrawSprite(model, view, projection);
-    rubick_cube.cubitos[25]->DrawSprite(model, view, projection);
-    rubick_cube.cubitos[19]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[1]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[4]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[7]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[16]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[25]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[22]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[19]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[10]->DrawSprite(model, view, projection);
+    //rubick_cube.cubitos[13]->DrawSprite(model, view, projection);
+
     
     // All cubes
-    //rubick_cube.Draw(model, view, projection);
+    rubick_cube.Draw(model, view, projection);
 
 
   /*  if (0 == 1) {
