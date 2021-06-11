@@ -108,9 +108,13 @@ bool type_of_move = false;
 
 // Movements of each cubito
 
-float angle_1 = 180.0f;
+float angle_1 = 135.0f;
 float rota_1 = 0.0f;
-float rad_1 = 0.5f;
+float rad_1 = 0.5f*sqrt(2);
+
+float angle_7 = 45.0f;
+float rota_7 = 0.0f;
+float rad_7 = 0.5f * sqrt(2);
 
 int main() {
   // ----- Test solver --- //
@@ -268,20 +272,36 @@ int main() {
     view = camera.GetViewMatrix();
 
     if (type_of_move) {
-      if (angle_1 > 0.0f) { /*type_of_move = false;*/ angle_1 -= 2.0f; }
+      // CUBO 01
+      if (angle_1 > 45.0f) { /*type_of_move = false;*/ angle_1 -= 1.0f; }
       else {
-        angle_1 = 0.0f;
+        angle_1 = 45.0f;
       }
-      rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1 * cos(deg(angle_1)), rad_1 *  sin(deg(angle_1)) + rad_1, 1.0f));
+      //std::cout << "x "<< rad_1 * cos(deg(angle_1)) <<std::endl;
+      //std::cout << "x "<< rad_1 * sin(deg(angle_1)) <<std::endl << std::endl;
+      rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1 * cos(deg(angle_1)), rad_1 * sin(deg(angle_1)), 1.0f));
 
       if (rota_1 > -90) { rota_1 -= 1.0f; }
       else rota_1 = -90.0f;
 
       rubick_cube.cubitos[1]->Rotate(rota_1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+      // CUBO 07
+      if (angle_7 > -45.0f) { /*type_of_move = false;*/ angle_7 -= 1.0f; }
+      else {
+        angle_7 = -45.0f;
+      }
+      rubick_cube.cubitos[7]->Translate(glm::vec3(rad_7 * cos(deg(angle_7)) , rad_7 * sin(deg(angle_7)), 1.0f));
+
+      if (rota_7 > -90) { rota_7 -= 1.0f; }
+      else rota_7 = -90.0f;
+
+      rubick_cube.cubitos[7]->Rotate(rota_7, glm::vec3(0.0f, 0.0f, 1.0f));
     }
     
     // Testing one cube
     rubick_cube.cubitos[1]->DrawSprite(model, view, projection);
+    rubick_cube.cubitos[7]->DrawSprite(model, view, projection);
     
     // All cubes
     //rubick_cube.Draw(model, view, projection);
