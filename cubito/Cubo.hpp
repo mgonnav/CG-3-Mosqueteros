@@ -22,6 +22,7 @@ class Cubo {
 Cubo::Cubo() {
 	cubitos.resize(28);
 }
+
 void Cubo::Draw(glm::mat4& model, glm::mat4& view, glm::mat4& projection) {
 	for (int i = 1; i <= 27; ++i)
 		this->cubitos[i]->DrawSprite(model, view, projection);
