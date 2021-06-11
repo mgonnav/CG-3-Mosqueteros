@@ -40,6 +40,7 @@
 #include "Cubito.hpp"
 #include "Cubo.hpp"
 #include "Camera.hpp"
+#include "solver/Rubik.hpp"
 
 #include <iostream>
 #include <vector>
@@ -105,8 +106,8 @@ bool first_time_mouse = true;
 int main() {
   // ----- Test solver --- //
 
-  // std::string solution = rubik::solve("R' F U' D2 R F R' L2 F' B2 U' F2 B' R2 B D2 B' U2 R2");
-  // std::cout << "Solution: " << solution << std::endl;
+  std::string solution = rubik::solve("R' F U' D2 R F R' L2 F' B2 U' F2 B' R2 B D2 B' U2 R2");
+  std::cout << "Solution: " << solution << std::endl;
 
   // ----- Test solver --- //
 

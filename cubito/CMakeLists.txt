@@ -5,7 +5,7 @@ message( "Configuring main application - ${PROJECT_NAME} : " )
 # OpenGL
 find_package(OpenGL REQUIRED)
 
-file(GLOB SOURCES "*.cpp" ${DEPENDENCY_DIR}/include/glad/glad/glad.c )
+file(GLOB SOURCES "*.cpp" ${DEPENDENCY_DIR}/include/glad/glad/glad.c "./solver/*.cpp")
 file(GLOB HEADERS "*.h" "*.hpp" )
 file(GLOB SHADERS "*.vert" "*.frag" "*.vs" "*.fs" )
 
