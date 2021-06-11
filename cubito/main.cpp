@@ -106,37 +106,40 @@ bool first_time_mouse = true;
 
 bool type_of_move = false;
 
-// Movements of each cubito
+// Movements of each cubito first face
 
-float angle_1 = 135.0f;
+bool first_face = false;
+bool xxx = false;
+
+float angle_1 = 134.0f;
 float rota_1 = 0.0f;
 float rad_1 = 0.5f*sqrt(2);
 
-float angle_4 = 90.0f;
+float angle_4 = 89.0f;
 float rota_4 = 0.0f;
 float rad_4 = 0.5f;
 
-float angle_7 = 45.0f;
+float angle_7 = 44.0f;
 float rota_7 = 0.0f;
 float rad_7 = 0.5f * sqrt(2);
 
-float angle_16 = 0.0f;
+float angle_16 = -1.0f;
 float rota_16 = 0.0f;
 float rad_16 = 0.5f;
 
-float angle_25 = 315.0f;
+float angle_25 = 314.0f;
 float rota_25 = 0.0f;
 float rad_25 = 0.5f * sqrt(2);
 
-float angle_22 = 270.0f;
+float angle_22 = 269.0f;
 float rota_22 = 0.0f;
 float rad_22 = 0.5f;
 
-float angle_19 = 225.0f;
+float angle_19 = 224.0f;
 float rota_19 = 0.0f;
 float rad_19 = 0.5f * sqrt(2);
 
-float angle_10 = 180.0f;
+float angle_10 = 179.0f;
 float rota_10 = 0.0f;
 float rad_10 = 0.5f;
 
@@ -214,7 +217,7 @@ int main() {
     }
     }
   */
-
+  int a = 1;
   // MAIN AND EACH CUBE
   {
     rubick_cube.cubitos[3] = std::make_shared<Cubito>(cubito_program,
@@ -298,108 +301,157 @@ int main() {
     view = camera.GetViewMatrix();
 
     if (type_of_move) {
-      // CUBO 01
-      if (angle_1 > 45.0f) { /*type_of_move = false;*/ angle_1 -= 1.0f; }
-      else {
-        angle_1 = 45.0f;
+      if (xxx) {
+        if (first_face) {
+          std::cout << "aa " << a++ << std::endl;
+          // CUBO 01
+          if (angle_1 > 45.0f) angle_1 -= 1.0f;
+          else angle_1 = 45.0f;
+          rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1 * cos(deg(angle_1)), rad_1 * sin(deg(angle_1)), 1.0f));
+          
+          if (rota_1 > -90) rota_1 -= 1.0f;
+          else rota_1 = -90.0f;
+          rubick_cube.cubitos[1]->Rotate(rota_1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 04
+          if (angle_4 > 0.0f) angle_4 -= 1.0f;
+          else angle_4 = 0.0f;
+          rubick_cube.cubitos[4]->Translate(glm::vec3(rad_4 * cos(deg(angle_4)), rad_4 * sin(deg(angle_4)), 1.0f));
+
+          if (rota_4 > -90) rota_4 -= 1.0f;
+          else rota_4 = -90.0f;
+          rubick_cube.cubitos[4]->Rotate(rota_4, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 07
+          if (angle_7 > -45.0f) angle_7 -= 1.0f;
+          else angle_7 = -45.0f;
+          rubick_cube.cubitos[7]->Translate(glm::vec3(rad_7 * cos(deg(angle_7)), rad_7 * sin(deg(angle_7)), 1.0f));
+
+          if (rota_7 > -90) { rota_7 -= 1.0f; }
+          else rota_7 = -90.0f;
+          rubick_cube.cubitos[7]->Rotate(rota_7, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 16
+          if (angle_16 > -90.0f) angle_16 -= 1.0f;
+          else angle_16 = -90.0f;
+          rubick_cube.cubitos[16]->Translate(glm::vec3(rad_16 * cos(deg(angle_16)), rad_16 * sin(deg(angle_16)), 1.0f));
+
+          if (rota_16 > -90) rota_16 -= 1.0f;
+          else rota_16 = -90.0f;
+          rubick_cube.cubitos[16]->Rotate(rota_16, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 25
+          if (angle_25 > 225.0f) angle_25 -= 1.0f;
+          else angle_25 = 225.0f;
+          rubick_cube.cubitos[25]->Translate(glm::vec3(rad_25 * cos(deg(angle_25)), rad_25 * sin(deg(angle_25)), 1.0f));
+
+          if (rota_25 > -90) rota_25 -= 1.0f;
+          else rota_25 = -90.0f;
+          rubick_cube.cubitos[25]->Rotate(rota_25, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 22
+          if (angle_22 > 180.0f) angle_22 -= 1.0f;
+          else angle_22 = 180.0f;
+          rubick_cube.cubitos[22]->Translate(glm::vec3(rad_22 * cos(deg(angle_22)), rad_22 * sin(deg(angle_22)), 1.0f));
+
+          if (rota_22 > -90) rota_22 -= 1.0f;
+          else rota_22 = -90.0f;
+          rubick_cube.cubitos[22]->Rotate(rota_22, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 19
+          if (angle_19 > 135.0f) angle_19 -= 1.0f;
+          else angle_19 = 135.0f;
+          rubick_cube.cubitos[19]->Translate(glm::vec3(rad_19 * cos(deg(angle_19)), rad_19 * sin(deg(angle_19)), 1.0f));
+
+          if (rota_19 > -90) rota_19 -= 1.0f;
+          else rota_19 = -90.0f;
+          rubick_cube.cubitos[19]->Rotate(rota_19, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 10
+          if (angle_10 > 90.0f) angle_10 -= 1.0f;
+          else { angle_10 = 90.0f; first_face = false; }
+          rubick_cube.cubitos[10]->Translate(glm::vec3(rad_10 * cos(deg(angle_10)), rad_10 * sin(deg(angle_10)), 1.0f));
+
+          if (rota_10 > -90) rota_10 -= 1.0f;
+          else rota_10 = -90.0f;
+          rubick_cube.cubitos[10]->Rotate(rota_10, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 13
+          if (rota_13 > -90) rota_13 -= 1.0f;
+          else rota_13 = -90.0f;
+          rubick_cube.cubitos[13]->Rotate(rota_13, glm::vec3(0.0f, 0.0f, 1.0f));
+        }
+        else {
+          std::cout << "finish first_face false" << std::endl;
+
+          std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
+          std::shared_ptr<Cubito> new_4 = rubick_cube.cubitos[4];
+          std::shared_ptr<Cubito> new_7 = rubick_cube.cubitos[7];
+          std::shared_ptr<Cubito> new_10 = rubick_cube.cubitos[10];
+          std::shared_ptr<Cubito> new_16 = rubick_cube.cubitos[16];
+          std::shared_ptr<Cubito> new_19 = rubick_cube.cubitos[19];
+          std::shared_ptr<Cubito> new_22 = rubick_cube.cubitos[22];
+          std::shared_ptr<Cubito> new_25 = rubick_cube.cubitos[25];
+          rubick_cube.cubitos[1] = new_19;
+          rubick_cube.cubitos[4] = new_10;
+          rubick_cube.cubitos[7] = new_1;
+          rubick_cube.cubitos[16] = new_4;
+          rubick_cube.cubitos[25] = new_7;
+          rubick_cube.cubitos[10] = new_22;
+          rubick_cube.cubitos[19] = new_25;
+          rubick_cube.cubitos[22] = new_16;
+
+          /*rubick_cube.cubitos[1].swap(rubick_cube.cubitos[19]);
+          rubick_cube.cubitos[4].swap(rubick_cube.cubitos[10]);
+          rubick_cube.cubitos[7].swap(rubick_cube.cubitos[1]);
+          rubick_cube.cubitos[10].swap(rubick_cube.cubitos[22]);
+          rubick_cube.cubitos[16].swap(rubick_cube.cubitos[4]);
+          rubick_cube.cubitos[19].swap(rubick_cube.cubitos[25]);
+          rubick_cube.cubitos[22].swap(rubick_cube.cubitos[16]);
+          rubick_cube.cubitos[25].swap(rubick_cube.cubitos[7]);*/
+
+          angle_1 = 134.0f;
+          rota_1 = 0.0f;
+          rad_1 = 0.5f * sqrt(2);
+
+          angle_4 = 89.0f;
+          rota_4 = 0.0f;
+          rad_4 = 0.5f;
+
+          angle_7 = 44.0f;
+          rota_7 = 0.0f;
+          rad_7 = 0.5f * sqrt(2);
+
+          angle_16 = -1.0f;
+          rota_16 = 0.0f;
+          rad_16 = 0.5f;
+
+          angle_25 = 314.0f;
+          rota_25 = 0.0f;
+          rad_25 = 0.5f * sqrt(2);
+
+          angle_22 = 269.0f;
+          rota_22 = 0.0f;
+          rad_22 = 0.5f;
+
+          angle_19 = 224.0f;
+          rota_19 = 0.0f;
+          rad_19 = 0.5f * sqrt(2);
+
+          angle_10 = 179.0f;
+          rota_10 = 0.0f;
+          rad_10 = 0.5f;
+
+          rota_13 = 0.0f;
+          xxx = false;
+        }
       }
-      rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1 * cos(deg(angle_1)), rad_1 * sin(deg(angle_1)), 1.0f));
-
-      if (rota_1 > -90) { rota_1 -= 1.0f; }
-      else rota_1 = -90.0f;
-
-      rubick_cube.cubitos[1]->Rotate(rota_1, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 04
-      if (angle_4 > 0.0f) { /*type_of_move = false;*/ angle_4 -= 1.0f; }
       else {
-        angle_4 = 0.0f;
+        std::cout << "Not inside xxx" << std::endl;
+        type_of_move = false;
       }
-      rubick_cube.cubitos[4]->Translate(glm::vec3(rad_4 * cos(deg(angle_4)), rad_4 * sin(deg(angle_4)), 1.0f));
-
-      if (rota_4 > -90) { rota_4 -= 1.0f; }
-      else rota_4 = -90.0f;
-
-      rubick_cube.cubitos[4]->Rotate(rota_4, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 07
-      if (angle_7 > -45.0f) { /*type_of_move = false;*/ angle_7 -= 1.0f; }
-      else {
-        angle_7 = -45.0f;
-      }
-      rubick_cube.cubitos[7]->Translate(glm::vec3(rad_7 * cos(deg(angle_7)) , rad_7 * sin(deg(angle_7)), 1.0f));
-
-      if (rota_7 > -90) { rota_7 -= 1.0f; }
-      else rota_7 = -90.0f;
-
-      rubick_cube.cubitos[7]->Rotate(rota_7, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 16
-      if (angle_16 > -90.0f) { /*type_of_move = false;*/ angle_16 -= 1.0f; }
-      else {
-        angle_16 = -90.0f;
-      }
-      rubick_cube.cubitos[16]->Translate(glm::vec3(rad_16* cos(deg(angle_16)), rad_16* sin(deg(angle_16)), 1.0f));
-
-      if (rota_16 > -90) { rota_16 -= 1.0f; }
-      else rota_16 = -90.0f;
-
-      rubick_cube.cubitos[16]->Rotate(rota_16, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 25
-      if (angle_25 > 225.0f) { /*type_of_move = false;*/ angle_25 -= 1.0f; }
-      else {
-        angle_25 = 225.0f;
-      }
-      rubick_cube.cubitos[25]->Translate(glm::vec3(rad_25 * cos(deg(angle_25)), rad_25 * sin(deg(angle_25)), 1.0f));
-
-      if (rota_25 > -90) { rota_25 -= 1.0f; }
-      else rota_25 = -90.0f;
-
-      rubick_cube.cubitos[25]->Rotate(rota_25, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 22
-      if (angle_22 > 180.0f) { /*type_of_move = false;*/ angle_22 -= 1.0f; }
-      else {
-        angle_22 = 180.0f;
-      }
-      rubick_cube.cubitos[22]->Translate(glm::vec3(rad_22 * cos(deg(angle_22)), rad_22 * sin(deg(angle_22)), 1.0f));
-
-      if (rota_22 > -90) { rota_22 -= 1.0f; }
-      else rota_22 = -90.0f;
-
-      rubick_cube.cubitos[22]->Rotate(rota_22, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 19
-      if (angle_19 > 135.0f) { /*type_of_move = false;*/ angle_19 -= 1.0f; }
-      else {
-        angle_19 = 135.0f;
-      }
-      rubick_cube.cubitos[19]->Translate(glm::vec3(rad_19 * cos(deg(angle_19)), rad_19 * sin(deg(angle_19)), 1.0f));
-
-      if (rota_19 > -90) { rota_19 -= 1.0f; }
-      else rota_19 = -90.0f;
-
-      rubick_cube.cubitos[19]->Rotate(rota_19, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 10
-      if (angle_10 > 90.0f) { /*type_of_move = false;*/ angle_10 -= 1.0f; }
-      else {
-        angle_10 = 90.0f;
-      }
-      rubick_cube.cubitos[10]->Translate(glm::vec3(rad_10 * cos(deg(angle_10)), rad_10 * sin(deg(angle_10)), 1.0f));
-
-      if (rota_10 > -90) { rota_10 -= 1.0f; }
-      else rota_10 = -90.0f;
-
-      rubick_cube.cubitos[10]->Rotate(rota_10, glm::vec3(0.0f, 0.0f, 1.0f));
-
-      // CUBO 13
-      if (rota_13 > -90) { rota_13 -= 1.0f; }
-      else rota_13 = -90.0f;
-
-      rubick_cube.cubitos[13]->Rotate(rota_13, glm::vec3(0.0f, 0.0f, 1.0f));
     }
+    else std::cout << "nothing press" << std::endl;
     
     // Testing one cube
     //rubick_cube.cubitos[1]->DrawSprite(model, view, projection);
@@ -467,6 +519,8 @@ void processInput(GLFWwindow* window) {
     camera.ProcessKeyboard(RIGHT, deltaTime);
 
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+    xxx = true;
+    first_face = true;
     type_of_move = true;
     //rubick_cube.Move(HU_L);
   }
