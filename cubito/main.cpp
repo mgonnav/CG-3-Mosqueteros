@@ -116,6 +116,14 @@ float angle_7 = 45.0f;
 float rota_7 = 0.0f;
 float rad_7 = 0.5f * sqrt(2);
 
+float angle_25 = 315.0f;
+float rota_25 = 0.0f;
+float rad_25 = 0.5f * sqrt(2);
+
+float angle_19 = 225.0f;
+float rota_19 = 0.0f;
+float rad_19 = 0.5f * sqrt(2);
+
 int main() {
   // ----- Test solver --- //
 
@@ -297,11 +305,37 @@ int main() {
       else rota_7 = -90.0f;
 
       rubick_cube.cubitos[7]->Rotate(rota_7, glm::vec3(0.0f, 0.0f, 1.0f));
+
+      // CUBO 25
+      if (angle_25 > 225.0f) { /*type_of_move = false;*/ angle_25 -= 1.0f; }
+      else {
+        angle_25 = 225.0f;
+      }
+      rubick_cube.cubitos[25]->Translate(glm::vec3(rad_25 * cos(deg(angle_25)), rad_25 * sin(deg(angle_25)), 1.0f));
+
+      if (rota_25 > -90) { rota_25 -= 1.0f; }
+      else rota_25 = -90.0f;
+
+      rubick_cube.cubitos[25]->Rotate(rota_25, glm::vec3(0.0f, 0.0f, 1.0f));
+
+      // CUBO 19
+      if (angle_19 > 135.0f) { /*type_of_move = false;*/ angle_19 -= 1.0f; }
+      else {
+        angle_19 = 135.0f;
+      }
+      rubick_cube.cubitos[19]->Translate(glm::vec3(rad_19 * cos(deg(angle_19)), rad_19 * sin(deg(angle_19)), 1.0f));
+
+      if (rota_19 > -90) { rota_19 -= 1.0f; }
+      else rota_19 = -90.0f;
+
+      rubick_cube.cubitos[19]->Rotate(rota_19, glm::vec3(0.0f, 0.0f, 1.0f));
     }
     
     // Testing one cube
     rubick_cube.cubitos[1]->DrawSprite(model, view, projection);
     rubick_cube.cubitos[7]->DrawSprite(model, view, projection);
+    rubick_cube.cubitos[25]->DrawSprite(model, view, projection);
+    rubick_cube.cubitos[19]->DrawSprite(model, view, projection);
     
     // All cubes
     //rubick_cube.Draw(model, view, projection);
