@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/io.hpp>
 
 #include "Shader.h"
 
@@ -13,18 +14,24 @@ class Cubito
 private:
 	Shader shader;
 	unsigned int quadVAO;
-	glm::vec3 my_position = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 my_position;
 	glm::mat4 MyPositionOnWorld(glm::mat4&);
 	int id;
 	glm::vec3 color1;
 	glm::vec3 color2;
 	glm::vec3 color3;
+
+	glm::vec3 axis;
+	float angle;
+
 public:
 	void InitialRender();
 	Cubito(Shader&, glm::vec3, int, glm::vec3, glm::vec3, glm::vec3);
 	Cubito() {}
 	~Cubito();
 	void DrawSprite(glm::mat4&, glm::mat4&, glm::mat4&);
+	void Translate(glm::vec3);
+	void Rotate(float, glm::vec3);
 };
 
 //==============================================================================================
@@ -41,6 +48,8 @@ Cubito::Cubito (Shader& shader,
 	this->color1 = color1n;
 	this->color2 = color2n;
 	this->color3 = color3n;
+	this->axis = glm::vec3(0.0f, 0.0f, 0.0f);
+	this->angle = 0.0f;
 	this->InitialRender();
 }
 
@@ -53,15 +62,19 @@ void Cubito::DrawSprite(glm::mat4& model, glm::mat4& view, glm::mat4& projection
 	this->shader.use();
 
 	glm::mat4 my_position_on_world = MyPositionOnWorld(model);
+	//glm::mat4 my_position_on_world = glm::translate(model, my_position);
+	//glm::mat4 my_position_on_world = glm::mat4(1.0f);
+	//my_position_on_world = glm::rotate(my_position_on_world, glm::radians(this->angle), this->axis);
+	//my_position_on_world = glm::translate(my_position_on_world, this->my_position);
 
-	//second_model = glm::rotate(second_model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	unsigned int modelLoc = glGetUniformLocation(this->shader.ID, "model");
-	unsigned int viewLoc = glGetUniformLocation(this->shader.ID, "view");
-	unsigned int projeLoc = glGetUniformLocation(this->shader.ID, "projection");
-	glUniformMatrix4fv(projeLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(my_position_on_world));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	unsigned int model_location = glGetUniformLocation(this->shader.ID, "model");
+	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(my_position_on_world));
+	
+	unsigned int view_location = glGetUniformLocation(this->shader.ID, "view");
+	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(projection));
+	
+	unsigned int projection_location = glGetUniformLocation(this->shader.ID, "projection");
+	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(this->quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -69,8 +82,24 @@ void Cubito::DrawSprite(glm::mat4& model, glm::mat4& view, glm::mat4& projection
 }
 
 glm::mat4 Cubito::MyPositionOnWorld(glm::mat4& model) {
+	//std::cout << "Tx " << my_position.x << " Ty " << my_position.y << " Tz " << my_position.z << std::endl;
+	//std::cout << "B model " << model << std::endl;
+	//glm::mat4 my_position_on_world = glm::mat4(1.0f);
 	glm::mat4 my_position_on_world = glm::translate(model, my_position);
+	//std::cout << "A model " << model << std::endl;
 	return  my_position_on_world;
+}
+
+void Cubito::Translate(glm::vec3 new_translate) {
+	//std::cout << "x "<< my_position.x << "y " << my_position.y << "z " << my_position.z << std::endl;
+	this->my_position = new_translate;
+	//std::cout << "x " << my_position.x << "y " << my_position.y << "z " << my_position.z << std::endl << std::endl;
+}
+
+
+void Cubito::Rotate(float new_angle, glm::vec3 axis) {
+	this->angle = new_angle;
+	this->axis = axis;
 }
 
 void Cubito::InitialRender() {
