@@ -64,6 +64,28 @@ const int HM_R = 10;
 const int HD_L = 11;
 const int HD_R = 12;
 
+
+bool BVL_U = false;
+bool BVL_D = false;
+bool BVM_U = false;
+bool BVM_D = false;
+bool BVR_U = false;
+bool BVR_D = false;
+
+bool BHU_L = false;
+bool BHU_R = false;
+bool BHM_L = false;
+bool BHM_R = false;
+bool BHD_L = false;
+bool BHD_R = false;
+
+bool BF_R = false, BF_R_I = false;
+bool BF_L = false, BF_L_I = false;
+bool BM_R = false, BM_R_I = false;
+bool BM_L = false, BM_L_I = false;
+bool BB_R = false, BB_R_I = false;
+bool BB_L = false, BB_L_I = false;
+
 const glm::vec3 RED = glm::vec3(1.0f, 0.0f, 0.0f);
 const glm::vec3 GREEN = glm::vec3(0.0f, 1.0f, 0.0f);
 const glm::vec3 BLUE = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -104,46 +126,61 @@ float lastX = 500.0f;
 float lastY = 500.0f;
 bool first_time_mouse = true;
 
-bool type_of_move = false;
+bool some_movement = false;
 
-// Movements of each cubito first face
-
-bool first_face = false;
-bool xxx = false;
+// BF_R
 
 float angle_1 = 134.0f;
-float rota_1 = 0.0f;
 float rad_1 = 0.5f*sqrt(2);
 
 float angle_4 = 89.0f;
-float rota_4 = 0.0f;
 float rad_4 = 0.5f;
 
 float angle_7 = 44.0f;
-float rota_7 = 0.0f;
 float rad_7 = 0.5f * sqrt(2);
 
 float angle_16 = -1.0f;
-float rota_16 = 0.0f;
 float rad_16 = 0.5f;
 
 float angle_25 = 314.0f;
-float rota_25 = 0.0f;
 float rad_25 = 0.5f * sqrt(2);
 
 float angle_22 = 269.0f;
-float rota_22 = 0.0f;
 float rad_22 = 0.5f;
 
 float angle_19 = 224.0f;
-float rota_19 = 0.0f;
 float rad_19 = 0.5f * sqrt(2);
 
 float angle_10 = 179.0f;
-float rota_10 = 0.0f;
 float rad_10 = 0.5f;
 
 float rota_13 = 0.0f;
+
+// BF_L
+
+float angle_1_ = 136.0f;
+float rad_1_ = 0.5f * sqrt(2);
+
+float angle_4_ = 91.0f;
+float rad_4_ = 0.5f;
+
+float angle_7_ = 46.0f;
+float rad_7_ = 0.5f * sqrt(2);
+
+float angle_16_ = 1.0f;
+float rad_16_ = 0.5f;
+
+float angle_25_ = 316.0f;
+float rad_25_ = 0.5f * sqrt(2);
+
+float angle_22_ = 271.0f;
+float rad_22_ = 0.5f;
+
+float angle_19_ = 226.0f;
+float rad_19_ = 0.5f * sqrt(2);
+
+float angle_10_ = 181.0f;
+float rad_10_ = 0.5f;
 
 int main() {
   // ----- Test solver --- //
@@ -300,90 +337,71 @@ int main() {
                                   (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     view = camera.GetViewMatrix();
 
-    if (type_of_move) {
-      if (xxx) {
-        if (first_face) {
-          std::cout << "aa " << a++ << std::endl;
+    if (some_movement) {
+      // ONE TURN BF_R | BOOL FRONT RIGHT
+      if (BF_R) {
+        if (BF_R_I) {
           // CUBO 01
           if (angle_1 > 45.0f) angle_1 -= 1.0f;
           else angle_1 = 45.0f;
           rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1 * cos(deg(angle_1)), rad_1 * sin(deg(angle_1)), 1.0f));
           
-          if (rota_1 > -90) rota_1 -= 1.0f;
-          else rota_1 = -90.0f;
-          rubick_cube.cubitos[1]->Rotate(rota_1, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[1]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 04
           if (angle_4 > 0.0f) angle_4 -= 1.0f;
           else angle_4 = 0.0f;
           rubick_cube.cubitos[4]->Translate(glm::vec3(rad_4 * cos(deg(angle_4)), rad_4 * sin(deg(angle_4)), 1.0f));
 
-          if (rota_4 > -90) rota_4 -= 1.0f;
-          else rota_4 = -90.0f;
-          rubick_cube.cubitos[4]->Rotate(rota_4, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[4]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 07
           if (angle_7 > -45.0f) angle_7 -= 1.0f;
           else angle_7 = -45.0f;
           rubick_cube.cubitos[7]->Translate(glm::vec3(rad_7 * cos(deg(angle_7)), rad_7 * sin(deg(angle_7)), 1.0f));
 
-          if (rota_7 > -90) { rota_7 -= 1.0f; }
-          else rota_7 = -90.0f;
-          rubick_cube.cubitos[7]->Rotate(rota_7, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[7]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 16
           if (angle_16 > -90.0f) angle_16 -= 1.0f;
           else angle_16 = -90.0f;
           rubick_cube.cubitos[16]->Translate(glm::vec3(rad_16 * cos(deg(angle_16)), rad_16 * sin(deg(angle_16)), 1.0f));
 
-          if (rota_16 > -90) rota_16 -= 1.0f;
-          else rota_16 = -90.0f;
-          rubick_cube.cubitos[16]->Rotate(rota_16, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[16]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 25
           if (angle_25 > 225.0f) angle_25 -= 1.0f;
           else angle_25 = 225.0f;
           rubick_cube.cubitos[25]->Translate(glm::vec3(rad_25 * cos(deg(angle_25)), rad_25 * sin(deg(angle_25)), 1.0f));
 
-          if (rota_25 > -90) rota_25 -= 1.0f;
-          else rota_25 = -90.0f;
-          rubick_cube.cubitos[25]->Rotate(rota_25, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[25]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 22
           if (angle_22 > 180.0f) angle_22 -= 1.0f;
           else angle_22 = 180.0f;
           rubick_cube.cubitos[22]->Translate(glm::vec3(rad_22 * cos(deg(angle_22)), rad_22 * sin(deg(angle_22)), 1.0f));
 
-          if (rota_22 > -90) rota_22 -= 1.0f;
-          else rota_22 = -90.0f;
-          rubick_cube.cubitos[22]->Rotate(rota_22, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[22]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 19
           if (angle_19 > 135.0f) angle_19 -= 1.0f;
           else angle_19 = 135.0f;
           rubick_cube.cubitos[19]->Translate(glm::vec3(rad_19 * cos(deg(angle_19)), rad_19 * sin(deg(angle_19)), 1.0f));
 
-          if (rota_19 > -90) rota_19 -= 1.0f;
-          else rota_19 = -90.0f;
-          rubick_cube.cubitos[19]->Rotate(rota_19, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[19]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 10
           if (angle_10 > 90.0f) angle_10 -= 1.0f;
-          else { angle_10 = 90.0f; first_face = false; }
+          else { angle_10 = 90.0f; BF_R_I = false; }
           rubick_cube.cubitos[10]->Translate(glm::vec3(rad_10 * cos(deg(angle_10)), rad_10 * sin(deg(angle_10)), 1.0f));
 
-          if (rota_10 > -90) rota_10 -= 1.0f;
-          else rota_10 = -90.0f;
-          rubick_cube.cubitos[10]->Rotate(rota_10, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[10]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
 
           // CUBO 13
-          if (rota_13 > -90) rota_13 -= 1.0f;
-          else rota_13 = -90.0f;
-          rubick_cube.cubitos[13]->Rotate(rota_13, glm::vec3(0.0f, 0.0f, 1.0f));
+          rubick_cube.cubitos[13]->Rotate(-1, glm::vec3(0.0f, 0.0f, 1.0f));
         }
+        // REASIGN POINTER
         else {
-          std::cout << "finish first_face false" << std::endl;
-
           std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
           std::shared_ptr<Cubito> new_4 = rubick_cube.cubitos[4];
           std::shared_ptr<Cubito> new_7 = rubick_cube.cubitos[7];
@@ -401,55 +419,143 @@ int main() {
           rubick_cube.cubitos[19] = new_25;
           rubick_cube.cubitos[22] = new_16;
 
-          /*rubick_cube.cubitos[1].swap(rubick_cube.cubitos[19]);
-          rubick_cube.cubitos[4].swap(rubick_cube.cubitos[10]);
-          rubick_cube.cubitos[7].swap(rubick_cube.cubitos[1]);
-          rubick_cube.cubitos[10].swap(rubick_cube.cubitos[22]);
-          rubick_cube.cubitos[16].swap(rubick_cube.cubitos[4]);
-          rubick_cube.cubitos[19].swap(rubick_cube.cubitos[25]);
-          rubick_cube.cubitos[22].swap(rubick_cube.cubitos[16]);
-          rubick_cube.cubitos[25].swap(rubick_cube.cubitos[7]);*/
-
           angle_1 = 134.0f;
-          rota_1 = 0.0f;
           rad_1 = 0.5f * sqrt(2);
 
           angle_4 = 89.0f;
-          rota_4 = 0.0f;
           rad_4 = 0.5f;
 
           angle_7 = 44.0f;
-          rota_7 = 0.0f;
           rad_7 = 0.5f * sqrt(2);
 
           angle_16 = -1.0f;
-          rota_16 = 0.0f;
           rad_16 = 0.5f;
 
           angle_25 = 314.0f;
-          rota_25 = 0.0f;
           rad_25 = 0.5f * sqrt(2);
 
           angle_22 = 269.0f;
-          rota_22 = 0.0f;
           rad_22 = 0.5f;
 
           angle_19 = 224.0f;
-          rota_19 = 0.0f;
           rad_19 = 0.5f * sqrt(2);
 
           angle_10 = 179.0f;
-          rota_10 = 0.0f;
           rad_10 = 0.5f;
 
           rota_13 = 0.0f;
-          xxx = false;
+          BF_R = false;
         }
       }
-      else {
-        std::cout << "Not inside xxx" << std::endl;
-        type_of_move = false;
+      // ONE TURN BF_L | BOOL FRONT LEFT
+      if (BF_L) {
+        if (BF_L_I) {
+          // CUBO 01
+          if (angle_1_ < 225.0f) angle_1_ += 1.0f;
+          else angle_1_ = 225.0f;
+          rubick_cube.cubitos[1]->Translate(glm::vec3(rad_1_ * cos(deg(angle_1_)), rad_1_ * sin(deg(angle_1_)), 1.0f));
+
+          rubick_cube.cubitos[1]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 04
+          if (angle_4_ < 180.0f) angle_4_ += 1.0f;
+          else angle_4_ = 180.0f;
+          rubick_cube.cubitos[4]->Translate(glm::vec3(rad_4_ * cos(deg(angle_4_)), rad_4_ * sin(deg(angle_4_)), 1.0f));
+
+          rubick_cube.cubitos[4]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 07
+          if (angle_7_ < 135.0f) angle_7_ += 1.0f;
+          else angle_7_ = 135.0f;
+          rubick_cube.cubitos[7]->Translate(glm::vec3(rad_7_ * cos(deg(angle_7_)), rad_7_ * sin(deg(angle_7_)), 1.0f));
+
+          rubick_cube.cubitos[7]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 16
+          if (angle_16_ < 90.0f) angle_16_ += 1.0f;
+          else angle_16_ = 90.0f;
+          rubick_cube.cubitos[16]->Translate(glm::vec3(rad_16_ * cos(deg(angle_16_)), rad_16_ * sin(deg(angle_16_)), 1.0f));
+
+          rubick_cube.cubitos[16]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 25
+          if (angle_25_ < 405.0f) angle_25_ += 1.0f;
+          else angle_25_ = 405.0f;
+          rubick_cube.cubitos[25]->Translate(glm::vec3(rad_25_ * cos(deg(angle_25_)), rad_25_ * sin(deg(angle_25_)), 1.0f));
+
+          rubick_cube.cubitos[25]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 22
+          if (angle_22_ < 360.0f) angle_22_ += 1.0f;
+          else angle_22_ = 360.0f;
+          rubick_cube.cubitos[22]->Translate(glm::vec3(rad_22_ * cos(deg(angle_22_)), rad_22_ * sin(deg(angle_22_)), 1.0f));
+
+          rubick_cube.cubitos[22]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 19
+          if (angle_19_ < 315.0f) angle_19_ += 1.0f;
+          else angle_19_ = 315.0f;
+          rubick_cube.cubitos[19]->Translate(glm::vec3(rad_19_ * cos(deg(angle_19_)), rad_19_ * sin(deg(angle_19_)), 1.0f));
+
+          rubick_cube.cubitos[19]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 10
+          if (angle_10_ < 270.0f) angle_10_ += 1.0f;
+          else { angle_10_ = 270.0f; BF_L_I = false; }
+          rubick_cube.cubitos[10]->Translate(glm::vec3(rad_10_ * cos(deg(angle_10_)), rad_10_ * sin(deg(angle_10_)), 1.0f));
+
+          rubick_cube.cubitos[10]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+
+          // CUBO 13
+          rubick_cube.cubitos[13]->Rotate(1, glm::vec3(0.0f, 0.0f, 1.0f));
+        }
+        // REASIGN POINTER
+        else {
+          std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
+          std::shared_ptr<Cubito> new_4 = rubick_cube.cubitos[4];
+          std::shared_ptr<Cubito> new_7 = rubick_cube.cubitos[7];
+          std::shared_ptr<Cubito> new_10 = rubick_cube.cubitos[10];
+          std::shared_ptr<Cubito> new_16 = rubick_cube.cubitos[16];
+          std::shared_ptr<Cubito> new_19 = rubick_cube.cubitos[19];
+          std::shared_ptr<Cubito> new_22 = rubick_cube.cubitos[22];
+          std::shared_ptr<Cubito> new_25 = rubick_cube.cubitos[25];
+          rubick_cube.cubitos[1] = new_7;
+          rubick_cube.cubitos[4] = new_16;
+          rubick_cube.cubitos[7] = new_25;
+          rubick_cube.cubitos[16] = new_22;
+          rubick_cube.cubitos[25] = new_19;
+          rubick_cube.cubitos[10] = new_4;
+          rubick_cube.cubitos[19] = new_1;
+          rubick_cube.cubitos[22] = new_10;
+
+
+          angle_1_ = 136.0f;
+          rad_1_ = 0.5f * sqrt(2);
+
+          angle_4_ = 91.0f;
+          rad_4_ = 0.5f;
+
+          angle_7_ = 46.0f;
+          rad_7_ = 0.5f * sqrt(2);
+
+          angle_16_ = 1.0f;
+          rad_16_ = 0.5f;
+
+          angle_25_ = 316.0f;
+          rad_25_ = 0.5f * sqrt(2);
+
+          angle_22_ = 271.0f;
+          rad_22_ = 0.5f;
+
+          angle_19_ = 226.0f;
+          rad_19_ = 0.5f * sqrt(2);
+
+          angle_10_ = 181.0f;
+          rad_10_ = 0.5f;
+          BF_L = false;
+        }
       }
+
     }
     else std::cout << "nothing press" << std::endl;
     
@@ -463,11 +569,9 @@ int main() {
     //rubick_cube.cubitos[19]->DrawSprite(model, view, projection);
     //rubick_cube.cubitos[10]->DrawSprite(model, view, projection);
     //rubick_cube.cubitos[13]->DrawSprite(model, view, projection);
-
     
     // All cubes
     rubick_cube.Draw(model, view, projection);
-
 
   /*  if (0 == 1) {
       switch (type_of_move) {
@@ -519,14 +623,18 @@ void processInput(GLFWwindow* window) {
     camera.ProcessKeyboard(RIGHT, deltaTime);
 
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-    xxx = true;
-    first_face = true;
-    type_of_move = true;
+    BF_R = true;
+    BF_R_I = true;
+    some_movement = true;
     //rubick_cube.Move(HU_L);
   }
 
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    rubick_cube.Move(HU_R);
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    BF_L = true;
+    BF_L_I = true;
+    some_movement = true;
+    //rubick_cube.Move(HU_R);
+  }
 
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     rubick_cube.Move(HM_L);

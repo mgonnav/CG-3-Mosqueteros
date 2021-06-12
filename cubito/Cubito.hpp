@@ -88,13 +88,8 @@ void Cubito::Translate(glm::vec3 new_translate) {
 }
 
 
-void Cubito::Rotate(float new_angle, glm::vec3 axis) {
-	//float a = this->angle;
-	//a -= 1.0f;
-	//if (a < 360.0f) a = 0.0f;
-	//this->angle = a;
-	this->angle--;
-	std::cout << "angle " << this->angle << std::endl;
+void Cubito::Rotate(float dif_angle, glm::vec3 axis) {
+	this->angle += dif_angle;
 	this->axis = axis;
 }
 
