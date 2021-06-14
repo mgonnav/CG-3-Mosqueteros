@@ -23,6 +23,9 @@ private:
 
 	glm::vec3 axis;
 	float angle;
+	float angle_x;
+	float angle_y;
+	float angle_z;
 
 public:
 	void InitialRender();
@@ -31,7 +34,7 @@ public:
 	~Cubito();
 	void DrawSprite(glm::mat4&, glm::mat4&, glm::mat4&);
 	void Translate(glm::vec3);
-	void Rotate(float, glm::vec3);
+	void Rotate(int);
 };
 
 //==============================================================================================
@@ -50,6 +53,9 @@ Cubito::Cubito (Shader& shader,
 	this->color3 = color3n;
 	this->axis = glm::vec3(1.0f, 0.0f, 0.0f);
 	this->angle = 0.0f;
+	this->angle_x = 0.0f;
+	this->angle_y = 0.0f;
+	this->angle_z = 0.0f;
 	this->InitialRender();
 }
 
@@ -79,7 +85,9 @@ void Cubito::DrawSprite(glm::mat4& model, glm::mat4& view, glm::mat4& projection
 
 glm::mat4 Cubito::MyPositionOnWorld(glm::mat4& model) {
 	glm::mat4 my_position_on_world = glm::translate(model, my_position);
-	my_position_on_world = glm::rotate(my_position_on_world, glm::radians(this->angle), this->axis);
+	my_position_on_world = glm::rotate(my_position_on_world, glm::radians(this->angle_x), glm::vec3(1.0f, 0.0f, 0.0f));
+	my_position_on_world = glm::rotate(my_position_on_world, glm::radians(this->angle_y), glm::vec3(0.0f, 1.0f, 0.0f));
+	my_position_on_world = glm::rotate(my_position_on_world, glm::radians(this->angle_z), glm::vec3(0.0f, 0.0f, 1.0f));
 	return  my_position_on_world;
 }
 
@@ -87,10 +95,33 @@ void Cubito::Translate(glm::vec3 new_translate) {
 	this->my_position = new_translate;
 }
 
-
-void Cubito::Rotate(float dif_angle, glm::vec3 axis) {
-	this->angle += dif_angle;
-	this->axis = axis;
+void Cubito::Rotate(int new_rotate) {
+	switch (new_rotate) {
+		case 1: {
+			this->angle_x += 1.0f;
+			break;
+		}
+		case -1: {
+			this->angle_x -= 1.0f;
+			break;
+		}
+		case 2: {
+			this->angle_y += 1.0f;
+			break;
+		}
+		case -2: {
+			this->angle_y -= 1.0f;
+			break;
+		}
+		case 3: {
+			this->angle_z += 1.0f;
+			break;
+		}
+		case -3: {
+			this->angle_z -= 1.0f;
+			break;
+		}
+	}
 }
 
 void Cubito::InitialRender() {
