@@ -27,6 +27,8 @@
 //                            UP
 // USE MOUSE AND ARROWS LEFT DOWN RIGHT
 
+#include <cmath>
+#include <functional>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -63,6 +65,15 @@ const int HM_L = 9;
 const int HM_R = 10;
 const int HD_L = 11;
 const int HD_R = 12;
+
+enum Move {
+  L, LP,
+  R, RP,
+  U, UP,
+  D, DP,
+  F, FP,
+  B, BP
+};
 
 bool BCL_U = false, BCL_U_I = false;
 bool BCL_D = false, BCL_D_I = false;
@@ -101,6 +112,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
                   int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void ParallelAnimation();
 
 const double PI = 3.14159;
 float deg(float num) {
@@ -417,195 +429,9 @@ int main() {
     view = camera.GetViewMatrix();
 
     if (some_movement) {
-      
-      // MOVEMENTS OF FRONT MID BACK
-
-      // ONE TURN BF_R | BOOL FRONT RIGHT
-      if (BF_R) {
-        if (BF_R_I) {
-          // CUBO 01
-          if (angle_1 > 45.0f) angle_1 -= 1.0f;
-          else angle_1 = 45.0f;
-          rubick_cube.cubitos[1]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_1)), kRadioLarge * sin(deg(angle_1)), 0.5f));
-          
-          rubick_cube.cubitos[1]->Rotate(kAroundZRight);
-
-          // CUBO 04
-          if (angle_4 > 0.0f) angle_4 -= 1.0f;
-          else angle_4 = 0.0f;
-          rubick_cube.cubitos[4]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_4)), kRadioNormal * sin(deg(angle_4)), 0.5f));
-
-          rubick_cube.cubitos[4]->Rotate(kAroundZRight);
-
-          // CUBO 07
-          if (angle_7 > -45.0f) angle_7 -= 1.0f;
-          else angle_7 = -45.0f;
-          rubick_cube.cubitos[7]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_7)), kRadioLarge * sin(deg(angle_7)), 0.5f));
-
-          rubick_cube.cubitos[7]->Rotate(kAroundZRight);
-
-          // CUBO 16
-          if (angle_16 > -90.0f) angle_16 -= 1.0f;
-          else angle_16 = -90.0f;
-          rubick_cube.cubitos[16]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_16)), kRadioNormal * sin(deg(angle_16)), 0.5f));
-
-          rubick_cube.cubitos[16]->Rotate(kAroundZRight);
-
-          // CUBO 25
-          if (angle_25 > 225.0f) angle_25 -= 1.0f;
-          else angle_25 = 225.0f;
-          rubick_cube.cubitos[25]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_25)), kRadioLarge * sin(deg(angle_25)), 0.5f));
-
-          rubick_cube.cubitos[25]->Rotate(kAroundZRight);
-
-          // CUBO 22
-          if (angle_22 > 180.0f) angle_22 -= 1.0f;
-          else angle_22 = 180.0f;
-          rubick_cube.cubitos[22]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_22)), kRadioNormal * sin(deg(angle_22)), 0.5f));
-
-          rubick_cube.cubitos[22]->Rotate(kAroundZRight);
-
-          // CUBO 19
-          if (angle_19 > 135.0f) angle_19 -= 1.0f;
-          else angle_19 = 135.0f;
-          rubick_cube.cubitos[19]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_19)), kRadioLarge * sin(deg(angle_19)), 0.5f));
-
-          rubick_cube.cubitos[19]->Rotate(kAroundZRight);
-
-          // CUBO 10
-          if (angle_10 > 90.0f) angle_10 -= 1.0f;
-          else { angle_10 = 90.0f; BF_R_I = false; }
-          rubick_cube.cubitos[10]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_10)), kRadioNormal * sin(deg(angle_10)), 0.5f));
-
-          rubick_cube.cubitos[10]->Rotate(kAroundZRight);
-
-          // CUBO 13
-          rubick_cube.cubitos[13]->Rotate(kAroundZRight);
-        }
-        // REASIGN POINTER
-        else {
-          std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
-          std::shared_ptr<Cubito> new_4 = rubick_cube.cubitos[4];
-          std::shared_ptr<Cubito> new_7 = rubick_cube.cubitos[7];
-          std::shared_ptr<Cubito> new_10 = rubick_cube.cubitos[10];
-          std::shared_ptr<Cubito> new_16 = rubick_cube.cubitos[16];
-          std::shared_ptr<Cubito> new_19 = rubick_cube.cubitos[19];
-          std::shared_ptr<Cubito> new_22 = rubick_cube.cubitos[22];
-          std::shared_ptr<Cubito> new_25 = rubick_cube.cubitos[25];
-          rubick_cube.cubitos[1] = new_19;
-          rubick_cube.cubitos[4] = new_10;
-          rubick_cube.cubitos[7] = new_1;
-          rubick_cube.cubitos[16] = new_4;
-          rubick_cube.cubitos[25] = new_7;
-          rubick_cube.cubitos[10] = new_22;
-          rubick_cube.cubitos[19] = new_25;
-          rubick_cube.cubitos[22] = new_16;
-
-          angle_1 = 134.0f;
-          angle_4 = 89.0f;
-          angle_7 = 44.0f;
-          angle_16 = -1.0f;
-          angle_25 = 314.0f;
-          angle_22 = 269.0f;
-          angle_19 = 224.0f;
-          angle_10 = 179.0f;
-
-          BF_R = false;
-        }
-      }
-      // ONE TURN BF_L | BOOL FRONT LEFT
-      if (BF_L) {
-        if (BF_L_I) {
-          // CUBO 01
-          if (angle_1_ < 225.0f) angle_1_ += 1.0f;
-          else angle_1_ = 225.0f;
-          rubick_cube.cubitos[1]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_1_)), kRadioLarge * sin(deg(angle_1_)), 0.5f));
-
-          rubick_cube.cubitos[1]->Rotate(kAroundZLeft);
-
-          // CUBO 04
-          if (angle_4_ < 180.0f) angle_4_ += 1.0f;
-          else angle_4_ = 180.0f;
-          rubick_cube.cubitos[4]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_4_)), kRadioNormal * sin(deg(angle_4_)), 0.5f));
-
-          rubick_cube.cubitos[4]->Rotate(kAroundZLeft);
-
-          // CUBO 07
-          if (angle_7_ < 135.0f) angle_7_ += 1.0f;
-          else angle_7_ = 135.0f;
-          rubick_cube.cubitos[7]->Translate(glm::vec3(kRadioLarge* cos(deg(angle_7_)), kRadioLarge* sin(deg(angle_7_)), 0.5f));
-
-          rubick_cube.cubitos[7]->Rotate(kAroundZLeft);
-
-          // CUBO 16
-          if (angle_16_ < 90.0f) angle_16_ += 1.0f;
-          else angle_16_ = 90.0f;
-          rubick_cube.cubitos[16]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_16_)), kRadioNormal * sin(deg(angle_16_)), 0.5f));
-
-          rubick_cube.cubitos[16]->Rotate(kAroundZLeft);
-
-          // CUBO 25
-          if (angle_25_ < 405.0f) angle_25_ += 1.0f;
-          else angle_25_ = 405.0f;
-          rubick_cube.cubitos[25]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_25_)), kRadioLarge * sin(deg(angle_25_)), 0.5f));
-
-          rubick_cube.cubitos[25]->Rotate(kAroundZLeft);
-
-          // CUBO 22
-          if (angle_22_ < 360.0f) angle_22_ += 1.0f;
-          else angle_22_ = 360.0f;
-          rubick_cube.cubitos[22]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_22_)), kRadioNormal * sin(deg(angle_22_)), 0.5f));
-
-          rubick_cube.cubitos[22]->Rotate(kAroundZLeft);
-
-          // CUBO 19
-          if (angle_19_ < 315.0f) angle_19_ += 1.0f;
-          else angle_19_ = 315.0f;
-          rubick_cube.cubitos[19]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_19_)), kRadioLarge * sin(deg(angle_19_)), 0.5f));
-
-          rubick_cube.cubitos[19]->Rotate(kAroundZLeft);
-
-          // CUBO 10
-          if (angle_10_ < 270.0f) angle_10_ += 1.0f;
-          else { angle_10_ = 270.0f; BF_L_I = false; }
-          rubick_cube.cubitos[10]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_10_)), kRadioNormal * sin(deg(angle_10_)), 0.5f));
-
-          rubick_cube.cubitos[10]->Rotate(kAroundZLeft);
-
-          // CUBO 13
-          rubick_cube.cubitos[13]->Rotate(kAroundZLeft);
-        }
-        // REASIGN POINTER
-        else {
-          std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
-          std::shared_ptr<Cubito> new_4 = rubick_cube.cubitos[4];
-          std::shared_ptr<Cubito> new_7 = rubick_cube.cubitos[7];
-          std::shared_ptr<Cubito> new_10 = rubick_cube.cubitos[10];
-          std::shared_ptr<Cubito> new_16 = rubick_cube.cubitos[16];
-          std::shared_ptr<Cubito> new_19 = rubick_cube.cubitos[19];
-          std::shared_ptr<Cubito> new_22 = rubick_cube.cubitos[22];
-          std::shared_ptr<Cubito> new_25 = rubick_cube.cubitos[25];
-          rubick_cube.cubitos[1] = new_7;
-          rubick_cube.cubitos[4] = new_16;
-          rubick_cube.cubitos[7] = new_25;
-          rubick_cube.cubitos[16] = new_22;
-          rubick_cube.cubitos[25] = new_19;
-          rubick_cube.cubitos[10] = new_4;
-          rubick_cube.cubitos[19] = new_1;
-          rubick_cube.cubitos[22] = new_10;
-
-
-          angle_1_ = 136.0f;
-          angle_4_ = 91.0f;
-          angle_7_ = 46.0f;
-          angle_16_ = 1.0f;
-          angle_25_ = 316.0f;
-          angle_22_ = 271.0f;
-          angle_19_ = 226.0f;
-          angle_10_ = 181.0f;
-          
-          BF_L = false;
-        }
+      if ((BF_R && BF_R_I) || (BB_R && BB_R_I)
+          || (BF_L && BF_L_I) || (BB_L && BB_L_I)) {
+        ParallelAnimation();
       }
       // ONE TURN BM_R | BOOL MID RIGHT
       if (BM_R) {
@@ -613,56 +439,56 @@ int main() {
           // CUBO 02
           if (angle_2 > 45.0f) angle_2 -= 1.0f;
           else angle_2 = 45.0f;
-          rubick_cube.cubitos[2]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_2)), kRadioLarge * sin(deg(angle_2)), 0.0f));
+          rubick_cube.cubitos[2]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_2)), kRadioLarge * sin(deg(angle_2)), 0.0f));
 
           rubick_cube.cubitos[2]->Rotate(kAroundZRight);
 
           // CUBO 05
           if (angle_5 > 0.0f) angle_5 -= 1.0f;
           else angle_5 = 0.0f;
-          rubick_cube.cubitos[5]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_5)), kRadioNormal * sin(deg(angle_5)), 0.0f));
+          rubick_cube.cubitos[5]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_5)), kRadioNormal * sin(deg(angle_5)), 0.0f));
 
           rubick_cube.cubitos[5]->Rotate(kAroundZRight);
 
           // CUBO 08
           if (angle_8 > -45.0f) angle_8 -= 1.0f;
           else angle_8 = -45.0f;
-          rubick_cube.cubitos[8]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_8)), kRadioLarge * sin(deg(angle_8)), 0.0f));
+          rubick_cube.cubitos[8]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_8)), kRadioLarge * sin(deg(angle_8)), 0.0f));
 
           rubick_cube.cubitos[8]->Rotate(kAroundZRight);
 
           // CUBO 17
           if (angle_17 > -90.0f) angle_17 -= 1.0f;
           else angle_17 = -90.0f;
-          rubick_cube.cubitos[17]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_17)), kRadioNormal * sin(deg(angle_17)), 0.0f));
+          rubick_cube.cubitos[17]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_17)), kRadioNormal * sin(deg(angle_17)), 0.0f));
 
           rubick_cube.cubitos[17]->Rotate(kAroundZRight);
 
           // CUBO 26
           if (angle_26 > 225.0f) angle_26 -= 1.0f;
           else angle_26 = 225.0f;
-          rubick_cube.cubitos[26]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_26)), kRadioLarge * sin(deg(angle_26)), 0.0f));
+          rubick_cube.cubitos[26]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_26)), kRadioLarge * sin(deg(angle_26)), 0.0f));
 
           rubick_cube.cubitos[26]->Rotate(kAroundZRight);
 
           // CUBO 23
           if (angle_23 > 180.0f) angle_23 -= 1.0f;
           else angle_23 = 180.0f;
-          rubick_cube.cubitos[23]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_23)), kRadioNormal * sin(deg(angle_23)), 0.0f));
+          rubick_cube.cubitos[23]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_23)), kRadioNormal * sin(deg(angle_23)), 0.0f));
 
           rubick_cube.cubitos[23]->Rotate(kAroundZRight);
 
           // CUBO 20
           if (angle_20 > 135.0f) angle_20 -= 1.0f;
           else angle_20 = 135.0f;
-          rubick_cube.cubitos[20]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_20)), kRadioLarge * sin(deg(angle_20)), 0.0f));
+          rubick_cube.cubitos[20]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_20)), kRadioLarge * sin(deg(angle_20)), 0.0f));
 
           rubick_cube.cubitos[20]->Rotate(kAroundZRight);
 
           // CUBO 11
           if (angle_11 > 90.0f) angle_11 -= 1.0f;
           else { angle_11 = 90.0f; BM_R_I = false; }
-          rubick_cube.cubitos[11]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_11)), kRadioNormal * sin(deg(angle_11)), 0.0f));
+          rubick_cube.cubitos[11]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_11)), kRadioNormal * sin(deg(angle_11)), 0.0f));
 
           rubick_cube.cubitos[11]->Rotate(kAroundZRight);
 
@@ -706,56 +532,56 @@ int main() {
           // CUBO 02
           if (angle_2_ < 225.0f) angle_2_ += 1.0f;
           else angle_2_ = 225.0f;
-          rubick_cube.cubitos[2]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_2_)), kRadioLarge * sin(deg(angle_2_)), 0.0f));
+          rubick_cube.cubitos[2]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_2_)), kRadioLarge * sin(deg(angle_2_)), 0.0f));
 
           rubick_cube.cubitos[2]->Rotate(kAroundZLeft);
 
           // CUBO 05
           if (angle_5_ < 180.0f) angle_5_ += 1.0f;
           else angle_5_ = 180.0f;
-          rubick_cube.cubitos[5]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_5_)), kRadioNormal * sin(deg(angle_5_)), 0.0f));
+          rubick_cube.cubitos[5]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_5_)), kRadioNormal * sin(deg(angle_5_)), 0.0f));
 
           rubick_cube.cubitos[5]->Rotate(kAroundZLeft);
 
           // CUBO 08
           if (angle_8_ < 135.0f) angle_8_ += 1.0f;
           else angle_8_ = 135.0f;
-          rubick_cube.cubitos[8]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_8_)), kRadioLarge * sin(deg(angle_8_)), 0.0f));
+          rubick_cube.cubitos[8]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_8_)), kRadioLarge * sin(deg(angle_8_)), 0.0f));
 
           rubick_cube.cubitos[8]->Rotate(kAroundZLeft);
 
           // CUBO 17
           if (angle_17_ < 90.0f) angle_17_ += 1.0f;
           else angle_17_ = 90.0f;
-          rubick_cube.cubitos[17]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_17_)), kRadioNormal * sin(deg(angle_17_)), 0.0f));
+          rubick_cube.cubitos[17]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_17_)), kRadioNormal * sin(deg(angle_17_)), 0.0f));
 
           rubick_cube.cubitos[17]->Rotate(kAroundZLeft);
 
           // CUBO 26
           if (angle_26_ < 405.0f) angle_26_ += 1.0f;
           else angle_26_ = 405.0f;
-          rubick_cube.cubitos[26]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_26_)), kRadioLarge * sin(deg(angle_26_)), 0.0f));
+          rubick_cube.cubitos[26]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_26_)), kRadioLarge * sin(deg(angle_26_)), 0.0f));
 
           rubick_cube.cubitos[26]->Rotate(kAroundZLeft);
 
           // CUBO 23
           if (angle_23_ < 360.0f) angle_23_ += 1.0f;
           else angle_23_ = 360.0f;
-          rubick_cube.cubitos[23]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_23_)), kRadioNormal * sin(deg(angle_23_)), 0.0f));
+          rubick_cube.cubitos[23]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_23_)), kRadioNormal * sin(deg(angle_23_)), 0.0f));
 
           rubick_cube.cubitos[23]->Rotate(kAroundZLeft);
 
           // CUBO 20
           if (angle_20_ < 315.0f) angle_20_ += 1.0f;
           else angle_20_ = 315.0f;
-          rubick_cube.cubitos[20]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_20_)), kRadioLarge * sin(deg(angle_20_)), 0.0f));
+          rubick_cube.cubitos[20]->SetPosition(glm::vec3(kRadioLarge * cos(deg(angle_20_)), kRadioLarge * sin(deg(angle_20_)), 0.0f));
 
           rubick_cube.cubitos[20]->Rotate(kAroundZLeft);
 
           // CUBO 11
           if (angle_11_ < 270.0f) angle_11_ += 1.0f;
           else { angle_11_ = 270.0f; BM_L_I = false; }
-          rubick_cube.cubitos[11]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_11_)), kRadioNormal * sin(deg(angle_11_)), 0.0f));
+          rubick_cube.cubitos[11]->SetPosition(glm::vec3(kRadioNormal * cos(deg(angle_11_)), kRadioNormal * sin(deg(angle_11_)), 0.0f));
 
           rubick_cube.cubitos[11]->Rotate(kAroundZLeft);
 
@@ -793,192 +619,6 @@ int main() {
           BM_L = false;
         }
       }
-      // ONE TURN BB_R | BOOL BACK RIGHT
-      if (BB_R) {
-        if (BB_R_I) {
-          // CUBO 03
-          if (angle_3 > 45.0f) angle_3 -= 1.0f;
-          else angle_3 = 45.0f;
-          rubick_cube.cubitos[3]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_3)), kRadioLarge * sin(deg(angle_3)), -0.5f));
-
-          rubick_cube.cubitos[3]->Rotate(kAroundZRight);
-
-          // CUBO 06
-          if (angle_6 > 0.0f) angle_6 -= 1.0f;
-          else angle_6 = 0.0f;
-          rubick_cube.cubitos[6]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_6)), kRadioNormal * sin(deg(angle_6)), -0.5f));
-
-          rubick_cube.cubitos[6]->Rotate(kAroundZRight);
-
-          // CUBO 09
-          if (angle_9 > -45.0f) angle_9 -= 1.0f;
-          else angle_9 = -45.0f;
-          rubick_cube.cubitos[9]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_9)), kRadioLarge * sin(deg(angle_9)), -0.5f));
-
-          rubick_cube.cubitos[9]->Rotate(kAroundZRight);
-
-          // CUBO 18
-          if (angle_18 > -90.0f) angle_18 -= 1.0f;
-          else angle_18 = -90.0f;
-          rubick_cube.cubitos[18]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_18)), kRadioNormal * sin(deg(angle_18)), -0.5f));
-
-          rubick_cube.cubitos[18]->Rotate(kAroundZRight);
-
-          // CUBO 27
-          if (angle_27 > 225.0f) angle_27 -= 1.0f;
-          else angle_27 = 225.0f;
-          rubick_cube.cubitos[27]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_27)), kRadioLarge * sin(deg(angle_27)), -0.5f));
-
-          rubick_cube.cubitos[27]->Rotate(kAroundZRight);
-
-          // CUBO 24
-          if (angle_24 > 180.0f) angle_24 -= 1.0f;
-          else angle_24 = 180.0f;
-          rubick_cube.cubitos[24]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_24)), kRadioNormal * sin(deg(angle_24)), -0.5f));
-
-          rubick_cube.cubitos[24]->Rotate(kAroundZRight);
-
-          // CUBO 21
-          if (angle_21 > 135.0f) angle_21 -= 1.0f;
-          else angle_21 = 135.0f;
-          rubick_cube.cubitos[21]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_21)), kRadioLarge * sin(deg(angle_21)), -0.5f));
-
-          rubick_cube.cubitos[21]->Rotate(kAroundZRight);
-
-          // CUBO 12
-          if (angle_12 > 90.0f) angle_12 -= 1.0f;
-          else { angle_12 = 90.0f; BB_R_I = false; }
-          rubick_cube.cubitos[12]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_12)), kRadioNormal * sin(deg(angle_12)), -0.5f));
-
-          rubick_cube.cubitos[12]->Rotate(kAroundZRight);
-
-          // CUBO 15
-          rubick_cube.cubitos[15]->Rotate(kAroundZRight);
-        }
-        // REASIGN POINTER
-        else {
-          std::shared_ptr<Cubito> new_3 = rubick_cube.cubitos[3];
-          std::shared_ptr<Cubito> new_6 = rubick_cube.cubitos[6];
-          std::shared_ptr<Cubito> new_9 = rubick_cube.cubitos[9];
-          std::shared_ptr<Cubito> new_12 = rubick_cube.cubitos[12];
-          std::shared_ptr<Cubito> new_18 = rubick_cube.cubitos[18];
-          std::shared_ptr<Cubito> new_21 = rubick_cube.cubitos[21];
-          std::shared_ptr<Cubito> new_24 = rubick_cube.cubitos[24];
-          std::shared_ptr<Cubito> new_27 = rubick_cube.cubitos[27];
-          rubick_cube.cubitos[3] = new_21;
-          rubick_cube.cubitos[6] = new_12;
-          rubick_cube.cubitos[9] = new_3;
-          rubick_cube.cubitos[18] = new_6;
-          rubick_cube.cubitos[27] = new_9;
-          rubick_cube.cubitos[12] = new_24;
-          rubick_cube.cubitos[21] = new_27;
-          rubick_cube.cubitos[24] = new_18;
-
-          angle_3 = 134.0f;
-          angle_6 = 89.0f;
-          angle_9 = 44.0f;
-          angle_18 = -1.0f;
-          angle_27 = 314.0f;
-          angle_24 = 269.0f;
-          angle_21 = 224.0f;
-          angle_12 = 179.0f;
-
-          BB_R = false;
-        }
-      }
-      // ONE TURN BB_L | BOOL BACK LEFT
-      if (BB_L) {
-        if (BB_L_I) {
-          // CUBO 03
-          if (angle_3_ < 225.0f) angle_3_ += 1.0f;
-          else angle_3_ = 225.0f;
-          rubick_cube.cubitos[3]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_3_)), kRadioLarge * sin(deg(angle_3_)), -0.5f));
-
-          rubick_cube.cubitos[3]->Rotate(kAroundZLeft);
-
-          // CUBO 06
-          if (angle_6_ < 180.0f) angle_6_ += 1.0f;
-          else angle_6_ = 180.0f;
-          rubick_cube.cubitos[6]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_6_)), kRadioNormal * sin(deg(angle_6_)), -0.5f));
-
-          rubick_cube.cubitos[6]->Rotate(kAroundZLeft);
-
-          // CUBO 09
-          if (angle_9_ < 135.0f) angle_9_ += 1.0f;
-          else angle_9_ = 135.0f;
-          rubick_cube.cubitos[9]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_9_)), kRadioLarge * sin(deg(angle_9_)), -0.5f));
-
-          rubick_cube.cubitos[9]->Rotate(kAroundZLeft);
-
-          // CUBO 18
-          if (angle_18_ < 90.0f) angle_18_ += 1.0f;
-          else angle_18_ = 90.0f;
-          rubick_cube.cubitos[18]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_18_)), kRadioNormal * sin(deg(angle_18_)), -0.5f));
-
-          rubick_cube.cubitos[18]->Rotate(kAroundZLeft);
-
-          // CUBO 27
-          if (angle_27_ < 405.0f) angle_27_ += 1.0f;
-          else angle_27_ = 405.0f;
-          rubick_cube.cubitos[27]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_27_)), kRadioLarge * sin(deg(angle_27_)), -0.5f));
-
-          rubick_cube.cubitos[27]->Rotate(kAroundZLeft);
-
-          // CUBO 24
-          if (angle_24_ < 360.0f) angle_24_ += 1.0f;
-          else angle_24_ = 360.0f;
-          rubick_cube.cubitos[24]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_24_)), kRadioNormal * sin(deg(angle_24_)), -0.5f));
-
-          rubick_cube.cubitos[24]->Rotate(kAroundZLeft);
-
-          // CUBO 21
-          if (angle_21_ < 315.0f) angle_21_ += 1.0f;
-          else angle_21_ = 315.0f;
-          rubick_cube.cubitos[21]->Translate(glm::vec3(kRadioLarge * cos(deg(angle_21_)), kRadioLarge * sin(deg(angle_21_)), -0.5f));
-
-          rubick_cube.cubitos[21]->Rotate(kAroundZLeft);
-
-          // CUBO 12
-          if (angle_12_ < 270.0f) angle_12_ += 1.0f;
-          else { angle_12_ = 270.0f; BB_L_I = false; }
-          rubick_cube.cubitos[12]->Translate(glm::vec3(kRadioNormal * cos(deg(angle_12_)), kRadioNormal * sin(deg(angle_12_)), -0.5f));
-
-          rubick_cube.cubitos[12]->Rotate(kAroundZLeft);
-
-          // CUBO 15
-          rubick_cube.cubitos[15]->Rotate(kAroundZLeft);
-        }
-        // REASIGN POINTER
-        else {
-          std::shared_ptr<Cubito> new_3 = rubick_cube.cubitos[3];
-          std::shared_ptr<Cubito> new_6 = rubick_cube.cubitos[6];
-          std::shared_ptr<Cubito> new_9 = rubick_cube.cubitos[9];
-          std::shared_ptr<Cubito> new_12 = rubick_cube.cubitos[12];
-          std::shared_ptr<Cubito> new_18 = rubick_cube.cubitos[18];
-          std::shared_ptr<Cubito> new_21 = rubick_cube.cubitos[21];
-          std::shared_ptr<Cubito> new_24 = rubick_cube.cubitos[24];
-          std::shared_ptr<Cubito> new_27 = rubick_cube.cubitos[27];
-          rubick_cube.cubitos[3] = new_9;
-          rubick_cube.cubitos[6] = new_18;
-          rubick_cube.cubitos[9] = new_27;
-          rubick_cube.cubitos[18] = new_24;
-          rubick_cube.cubitos[27] = new_21;
-          rubick_cube.cubitos[12] = new_6;
-          rubick_cube.cubitos[21] = new_3;
-          rubick_cube.cubitos[24] = new_12;
-
-          angle_3_ = 136.0f;
-          angle_6_ = 91.0f;
-          angle_9_ = 46.0f;
-          angle_18_ = 1.0f;
-          angle_27_ = 316.0f;
-          angle_24_ = 271.0f;
-          angle_21_ = 226.0f;
-          angle_12_ = 181.0f;
-
-          BB_L = false;
-        }
-      }
 
       // ====================================================================================== MOVEMENTS OF LEFT MID RIGHT - COLUMN
 
@@ -988,56 +628,56 @@ int main() {
           // CUBO 03  
           if (cl_angle_3 > 45.0f) cl_angle_3 -= 1.0f;
           else cl_angle_3 = 45.0f;
-          rubick_cube.cubitos[3]->Translate(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_3)), kRadioLarge * cos(deg(cl_angle_3))));
+          rubick_cube.cubitos[3]->SetPosition(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_3)), kRadioLarge * cos(deg(cl_angle_3))));
 
           rubick_cube.cubitos[3]->Rotate(kAroundXLeft);
 
           // CUBO 02
           if (cl_angle_2 > 0.0f) cl_angle_2 -= 1.0f;
           else cl_angle_2 = 0.0f;
-          rubick_cube.cubitos[2]->Translate(glm::vec3(-0.5f, kRadioNormal* sin(deg(cl_angle_2)), kRadioNormal* cos(deg(cl_angle_2))));
+          rubick_cube.cubitos[2]->SetPosition(glm::vec3(-0.5f, kRadioNormal* sin(deg(cl_angle_2)), kRadioNormal* cos(deg(cl_angle_2))));
 
           rubick_cube.cubitos[2]->Rotate(kAroundXLeft);
 
           // CUBO 01
           if (cl_angle_1 > -135.0f) cl_angle_1 -= 1.0f;
           else cl_angle_1 = -135.0f;
-          rubick_cube.cubitos[1]->Translate(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_1)), kRadioLarge * cos(deg(cl_angle_1))));
+          rubick_cube.cubitos[1]->SetPosition(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_1)), kRadioLarge * cos(deg(cl_angle_1))));
 
           rubick_cube.cubitos[1]->Rotate(kAroundXLeft);
 
           // CUBO 10
           if (cl_angle_10 > 270.0f) cl_angle_10 -= 1.0f;
           else cl_angle_10 = 270.0f;
-          rubick_cube.cubitos[10]->Translate(glm::vec3(-0.5f, kRadioNormal* sin(deg(cl_angle_10)), kRadioNormal* cos(deg(cl_angle_10))));
+          rubick_cube.cubitos[10]->SetPosition(glm::vec3(-0.5f, kRadioNormal* sin(deg(cl_angle_10)), kRadioNormal* cos(deg(cl_angle_10))));
         
           rubick_cube.cubitos[10]->Rotate(kAroundXLeft);
 
           // CUBO 19
           if (cl_angle_19 > 225.0f) cl_angle_19 -= 1.0f;
           else cl_angle_19 = 225.0f;
-          rubick_cube.cubitos[19]->Translate(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_19)), kRadioLarge * cos(deg(cl_angle_19))));
+          rubick_cube.cubitos[19]->SetPosition(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_19)), kRadioLarge * cos(deg(cl_angle_19))));
 
           rubick_cube.cubitos[19]->Rotate(kAroundXLeft);
 
           // CUBO 20
           if (cl_angle_20 > 180.0f) cl_angle_20 -= 1.0f;
           else cl_angle_20 = 180.0f;
-          rubick_cube.cubitos[20]->Translate(glm::vec3(-0.5f, kRadioNormal * sin(deg(cl_angle_20)), kRadioNormal* cos(deg(cl_angle_20))));
+          rubick_cube.cubitos[20]->SetPosition(glm::vec3(-0.5f, kRadioNormal * sin(deg(cl_angle_20)), kRadioNormal* cos(deg(cl_angle_20))));
 
           rubick_cube.cubitos[20]->Rotate(kAroundXLeft);
 
           // CUBO 21
           if (cl_angle_21 > 135.0f) cl_angle_21 -= 1.0f;
           else cl_angle_21 = 135.0f;
-          rubick_cube.cubitos[21]->Translate(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_21)), kRadioLarge* cos(deg(cl_angle_21))));
+          rubick_cube.cubitos[21]->SetPosition(glm::vec3(-0.5f, kRadioLarge * sin(deg(cl_angle_21)), kRadioLarge* cos(deg(cl_angle_21))));
 
           rubick_cube.cubitos[21]->Rotate(kAroundXLeft);
 
           // CUBO 12
           if (cl_angle_12 > 90.0f) cl_angle_12 -= 1.0f;
           else { cl_angle_12 = 90.0f; BCL_D_I = false; }
-          rubick_cube.cubitos[12]->Translate(glm::vec3(-0.5f, kRadioNormal * sin(deg(cl_angle_12)), kRadioNormal * cos(deg(cl_angle_12))));
+          rubick_cube.cubitos[12]->SetPosition(glm::vec3(-0.5f, kRadioNormal * sin(deg(cl_angle_12)), kRadioNormal * cos(deg(cl_angle_12))));
 
           rubick_cube.cubitos[12]->Rotate(kAroundXLeft);
 
@@ -1288,4 +928,240 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
   camera.ProcessMouseScroll(yoffset);
+}
+
+float back_front_move_angles[8] = {
+  135.0f,
+  90.0f,
+  45.0f,
+  180.0f,
+  0.0f,
+  225.0f,
+  270.0f,
+  315.0f,
+};
+
+float angles_left_limit[8] = {
+  225.0f,
+  180.0f,
+  135.0f,
+  270.0f,
+  90.0f,
+  315.0f,
+  360.0f,
+  405.0f,
+};
+
+float angles_right_limit[8] = {
+  45.0f,
+  0.0f,
+  -45.0f,
+  90.0f,
+  -90.0f,
+  135.0f,
+  180.0f,
+  225.0f,
+};
+
+void ResetBackFrontAngles() {
+  back_front_move_angles[0] = 135.0f;
+  back_front_move_angles[1] = 90.0f;
+  back_front_move_angles[2] = 45.0f;
+  back_front_move_angles[3] = 180.0f;
+  back_front_move_angles[4] = 0.0f;
+  back_front_move_angles[5] = 225.0f;
+  back_front_move_angles[6] = 270.0f;
+  back_front_move_angles[7] = 315.0f;
+}
+
+void ParallelAnimation() {
+  std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
+  float offset;
+  float* angles = back_front_move_angles;
+  float* angles_limit;
+  float step;
+  int clockwise;
+
+  if (BF_R_I) {
+    clockwise = 1;
+    offset = 0.5f;
+    angles_limit = angles_right_limit;
+    step = -1.0f;
+
+    for (int i = 1; i <= 25; i += 3)
+      cubitos.push_back(rubick_cube.cubitos[i]);
+  }
+  else if (BB_R_I) {
+    clockwise = 1;
+    offset = -0.5f;
+    angles_limit = angles_right_limit;
+    step = -1.0f;
+
+    for (int i = 3; i <= 27; i += 3)
+      cubitos.push_back(rubick_cube.cubitos[i]);
+  }
+  else if (BF_L_I) {
+    clockwise = -1;
+    offset = 0.5f;
+    angles_limit = angles_left_limit;
+    step = 1.0f;
+
+    for (int i = 1; i <= 25; i += 3)
+      cubitos.push_back(rubick_cube.cubitos[i]);
+  }
+  else if (BB_L_I) {
+    clockwise = -1;
+    offset = -0.5f;
+    angles_limit = angles_left_limit;
+    step = 1.0f;
+
+    for (int i = 3; i <= 27; i += 3)
+      cubitos.push_back(rubick_cube.cubitos[i]);
+  }
+
+  // CUBO 01
+  if (std::abs(angles_limit[0] - angles[0]) > 0.5f) angles[0] += step;
+  else {
+    angles[0] = angles_limit[0];
+    cubitos[0].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[0].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[0])),
+                                        kRadioLarge * sin(deg(angles[0])), offset));
+
+  glm::vec3 c4_pos = cubitos[4].get()->GetPosition();
+  glSetPositionf(c4_pos.x, c4_pos.y, 0.0f);
+  // glRotatef(-1.0f * clockwise, 0.0f, 0.0f, 1.0f);
+  // glSetPositionf(-c4_pos.x, -c4_pos.y, 0.0f);
+  // cubitos[0].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 04
+  if (std::abs(angles_limit[1] - angles[1]) > 0.5f) angles[1] += step;
+  else {
+    angles[1] = angles_limit[1];
+    cubitos[1].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[1].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[1])),
+                                        kRadioNormal * sin(deg(angles[1])), offset));
+
+  cubitos[1].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 07
+  if (std::abs(angles_limit[2] - angles[2]) > 0.5f) angles[2] += step;
+  else {
+    angles[2] = angles_limit[2];
+    cubitos[2].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[2].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[2])),
+                                        kRadioLarge * sin(deg(angles[2])), offset));
+
+  cubitos[2].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 10
+  if (std::abs(angles_limit[3] - angles[3]) > 0.5f) angles[3] += step;
+  else {
+    angles[3] = angles_limit[3];
+    cubitos[3].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[4].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[3].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[3])),
+                                        kRadioNormal * sin(deg(angles[3])), offset));
+
+  cubitos[3].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 13
+  cubitos[4].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 16
+  if (std::abs(angles_limit[4] - angles[4]) > 0.5f) angles[4] += step;
+  else {
+    angles[4] = angles_limit[4];
+    cubitos[5].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[5].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[4])),
+                                        kRadioNormal * sin(deg(angles[4])), offset));
+
+  cubitos[5].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 19
+  if (std::abs(angles_limit[5] - angles[5]) > 0.5f) angles[5] += step;
+  else {
+    angles[5] = angles_limit[5];
+    cubitos[6].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[6].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[5])),
+                                        kRadioLarge * sin(deg(angles[5])), offset));
+
+  cubitos[6].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 22
+  if (std::abs(angles_limit[6] - angles[6]) > 0.5f) angles[6] += step;
+  else {
+    angles[6] = angles_limit[6];
+    cubitos[7].get()->Rotate(kAroundZLeft * clockwise);
+  }
+
+  cubitos[7].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[6])),
+                                        kRadioNormal * sin(deg(angles[6])), offset));
+
+  cubitos[7].get()->Rotate(kAroundZRight * clockwise);
+
+  // CUBO 25
+  if (std::abs(angles_limit[7] - angles[7]) > 0.5f) angles[7] += step;
+  else {
+    angles[7] = angles_limit[7];
+    cubitos[8].get()->Rotate(kAroundZLeft * clockwise);
+    BF_R_I = false;
+    BB_R_I = false;
+    BF_L_I = false;
+    BB_L_I = false;
+  }
+
+  cubitos[8].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[7])),
+                                        kRadioLarge * sin(deg(angles[7])), offset));
+
+  cubitos[8].get()->Rotate(kAroundZRight * clockwise);
+
+  // REASIGN POINTER
+  if ((BB_R && !BB_R_I) || (BF_R && !BF_R_I)
+      || (BB_L && !BB_L_I) || (BF_L && !BF_L_I)) {
+    if (clockwise > 0) {
+    auto temp = cubitos[0].get();
+    cubitos[0].get() = cubitos[6].get();
+    cubitos[6].get() = cubitos[8].get();
+    cubitos[8].get() = cubitos[2].get();
+    cubitos[2].get() = temp;
+
+    temp = cubitos[1].get();
+    cubitos[1].get() = cubitos[3].get();
+    cubitos[3].get() = cubitos[7].get();
+    cubitos[7].get() = cubitos[5].get();
+    cubitos[5].get() = temp;
+    }
+    else {
+    auto temp = cubitos[0].get();
+    cubitos[0].get() = cubitos[2].get();
+    cubitos[2].get() = cubitos[8].get();
+    cubitos[8].get() = cubitos[6].get();
+    cubitos[6].get() = temp;
+
+    temp = cubitos[1].get();
+    cubitos[1].get() = cubitos[5].get();
+    cubitos[5].get() = cubitos[7].get();
+    cubitos[7].get() = cubitos[3].get();
+    cubitos[3].get() = temp;
+    }
+
+    ResetBackFrontAngles();
+
+    BB_R = false;
+    BF_R = false;
+    BB_L = false;
+    BF_L = false;
+  }
 }

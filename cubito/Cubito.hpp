@@ -35,7 +35,13 @@ public:
 	void DrawSprite(glm::mat4&, glm::mat4&, glm::mat4&);
 	void Translate(glm::vec3);
 	void Rotate(int);
+  glm::vec3 GetPosition();
+  void SetPosition(glm::vec3 new_position);
 };
+
+glm::vec3 Cubito::GetPosition() {
+  return my_position;
+}
 
 //==============================================================================================
 
@@ -91,8 +97,13 @@ glm::mat4 Cubito::MyPositionOnWorld(glm::mat4& model) {
 	return  my_position_on_world;
 }
 
-void Cubito::Translate(glm::vec3 new_translate) {
-	this->my_position = new_translate;
+void Cubito::SetPosition(glm::vec3 new_position) {
+	this->my_position = new_position;
+}
+
+void Cubito::Translate(glm::vec3 translation) {
+  glm::mat4 model;
+  this->my_position = glm::translate(model)
 }
 
 void Cubito::Rotate(int new_rotate) {
