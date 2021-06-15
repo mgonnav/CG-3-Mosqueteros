@@ -16,17 +16,10 @@ private:
 	unsigned int quadVAO;
 	glm::vec3 my_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 MyPositionOnWorld(glm::mat4&);
-	int id;
 	glm::vec3 color1;
 	glm::vec3 color2;
 	glm::vec3 color3;
-
-	float rotation_x;
-	float rotation_y;
-	float rotation_z;
-
-	int last_move = 0;
-
+	int id;
 	glm::mat4 my_rotation = glm::mat4(1.0f);
 
 public:
@@ -44,20 +37,16 @@ public:
 
 Cubito::Cubito (Shader& shader,
 								glm::vec3 first_position,
-								int nid,
+								int new_id,
 								glm::vec3 color1n = glm::vec3(0.1f, 0.1f, 0.1f),
 								glm::vec3 color2n = glm::vec3(0.1f, 0.1f, 0.1f),
 								glm::vec3 color3n = glm::vec3(0.1f, 0.1f, 0.1f)) {
-	std::cout << " CONTRUYENDO CUBITO " << std::endl;
+	this->id = new_id;
 	this->shader = shader;
-	this->id = nid;
 	my_position = first_position;
 	this->color1 = color1n;
 	this->color2 = color2n;
 	this->color3 = color3n;
-	this->rotation_x = 0.0f;
-	this->rotation_y = 0.0f;
-	this->rotation_z = 0.0f;
 	this->InitialRender();
 }
 
@@ -91,20 +80,6 @@ glm::mat4 Cubito::MyPositionOnWorld(glm::mat4& model) {
 	
 	my_position_on_world =  my_position_on_world * my_rotation;
 	
-	// PREVIOUS CODE WITH ERROR WITH ANGLE ORDER MOVEMENT
-	/*
-	my_position_on_world = glm::rotate(my_position_on_world,
-		glm::radians(this->rotation_y),
-		glm::vec3(0.0f, 1.0f, 0.0f));
-	
-	my_position_on_world = glm::rotate(my_position_on_world,
-		glm::radians(this->rotation_z),
-		glm::vec3(0.0f, 0.0f, 1.0f));
-	my_position_on_world = glm::rotate(my_position_on_world,
-		glm::radians(this->rotation_x),
-		glm::vec3(1.0f, 0.0f, 0.0f));
-	*/
-
 	return  my_position_on_world;
 }
 
@@ -121,9 +96,6 @@ void Cubito::Rotate(int around_axis) {
 	// kAroundZRight = 6;
 	switch (around_axis) {
 		case 1: {
-			this->rotation_x += 1.0f;
-			last_move = 1;
-
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
 				glm::radians(1.0f),
@@ -134,9 +106,6 @@ void Cubito::Rotate(int around_axis) {
 			break;
 		}
 		case 2: {
-			this->rotation_x -= 1.0f;
-			last_move = 2;
-
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
 				glm::radians(-1.0f),
@@ -147,9 +116,6 @@ void Cubito::Rotate(int around_axis) {
 			break;
 		}
 		case 3: {
-			this->rotation_y -= 1.0f;
-			last_move = 3;
-
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
 				glm::radians(-1.0f),
@@ -160,9 +126,6 @@ void Cubito::Rotate(int around_axis) {
 			break;
 		}
 		case 4: {
-			this->rotation_y += 1.0f;
-			last_move = 4;
-
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
 				glm::radians(1.0f),
@@ -173,9 +136,6 @@ void Cubito::Rotate(int around_axis) {
 			break;
 		}
 		case 5: {
-			this->rotation_z += 1.0f;
-			last_move = 5;
-
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
 				glm::radians(1.0f),
@@ -186,9 +146,6 @@ void Cubito::Rotate(int around_axis) {
 			break;
 		}
 		case 6: {
-			this->rotation_z -= 1.0f;
-			last_move = 6;
-
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
 				glm::radians(-1.0f),
@@ -1600,9 +1557,7 @@ void Cubito::InitialRender() {
 }
 
 void Cubito::MyData() {
-	std::cout << " rotation_x: " << this->rotation_x << std::endl;
-	std::cout << " rotation_y: " << this->rotation_y << std::endl;
-	std::cout << " rotation_z: " << this->rotation_z << std::endl;
-	std::cout << " Position: " << this->my_position<< std::endl;
+	std::cout << " My_rotation: " << this->my_rotation << std::endl;
+	std::cout << " My_position: " << this->my_position << std::endl;
 }
 #endif // CUBITO_H

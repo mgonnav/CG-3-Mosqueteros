@@ -23,17 +23,12 @@
 //           48 49 50
 //           51 52 53
 
-// INSTRUCTION
-//                            UP
-// USE MOUSE AND ARROWS LEFT DOWN RIGHT
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-//#include <irrklang/irrKlang.h>
 
 #include "stb_image.h"
 #include "Shader.h"
@@ -50,22 +45,6 @@
 
 // IF YOU WANT TO KNOW INFO AFTER ONE MOVEMENT
 #define DEBUG 0
-
-// THIS VARIABLES ARE COMPOSED LIKE THIS EXAMPLES
-// MOVEMENT VERTICAL | COLUMN LEFT | DIRECTION UP => VL_U
-// MOVEMENT HORIZONTAL | ROW MID | DIRECTION LEFT => HM_L
-const int VL_U = 1;
-const int VL_D = 2;
-const int VM_U = 3;
-const int VM_D = 4;
-const int VR_U = 5;
-const int VR_D = 6;
-const int HU_L = 7;
-const int HU_R = 8;
-const int HM_L = 9;
-const int HM_R = 10;
-const int HD_L = 11;
-const int HD_R = 12;
 
 bool BCL_U = false, BCL_U_I = false;
 bool BCL_D = false, BCL_D_I = false;
@@ -106,6 +85,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 const double PI = 3.14159;
+
 float deg(float num) {
   return (num * PI / 180);
 }
@@ -118,16 +98,14 @@ glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 view = glm::mat4(1.0f);
 glm::mat4 projection = glm::mat4(1.0f);
 
+// MAIN OBJECT THAT CONTROL CUBE RUBICK
 Cubo rubick_cube;
-
-unsigned int VBO, VAO, EBO;
 
 // MOUSE AND CAMERA
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = 500.0f;
 float lastY = 500.0f;
 bool first_time_mouse = true;
-
 
 const int kAroundXLeft = 1;
 const int kAroundXRight = 2;
@@ -346,19 +324,21 @@ float rtr_angle_19 = 134.0f;
 float rtr_angle_22 = 89.0f;
 float rtr_angle_25 = 44.0f;
 
-
 // PRINT COMMANDS
 
 void Print() {
-  std::cout << "\t\tWELCOME TO CUBITO MOSQUETERO" << std::endl;
+  std::cout << "\n\t\tWELCOME TO CUBITO MOSQUETERO" << std::endl;
   std::cout << "\t\t     CONTROLS TO PLAY" << std::endl << std::endl;
+
+  std::cout << "\t    FIRST GROUP OF MOVEMENT" << std::endl;
   std::cout << "\tQ | FIRST ROW TURN LEFT" << std::endl;
   std::cout << "\tW | FIRST ROW TURN RIGHT" << std::endl;
-  std::cout << "\tA | MID ROW TURN LEFT" << std::endl;
-  std::cout << "\tS | MID ROW TURN RIGHT" << std::endl;
+  std::cout << "\tA | SECOND ROW TURN LEFT" << std::endl;
+  std::cout << "\tS | SECOND ROW TURN RIGHT" << std::endl;
   std::cout << "\tZ | THIRD ROW TURN LEFT" << std::endl;
   std::cout << "\tX | THIRD ROW TURN RIGHT\n" << std::endl;
 
+  std::cout << "\t    SECOND GROUP OF MOVEMENT" << std::endl;
   std::cout << "\tU | LEFT COLUMN TURN UP" << std::endl;
   std::cout << "\tJ | LEFT COLUMN TURN DOWN" << std::endl;
   std::cout << "\tI | MID COLUMN TURN UP" << std::endl;
@@ -366,12 +346,15 @@ void Print() {
   std::cout << "\tO | RIGHT COLUMN TURN UP" << std::endl;
   std::cout << "\tL | RIGHT COLUMN TURN DOWN\n" << std::endl;
 
+  std::cout << "\t    THIRD GROUP OF MOVEMENT" << std::endl;
   std::cout << "\tV | FRONT GROUP TURN LEFT" << std::endl;
   std::cout << "\tB | FRONT GROUP TURN RIGHT" << std::endl;
   std::cout << "\tF | MID GROUP TURN LEFT" << std::endl;
   std::cout << "\tG | MID GROUP TURN RIGHT" << std::endl;
   std::cout << "\tR | BACK GROUP TURN LEFT" << std::endl;
   std::cout << "\tT | BACK GROUP TURN RIGHT\n" << std::endl;
+  std::cout << "\tPLEASE PRESS ONE BUTTON ONCE AND WAIT IT FINISH UNTIL NEXT PRESS\n" << std::endl;
+  std::cout << "\tYOU CAN MOVE SIMULTANEOUSLY SOME PARTS THAT NOT HAVE CUBES IN COMMON\n" << std::endl;
 
 }
 
@@ -430,24 +413,8 @@ int main() {
   }
 
   fill_n(back_inserter(input_colors), 9, GREEN);
-  // std::random_shuffle(input_colors.begin(), input_colors.end());
-
-  // USER INPUT
-  /*char c;
-    for (int i = 0; i < 54; i++) {
-    std::cin >> c;
-    switch (c) {
-    case 'r': {input_colors[i] == RED; break; }
-    case 'g': {input_colors[i] == GREEN; break; }
-    case 'b': {input_colors[i] == BLUE; break; }
-    case 'y': {input_colors[i] == YELLOW; break; }
-    case 'w': {input_colors[i] == WHITE; break; }
-    case 'o': {input_colors[i] == ORANGE; break; }
-    default: {std::cout << "WRONG INPUT" << std::endl; break;}
-    }
-    }
-  */
-  // MAIN AND EACH CUBE
+  
+  // CREATING EACH CUBITO OF RUBICK CUBE
   {
     rubick_cube.cubitos[3] = std::make_shared<Cubito>(cubito_program,
       glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
@@ -517,7 +484,6 @@ int main() {
   
   Print();
 
-  int a = 1;
   while (!glfwWindowShouldClose(window)) {
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
@@ -536,7 +502,7 @@ int main() {
       
       // ========================================= PARALEL MOVEMENTS | FRONT MID BACK
 
-      // ONE TURN BF_R | BOOL FRONT RIGHT
+      // BOOL FRONT RIGHT (with "_I" mean inside)
       if (BF_R) {
         if (BF_R_I) {
           // CUBO 01
@@ -651,6 +617,7 @@ int main() {
           fr_angle_18 = 179.0f;
 
           BF_R = false;
+          some_movement = false;
 
           if (DEBUG) {
             rubick_cube.cubitos[1]->MyData();
@@ -665,7 +632,7 @@ int main() {
           }
         }
       }
-      // ONE TURN BF_L | BOOL FRONT LEFT
+      // BOOL FRONT LEFT
       if (BF_L) {
         if (BF_L_I) {
           // CUBO 01
@@ -795,7 +762,7 @@ int main() {
           }
         }
       }
-      // ONE TURN BM_R | BOOL MID RIGHT
+      // BOOL MID RIGHT
       if (BM_R) {
         if (BM_R_I) {
           // CUBO 02
@@ -912,7 +879,7 @@ int main() {
           BM_R = false;
         }
       }
-      // ONE TURN BM_L | BOOL MID LEFT
+      // BOOL MID LEFT
       if (BM_L) {
         if (BM_L_I) {
           // CUBO 02
@@ -1029,7 +996,7 @@ int main() {
           BM_L = false;
         }
       }
-      // ONE TURN BB_R | BOOL BACK RIGHT
+      // BOOL BACK RIGHT
       if (BB_R) {
         if (BB_R_I) {
           // CUBO 03
@@ -1146,7 +1113,7 @@ int main() {
           BB_R = false;
         }
       }
-      // ONE TURN BB_L | BOOL BACK LEFT
+      // BOOL BACK LEFT
       if (BB_L) {
         if (BB_L_I) {
           // CUBO 03
@@ -1266,7 +1233,7 @@ int main() {
 
       // ========================================= COLUMN MOVEMENTS | LEFT MID RIGHT
 
-      // TURN BCL_D | BOOL COLUMN LEFT DOWN
+      // BOOL COLUMN LEFT DOWN
       if (BCL_D) {
         if (BCL_D_I) {
           // CUBO 03  
@@ -1395,7 +1362,7 @@ int main() {
         }
       }
 
-      // TURN BCL_D | BOOL COLUMN LEFT UP
+      // BOOL COLUMN LEFT UP
       if (BCL_U) {
         if (BCL_U_I) {
           // CUBO 03  
@@ -1524,7 +1491,7 @@ int main() {
         }
       }
 
-      // TURN BCL_D | BOOL COLUMN MID DOWN
+      // BOOL COLUMN MID DOWN
       if (BCM_D) {
         if (BCM_D_I) {
           // CUBO 06
@@ -1653,7 +1620,7 @@ int main() {
         }
       }
 
-      // TURN BCL_D | BOOL COLUMN MID UP
+      // BOOL COLUMN MID UP
       if (BCM_U) {
         if (BCM_U_I) {
           // CUBO 06
@@ -1782,7 +1749,7 @@ int main() {
         }
       }
 
-      // TURN BCL_D | BOOL COLUMN RIGHT DOWN
+      // BOOL COLUMN RIGHT DOWN
       if (BCR_D) {
         if (BCR_D_I) {
           // CUBO 09
@@ -1912,7 +1879,7 @@ int main() {
         }
       }
 
-      // TURN BCL_D | BOOL COLUMN RIGHT UP
+      // BOOL COLUMN RIGHT UP
       if (BCR_U) {
         if (BCR_U_I) {
           // CUBO 09
@@ -2044,7 +2011,7 @@ int main() {
 
       // ========================================= ROWS MOVEMENTS | LEFT SECOND RIGHT
 
-      // TURN BRF_L | BOOL ROW FIRST LEFT
+      // BOOL ROW FIRST LEFT
       if (BRF_L) {
         if (BRF_L_I) {
           // CUBO 03  
@@ -2173,7 +2140,7 @@ int main() {
         }
       }
 
-      // TURN BRF_L | BOOL ROW FIRST RIGHT
+      // BOOL ROW FIRST RIGHT
       if (BRF_R) {
         if (BRF_R_I) {
           // CUBO 03  
@@ -2302,7 +2269,7 @@ int main() {
         }
       }
 
-      // TURN BRS_L | BOOL ROW SECOND LEFT
+      // BOOL ROW SECOND LEFT
       if (BRS_L) {
         if (BRS_L_I) {
           // CUBO 12
@@ -2432,7 +2399,7 @@ int main() {
         }
       }
 
-      // TURN BRS_L | BOOL ROW SECOND RIGHT
+      // BOOL ROW SECOND RIGHT
       if (BRS_R) {
         if (BRS_R_I) {
           // CUBO 12
@@ -2562,7 +2529,7 @@ int main() {
         }
       }
 
-      // TURN BRT_L | BOOL ROW THIRD LEFT
+      // BOOL ROW THIRD LEFT
       if (BRT_L) {
         if (BRT_L_I) {
           // CUBO 21
@@ -2692,7 +2659,7 @@ int main() {
         }
       }
 
-      // TURN BRS_L | BOOL ROW THIRD RIGHT
+      // BOOL ROW THIRD RIGHT
       if (BRT_R) {
         if (BRT_R_I) {
           // CUBO 21
@@ -2823,45 +2790,12 @@ int main() {
       }
     }
     
-    // Testing one cube
-    //rubick_cube.cubitos[3]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[4]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[7]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[16]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[25]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[22]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[19]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[10]->DrawSprite(model, view, projection);
-    //rubick_cube.cubitos[13]->DrawSprite(model, view, projection);
-    
-    // All cubes
+    // PRINT RUBICK CUBE
     rubick_cube.Draw(model, view, projection);
-
-  /*  if (0 == 1) {
-      switch (type_of_move) {
-      case 0: {break; }
-      case VL_U: {rubick_cube.Move(VL_U); break; }
-      case VL_D: {rubick_cube.Move(VL_D); break; }
-      case VM_U: {rubick_cube.Move(VM_U); break; }
-      case VM_D: {rubick_cube.Move(VM_D); break; }
-      case VR_U: {rubick_cube.Move(VR_U); break; }
-      case VR_D: {rubick_cube.Move(VR_D); break; }
-      case HU_L: {rubick_cube.Move(HU_L); break; }
-      case HU_R: {rubick_cube.Move(HU_R); break; }
-      case HM_L: {rubick_cube.Move(HM_L); break; }
-      case HM_R: {rubick_cube.Move(HM_R); break; }
-      case HD_L: {rubick_cube.Move(HD_L); break; }
-      case HD_R: {rubick_cube.Move(HD_R); break; }
-      default: {std::cout << "ERROR ON MOVE" << std::endl; break; }
-      }
-    }*/
 
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
-
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBO);
 
   glfwTerminate();
   return 0;
@@ -2892,42 +2826,36 @@ void processInput(GLFWwindow* window) {
     BRF_L = true;
     BRF_L_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
 
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     BRF_R = true;
     BRF_R_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_R);
   }
 
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
     BRS_L = true;
     BRS_L_I = true;
     some_movement = true;
-    //rubick_cube.Move(HM_L); BRF_R = true;
   }
 
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
     BRS_R = true;
     BRS_R_I = true;
     some_movement = true;
-    //rubick_cube.Move(HM_R);
   }
 
   if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
     BRT_L = true;
     BRT_L_I = true;
     some_movement = true;
-    //rubick_cube.Move(HD_L);
   }
 
   if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS){
     BRT_R = true;
     BRT_R_I = true;
     some_movement = true;
-    //rubick_cube.Move(HD_R);
   }
 
   // COLUMNS MOVEMENTS
@@ -2936,77 +2864,65 @@ void processInput(GLFWwindow* window) {
     BCL_U = true;
     BCL_U_I = true;
     some_movement = true;
-    //rubick_cube.Move(VM_U);
   }
 
   if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
     BCL_D = true;
     BCL_D_I = true;
     some_movement = true;
-    //rubick_cube.Move(VM_D);
   }
   if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
     BCM_U = true;
     BCM_U_I = true;
     some_movement = true;
-    //rubick_cube.Move(VR_U);
   }
   if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
     BCM_D = true;
     BCM_D_I = true;
     some_movement = true;
-    //rubick_cube.Move(VR_D);
   }
   if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
     BCR_U = true;
     BCR_U_I = true;
     some_movement = true;
-    //rubick_cube.Move(VL_U);
   }
   if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
     BCR_D = true;
     BCR_D_I = true;
     some_movement = true;
-    //rubick_cube.Move(VL_D);
   }
 
-  // FRONT MID AND BACK GROUP
+  // PARALLEL MOVEMENTS 
   
   if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
     BF_L = true;
     BF_L_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
   if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
     BF_R = true;
     BF_R_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
   if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
     BM_L = true;
     BM_L_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
   if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
     BM_R = true;
     BM_R_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
   if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
     BB_L = true;
     BB_L_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
   if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
     BB_R = true;
     BB_R_I = true;
     some_movement = true;
-    //rubick_cube.Move(HU_L);
   }
 }
 
