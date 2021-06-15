@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/io.hpp>
 
 #include "Shader.h"
 
@@ -15,28 +16,33 @@ private:
 	unsigned int quadVAO;
 	glm::vec3 my_position = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 MyPositionOnWorld(glm::mat4&);
-	int id;
 	glm::vec3 color1;
 	glm::vec3 color2;
 	glm::vec3 color3;
+	int id;
+	glm::mat4 my_rotation = glm::mat4(1.0f);
+
 public:
 	void InitialRender();
 	Cubito(Shader&, glm::vec3, int, glm::vec3, glm::vec3, glm::vec3);
 	Cubito() {}
 	~Cubito();
 	void DrawSprite(glm::mat4&, glm::mat4&, glm::mat4&);
+	void Translate(glm::vec3);
+	void Rotate(int);
+	void MyData();
 };
 
 //==============================================================================================
 
 Cubito::Cubito (Shader& shader,
 								glm::vec3 first_position,
-								int nid,
+								int new_id,
 								glm::vec3 color1n = glm::vec3(0.1f, 0.1f, 0.1f),
 								glm::vec3 color2n = glm::vec3(0.1f, 0.1f, 0.1f),
 								glm::vec3 color3n = glm::vec3(0.1f, 0.1f, 0.1f)) {
+	this->id = new_id;
 	this->shader = shader;
-	this->id = nid;
 	my_position = first_position;
 	this->color1 = color1n;
 	this->color2 = color2n;
@@ -53,15 +59,15 @@ void Cubito::DrawSprite(glm::mat4& model, glm::mat4& view, glm::mat4& projection
 	this->shader.use();
 
 	glm::mat4 my_position_on_world = MyPositionOnWorld(model);
-
-	//second_model = glm::rotate(second_model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
-	unsigned int modelLoc = glGetUniformLocation(this->shader.ID, "model");
-	unsigned int viewLoc = glGetUniformLocation(this->shader.ID, "view");
-	unsigned int projeLoc = glGetUniformLocation(this->shader.ID, "projection");
-	glUniformMatrix4fv(projeLoc, 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(my_position_on_world));
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+	
+	unsigned int model_location = glGetUniformLocation(this->shader.ID, "model");
+	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(my_position_on_world));
+	
+	unsigned int view_location = glGetUniformLocation(this->shader.ID, "view");
+	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+	
+	unsigned int projection_location = glGetUniformLocation(this->shader.ID, "projection");
+	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
 
 	glBindVertexArray(this->quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -69,8 +75,87 @@ void Cubito::DrawSprite(glm::mat4& model, glm::mat4& view, glm::mat4& projection
 }
 
 glm::mat4 Cubito::MyPositionOnWorld(glm::mat4& model) {
+
 	glm::mat4 my_position_on_world = glm::translate(model, my_position);
+	
+	my_position_on_world =  my_position_on_world * my_rotation;
+	
 	return  my_position_on_world;
+}
+
+void Cubito::Translate(glm::vec3 new_translate) {
+	this->my_position = new_translate;
+}
+
+void Cubito::Rotate(int around_axis) {
+	// kAroundXLeft = 1;
+	// kAroundXRight = 2;
+	// kAroundYLeft = 3;
+	// kAroundYRight = 4;
+	// kAroundZLeft = 5;
+	// kAroundZRight = 6;
+	switch (around_axis) {
+		case 1: {
+			glm::mat4 temporal = glm::mat4(1.0f);
+			temporal = glm::rotate(temporal,
+				glm::radians(1.0f),
+				glm::vec3(1.0f, 0.0f, 0.0f));
+
+			my_rotation = temporal * my_rotation;
+
+			break;
+		}
+		case 2: {
+			glm::mat4 temporal = glm::mat4(1.0f);
+			temporal = glm::rotate(temporal,
+				glm::radians(-1.0f),
+				glm::vec3(1.0f, 0.0f, 0.0f));
+
+			my_rotation = temporal * my_rotation;
+
+			break;
+		}
+		case 3: {
+			glm::mat4 temporal = glm::mat4(1.0f);
+			temporal = glm::rotate(temporal,
+				glm::radians(-1.0f),
+				glm::vec3(0.0f, 1.0f, 0.0f));
+
+			my_rotation = temporal * my_rotation;
+
+			break;
+		}
+		case 4: {
+			glm::mat4 temporal = glm::mat4(1.0f);
+			temporal = glm::rotate(temporal,
+				glm::radians(1.0f),
+				glm::vec3(0.0f, 1.0f, 0.0f));
+
+			my_rotation = temporal * my_rotation;
+
+			break;
+		}
+		case 5: {
+			glm::mat4 temporal = glm::mat4(1.0f);
+			temporal = glm::rotate(temporal,
+				glm::radians(1.0f),
+				glm::vec3(0.0f, 0.0f, 1.0f));
+
+			my_rotation = temporal * my_rotation;
+
+			break;
+		}
+		case 6: {
+			glm::mat4 temporal = glm::mat4(1.0f);
+			temporal = glm::rotate(temporal,
+				glm::radians(-1.0f),
+				glm::vec3(0.0f, 0.0f, 1.0f));
+
+			my_rotation = temporal * my_rotation;
+
+			break;
+		}
+	}
 }
 
 void Cubito::InitialRender() {
@@ -1471,4 +1556,8 @@ void Cubito::InitialRender() {
 
 }
 
+void Cubito::MyData() {
+	std::cout << " My_rotation: " << this->my_rotation << std::endl;
+	std::cout << " My_position: " << this->my_position << std::endl;
+}
 #endif // CUBITO_H
