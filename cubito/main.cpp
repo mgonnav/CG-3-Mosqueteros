@@ -75,12 +75,12 @@ bool BRS_R = false, BRS_R_I = false;
 bool BRT_L = false, BRT_L_I = false;
 bool BRT_R = false, BRT_R_I = false;
 
-bool BF_R = false, BF_R_I = false;
-bool BF_L = false, BF_L_I = false;
+bool F_R = false, F_R_I = false;
+bool F_L = false, F_L_I = false;
 bool BM_R = false, BM_R_I = false;
 bool BM_L = false, BM_L_I = false;
-bool BB_R = false, BB_R_I = false;
-bool BB_L = false, BB_L_I = false;
+bool B_R = false, B_R_I = false;
+bool B_L = false, B_L_I = false;
 
 const glm::vec3 RED = glm::vec3(1.0f, 0.0f, 0.0f);
 const glm::vec3 GREEN = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -124,11 +124,11 @@ float lastY = 500.0f;
 bool first_time_mouse = true;
 
 const int kAroundXLeft = 1;
-const int kAroundXRight = 2;
-const int kAroundYLeft = 3;
-const int kAroundYRight = 4;
-const int kAroundZLeft = 5;
-const int kAroundZRight = 6;
+const int kAroundXRight = -1;
+const int kAroundYLeft = 2;
+const int kAroundYRight = -2;
+const int kAroundZLeft = 3;
+const int kAroundZRight = -3;
 
 //========================================== VARIABLES FOR MOVEMENTS
 
@@ -138,7 +138,7 @@ const float kRadioNormal = 0.5f;
 
 // ========================================= PARALEL MOVEMENTS | FRONT MID BACK
 
-// BF_R
+// F_R
 
 float fr_angle_1 = 134.0f;
 float fr_angle_4 = 89.0f;
@@ -149,7 +149,7 @@ float fr_angle_22 = 269.0f;
 float fr_angle_19 = 224.0f;
 float fr_angle_18 = 179.0f;
 
-// BF_L
+// F_L
 
 float fl_angle_1 = 136.0f;
 float fl_angle_4 = 91.0f;
@@ -182,7 +182,7 @@ float ml_angle_23 = 271.0f;
 float ml_angle_20 = 226.0f;
 float ml_angle_11 = 181.0f;
 
-// BB_R
+// B_R
 
 float br_angle_3 = 134.0f;
 float br_angle_6 = 89.0f;
@@ -193,7 +193,7 @@ float br_angle_24 = 269.0f;
 float br_angle_21 = 224.0f;
 float br_angle_12 = 179.0f;
 
-// BB_L
+// B_L
 
 float bl_angle_3 = 136.0f;
 float bl_angle_6 = 91.0f;
@@ -515,8 +515,8 @@ int main() {
     view = camera.GetViewMatrix();
 
     if (some_movement) {
-      if ((BF_R && BF_R_I) || (BB_R && BB_R_I)
-          || (BF_L && BF_L_I) || (BB_L && BB_L_I)) {
+      if ((F_R && F_R_I) || (B_R && B_R_I)
+          || (F_L && F_L_I) || (B_L && B_L_I)) {
         ParallelAnimation();
       }
 
@@ -2139,7 +2139,7 @@ void processInput(GLFWwindow* window) {
     some_movement = true;
   }
 
-  if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS){
+  if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
     BRT_R = true;
     BRT_R_I = true;
     some_movement = true;
@@ -2158,58 +2158,72 @@ void processInput(GLFWwindow* window) {
     BCL_D_I = true;
     some_movement = true;
   }
+
   if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
     BCM_U = true;
     BCM_U_I = true;
     some_movement = true;
   }
+
   if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
     BCM_D = true;
     BCM_D_I = true;
     some_movement = true;
   }
+
   if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
     BCR_U = true;
     BCR_U_I = true;
     some_movement = true;
   }
+
   if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
     BCR_D = true;
     BCR_D_I = true;
     some_movement = true;
   }
 
-  // PARALLEL MOVEMENTS 
-  
-  if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
-    BF_L = true;
-    BF_L_I = true;
-    some_movement = true;
+  // PARALLEL MOVEMENTS
+
+  // if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
+  // if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+  // if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+  // BM_L = true;
+  // BM_L_I = true;
+  // some_movement = true;
+  // }
+  // if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+  // BM_R = true;
+  // BM_R_I = true;
+  // some_movement = true;
+  // }
+  if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
+      glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+      F_L = true;
+      F_L_I = true;
+      some_movement = true;
+    }
+
+    if (
+      glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+      B_L = true;
+      B_L_I = true;
+      some_movement = true;
+    }
   }
-  if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-    BF_R = true;
-    BF_R_I = true;
-    some_movement = true;
-  }
-  if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-    BM_L = true;
-    BM_L_I = true;
-    some_movement = true;
-  }
-  if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-    BM_R = true;
-    BM_R_I = true;
-    some_movement = true;
-  }
-  if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-    BB_L = true;
-    BB_L_I = true;
-    some_movement = true;
-  }
-  if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-    BB_R = true;
-    BB_R_I = true;
-    some_movement = true;
+  else {
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+      B_R = true;
+      B_R_I = true;
+      some_movement = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+      F_R = true;
+      F_R_I = true;
+      some_movement = true;
+    }
   }
 }
 
@@ -2282,50 +2296,77 @@ void ResetBackFrontAngles() {
   back_front_move_angles[7] = 315.0f;
 }
 
+glm::vec3 CalculateTranslatePosition(float angle, Move m, const float& radius) {
+  switch (m) {
+    case L:
+    case LP:
+      return glm::vec3(-0.5f,
+                       radius * sin(deg(angle)),
+                       radius * cos(deg(angle)));
+      break;
+
+    case F:
+    case FP:
+      return glm::vec3(radius * cos(deg(angle)),
+                       radius * sin(deg(angle)),
+                       0.5f);
+      break;
+
+    case B:
+    case BP:
+      return glm::vec3(radius * cos(deg(angle)),
+                       radius * sin(deg(angle)),
+                       -0.5f);
+      break;
+  }
+}
+
 void ParallelAnimation() {
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
-  float offset;
   float* angles = back_front_move_angles;
   float* angles_limit;
   float step;
   int clockwise;
+  Move current_move;
 
-  if (BF_R_I) {
+  if (F_R_I) {
+    current_move = F;
     clockwise = 1;
-    offset = 0.5f;
     angles_limit = angles_right_limit;
     step = -1.0f;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
   }
-  else if (BB_R_I) {
+  else if (B_R_I) {
+    current_move = B;
     clockwise = 1;
-    offset = -0.5f;
     angles_limit = angles_right_limit;
     step = -1.0f;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
   }
-  else if (BF_L_I) {
+  else if (F_L_I) {
+    current_move = FP;
     clockwise = -1;
-    offset = 0.5f;
     angles_limit = angles_left_limit;
     step = 1.0f;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
   }
-  else if (BB_L_I) {
+  else if (B_L_I) {
+    current_move = BP;
     clockwise = -1;
-    offset = -0.5f;
     angles_limit = angles_left_limit;
     step = 1.0f;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
   }
+  else if (BCL_D_I)
+    clockwise = 1;
 
   // CUBO 01
   if (std::abs(angles_limit[0] - angles[0]) > 0.5f) angles[0] += step;
@@ -2334,14 +2375,10 @@ void ParallelAnimation() {
     cubitos[0].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[0].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[0])),
-                                        kRadioLarge * sin(deg(angles[0])), offset));
+  cubitos[0].get()->SetPosition(CalculateTranslatePosition(angles[0],
+                                current_move, kRadioLarge));
 
-  glm::vec3 c4_pos = cubitos[4].get()->GetPosition();
-  glSetPositionf(c4_pos.x, c4_pos.y, 0.0f);
-  // glRotatef(-1.0f * clockwise, 0.0f, 0.0f, 1.0f);
-  // glSetPositionf(-c4_pos.x, -c4_pos.y, 0.0f);
-  // cubitos[0].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[0].get()->Rotate(kAroundZRight * clockwise);
 
   // CUBO 04
   if (std::abs(angles_limit[1] - angles[1]) > 0.5f) angles[1] += step;
@@ -2350,8 +2387,8 @@ void ParallelAnimation() {
     cubitos[1].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[1].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[1])),
-                                        kRadioNormal * sin(deg(angles[1])), offset));
+  cubitos[1].get()->SetPosition(CalculateTranslatePosition(angles[1],
+                                current_move, kRadioNormal));
 
   cubitos[1].get()->Rotate(kAroundZRight * clockwise);
 
@@ -2362,8 +2399,8 @@ void ParallelAnimation() {
     cubitos[2].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[2].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[2])),
-                                        kRadioLarge * sin(deg(angles[2])), offset));
+  cubitos[2].get()->SetPosition(CalculateTranslatePosition(angles[2],
+                                current_move, kRadioLarge));
 
   cubitos[2].get()->Rotate(kAroundZRight * clockwise);
 
@@ -2375,8 +2412,8 @@ void ParallelAnimation() {
     cubitos[4].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[3].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[3])),
-                                        kRadioNormal * sin(deg(angles[3])), offset));
+  cubitos[3].get()->SetPosition(CalculateTranslatePosition(angles[3],
+                                current_move, kRadioNormal));
 
   cubitos[3].get()->Rotate(kAroundZRight * clockwise);
 
@@ -2390,8 +2427,8 @@ void ParallelAnimation() {
     cubitos[5].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[5].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[4])),
-                                        kRadioNormal * sin(deg(angles[4])), offset));
+  cubitos[5].get()->SetPosition(CalculateTranslatePosition(angles[4],
+                                current_move, kRadioNormal));
 
   cubitos[5].get()->Rotate(kAroundZRight * clockwise);
 
@@ -2402,8 +2439,8 @@ void ParallelAnimation() {
     cubitos[6].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[6].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[5])),
-                                        kRadioLarge * sin(deg(angles[5])), offset));
+  cubitos[6].get()->SetPosition(CalculateTranslatePosition(angles[5],
+                                current_move, kRadioLarge));
 
   cubitos[6].get()->Rotate(kAroundZRight * clockwise);
 
@@ -2414,8 +2451,8 @@ void ParallelAnimation() {
     cubitos[7].get()->Rotate(kAroundZLeft * clockwise);
   }
 
-  cubitos[7].get()->SetPosition(glm::vec3(kRadioNormal * cos(deg(angles[6])),
-                                        kRadioNormal * sin(deg(angles[6])), offset));
+  cubitos[7].get()->SetPosition(CalculateTranslatePosition(angles[6],
+                                current_move, kRadioNormal));
 
   cubitos[7].get()->Rotate(kAroundZRight * clockwise);
 
@@ -2424,52 +2461,52 @@ void ParallelAnimation() {
   else {
     angles[7] = angles_limit[7];
     cubitos[8].get()->Rotate(kAroundZLeft * clockwise);
-    BF_R_I = false;
-    BB_R_I = false;
-    BF_L_I = false;
-    BB_L_I = false;
+    F_R_I = false;
+    B_R_I = false;
+    F_L_I = false;
+    B_L_I = false;
   }
 
-  cubitos[8].get()->SetPosition(glm::vec3(kRadioLarge * cos(deg(angles[7])),
-                                        kRadioLarge * sin(deg(angles[7])), offset));
+  cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[7],
+                                current_move, kRadioLarge));
 
   cubitos[8].get()->Rotate(kAroundZRight * clockwise);
 
   // REASIGN POINTER
-  if ((BB_R && !BB_R_I) || (BF_R && !BF_R_I)
-      || (BB_L && !BB_L_I) || (BF_L && !BF_L_I)) {
+  if ((B_R && !B_R_I) || (F_R && !F_R_I)
+      || (B_L && !B_L_I) || (F_L && !F_L_I)) {
     if (clockwise > 0) {
-    auto temp = cubitos[0].get();
-    cubitos[0].get() = cubitos[6].get();
-    cubitos[6].get() = cubitos[8].get();
-    cubitos[8].get() = cubitos[2].get();
-    cubitos[2].get() = temp;
+      auto temp = cubitos[0].get();
+      cubitos[0].get() = cubitos[6].get();
+      cubitos[6].get() = cubitos[8].get();
+      cubitos[8].get() = cubitos[2].get();
+      cubitos[2].get() = temp;
 
-    temp = cubitos[1].get();
-    cubitos[1].get() = cubitos[3].get();
-    cubitos[3].get() = cubitos[7].get();
-    cubitos[7].get() = cubitos[5].get();
-    cubitos[5].get() = temp;
+      temp = cubitos[1].get();
+      cubitos[1].get() = cubitos[3].get();
+      cubitos[3].get() = cubitos[7].get();
+      cubitos[7].get() = cubitos[5].get();
+      cubitos[5].get() = temp;
     }
     else {
-    auto temp = cubitos[0].get();
-    cubitos[0].get() = cubitos[2].get();
-    cubitos[2].get() = cubitos[8].get();
-    cubitos[8].get() = cubitos[6].get();
-    cubitos[6].get() = temp;
+      auto temp = cubitos[0].get();
+      cubitos[0].get() = cubitos[2].get();
+      cubitos[2].get() = cubitos[8].get();
+      cubitos[8].get() = cubitos[6].get();
+      cubitos[6].get() = temp;
 
-    temp = cubitos[1].get();
-    cubitos[1].get() = cubitos[5].get();
-    cubitos[5].get() = cubitos[7].get();
-    cubitos[7].get() = cubitos[3].get();
-    cubitos[3].get() = temp;
+      temp = cubitos[1].get();
+      cubitos[1].get() = cubitos[5].get();
+      cubitos[5].get() = cubitos[7].get();
+      cubitos[7].get() = cubitos[3].get();
+      cubitos[3].get() = temp;
     }
 
     ResetBackFrontAngles();
 
-    BB_R = false;
-    BF_R = false;
-    BB_L = false;
-    BF_L = false;
+    B_R = false;
+    F_R = false;
+    B_L = false;
+    F_L = false;
   }
 }
