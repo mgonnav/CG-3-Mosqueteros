@@ -424,33 +424,36 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
   camera.ProcessMouseScroll(yoffset);
 }
 
-float move_angles[8] = {
+float move_angles[9] = {
   135.0f,
   90.0f,
   45.0f,
   180.0f,
+  0.0f,
   0.0f,
   225.0f,
   270.0f,
   315.0f,
 };
 
-const float angles_upper_limit[8] = {
+const float angles_upper_limit[9] = {
   225.0f,
   180.0f,
   135.0f,
   270.0f,
+  0.0f,
   90.0f,
   315.0f,
   360.0f,
   405.0f,
 };
 
-const float angles_lower_limit[8] = {
+const float angles_lower_limit[9] = {
   45.0f,
   0.0f,
   -45.0f,
   90.0f,
+  0.0f,
   -90.0f,
   135.0f,
   180.0f,
@@ -463,9 +466,10 @@ void ResetAngles() {
   move_angles[2] = 45.0f;
   move_angles[3] = 180.0f;
   move_angles[4] = 0.0f;
-  move_angles[5] = 225.0f;
-  move_angles[6] = 270.0f;
-  move_angles[7] = 315.0f;
+  move_angles[5] = 0.0f;
+  move_angles[6] = 225.0f;
+  move_angles[7] = 270.0f;
+  move_angles[8] = 315.0f;
 }
 
 glm::vec3 CalculateTranslatePosition(float angle, Move m, const float& radius) {
@@ -667,90 +671,39 @@ void PlayAnimation() {
     }
   }
 
-  if (std::abs(angles_limit[0] - angles[0]) > 0.5f) angles[0] += step;
-  else {
-    angles[0] = angles_limit[0];
-    cubitos[0].get()->Rotate(normalMove * clockwise);
+  for (int i = 1; i <= 7; i += 2) {
+    if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
+    else {
+      angles[i] = angles_limit[i];
+      cubitos[i].get()->Rotate(normalMove * clockwise);
+    }
+
+    cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
+                                  current_move, kRadioNormal));
+
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise);
   }
 
-  cubitos[0].get()->SetPosition(CalculateTranslatePosition(angles[0],
-                                current_move, kRadioLarge));
+  for (int i = 0; i < 8; i += 2) {
+    if (i != 4) {
+      if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
+      else {
+        angles[i] = angles_limit[i];
+        cubitos[i].get()->Rotate(normalMove * clockwise);
+      }
 
-  cubitos[0].get()->Rotate(normalMove * -1 * clockwise);
+      cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
+                                    current_move, kRadioLarge));
+    }
 
-  if (std::abs(angles_limit[1] - angles[1]) > 0.5f) angles[1] += step;
-  else {
-    angles[1] = angles_limit[1];
-    cubitos[1].get()->Rotate(normalMove * clockwise);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise);
   }
 
-  cubitos[1].get()->SetPosition(CalculateTranslatePosition(angles[1],
-                                current_move, kRadioNormal));
-
-  cubitos[1].get()->Rotate(normalMove * -1 * clockwise);
-
-  if (std::abs(angles_limit[2] - angles[2]) > 0.5f) angles[2] += step;
+  if (std::abs(angles_limit[8] - angles[8]) > 0.5f) angles[8] += step;
   else {
-    angles[2] = angles_limit[2];
-    cubitos[2].get()->Rotate(normalMove * clockwise);
-  }
-
-  cubitos[2].get()->SetPosition(CalculateTranslatePosition(angles[2],
-                                current_move, kRadioLarge));
-
-  cubitos[2].get()->Rotate(normalMove * -1 * clockwise);
-
-  if (std::abs(angles_limit[3] - angles[3]) > 0.5f) angles[3] += step;
-  else {
-    angles[3] = angles_limit[3];
-    cubitos[3].get()->Rotate(normalMove * clockwise);
-    cubitos[4].get()->Rotate(normalMove * clockwise);
-  }
-
-  cubitos[3].get()->SetPosition(CalculateTranslatePosition(angles[3],
-                                current_move, kRadioNormal));
-
-  cubitos[3].get()->Rotate(normalMove * -1 * clockwise);
-
-  cubitos[4].get()->Rotate(normalMove * -1 * clockwise);
-
-  if (std::abs(angles_limit[4] - angles[4]) > 0.5f) angles[4] += step;
-  else {
-    angles[4] = angles_limit[4];
-    cubitos[5].get()->Rotate(normalMove * clockwise);
-  }
-
-  cubitos[5].get()->SetPosition(CalculateTranslatePosition(angles[4],
-                                current_move, kRadioNormal));
-
-  cubitos[5].get()->Rotate(normalMove * -1 * clockwise);
-
-  if (std::abs(angles_limit[5] - angles[5]) > 0.5f) angles[5] += step;
-  else {
-    angles[5] = angles_limit[5];
-    cubitos[6].get()->Rotate(normalMove * clockwise);
-  }
-
-  cubitos[6].get()->SetPosition(CalculateTranslatePosition(angles[5],
-                                current_move, kRadioLarge));
-
-  cubitos[6].get()->Rotate(normalMove * -1 * clockwise);
-
-  if (std::abs(angles_limit[6] - angles[6]) > 0.5f) angles[6] += step;
-  else {
-    angles[6] = angles_limit[6];
-    cubitos[7].get()->Rotate(normalMove * clockwise);
-  }
-
-  cubitos[7].get()->SetPosition(CalculateTranslatePosition(angles[6],
-                                current_move, kRadioNormal));
-
-  cubitos[7].get()->Rotate(normalMove * -1 * clockwise);
-
-  if (std::abs(angles_limit[7] - angles[7]) > 0.5f) angles[7] += step;
-  else {
-    angles[7] = angles_limit[7];
+    angles[8] = angles_limit[8];
     cubitos[8].get()->Rotate(normalMove * clockwise);
+    cubitos[4].get()->Rotate(normalMove * clockwise);
     F_ANIM_I = false;
     B_ANIM_I = false;
     F_PRIME_ANIM_I = false;
@@ -763,20 +716,16 @@ void PlayAnimation() {
     U_PRIME_ANIM_I = false;
     D_ANIM_I = false;
     D_PRIME_ANIM_I = false;
+    some_movement = false;
   }
 
-  cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[7],
+  cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
                                 current_move, kRadioLarge));
 
   cubitos[8].get()->Rotate(normalMove * -1 * clockwise);
 
   // REASIGN POINTER
-  if ((B_ANIM && !B_ANIM_I) || (F_ANIM && !F_ANIM_I)
-      || (B_PRIME_ANIM && !B_PRIME_ANIM_I) || (F_PRIME_ANIM && !F_PRIME_ANIM_I)
-      || (L_ANIM && !L_ANIM_I) || (L_PRIME_ANIM && !L_PRIME_ANIM_I)
-      || (R_PRIME_ANIM && !R_PRIME_ANIM_I) || (R_ANIM && !R_ANIM_I)
-      || (U_ANIM && !U_ANIM_I) || (U_PRIME_ANIM && !U_PRIME_ANIM_I)
-      || (D_ANIM && !D_ANIM_I) || (D_PRIME_ANIM && !D_PRIME_ANIM_I)) {
+  if (!some_movement) {
     if (clockwise > 0) {
       auto temp = cubitos[0].get();
       cubitos[0].get() = cubitos[6].get();
@@ -818,6 +767,5 @@ void PlayAnimation() {
     U_PRIME_ANIM = false;
     D_ANIM = false;
     D_PRIME_ANIM = false;
-    some_movement = false;
   }
 }
