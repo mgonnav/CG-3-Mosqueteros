@@ -2108,7 +2108,6 @@ void processInput(GLFWwindow* window) {
 
 
   // ROWS MOVEMENTS
-
   if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
     BRF_L = true;
     BRF_L_I = true;
@@ -2183,20 +2182,7 @@ void processInput(GLFWwindow* window) {
     some_movement = true;
   }
 
-  // PARALLEL MOVEMENTS
-
-  // if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS) {
-  // if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-  // if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-  // BM_L = true;
-  // BM_L_I = true;
-  // some_movement = true;
-  // }
-  // if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-  // BM_R = true;
-  // BM_R_I = true;
-  // some_movement = true;
-  // }
+  // Standard movements
   if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
       glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {

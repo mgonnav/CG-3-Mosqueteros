@@ -1575,4 +1575,5 @@ void Cubito::MyData() {
 	std::cout << " My_rotation: " << this->my_rotation << std::endl;
 	std::cout << " My_position: " << this->my_position << std::endl;
 }
+
 #endif // CUBITO_H
