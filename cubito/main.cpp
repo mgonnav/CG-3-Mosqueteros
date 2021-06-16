@@ -138,28 +138,6 @@ const float kRadioNormal = 0.5f;
 
 // ========================================= PARALEL MOVEMENTS | FRONT MID BACK
 
-// F_R
-
-float fr_angle_1 = 134.0f;
-float fr_angle_4 = 89.0f;
-float fr_angle_7 = 44.0f;
-float fr_angle_16 = -1.0f;
-float fr_angle_25 = 314.0f;
-float fr_angle_22 = 269.0f;
-float fr_angle_19 = 224.0f;
-float fr_angle_18 = 179.0f;
-
-// F_L
-
-float fl_angle_1 = 136.0f;
-float fl_angle_4 = 91.0f;
-float fl_angle_7 = 46.0f;
-float fl_angle_16 = 1.0f;
-float fl_angle_25 = 316.0f;
-float fl_angle_22 = 271.0f;
-float fl_angle_19 = 226.0f;
-float fl_angle_10 = 181.0f;
-
 // BM_R
 
 float mr_angle_2 = 134.0f;
@@ -182,28 +160,6 @@ float ml_angle_23 = 271.0f;
 float ml_angle_20 = 226.0f;
 float ml_angle_11 = 181.0f;
 
-// B_R
-
-float br_angle_3 = 134.0f;
-float br_angle_6 = 89.0f;
-float br_angle_9 = 44.0f;
-float br_angle_18 = -1.0f;
-float br_angle_27 = 314.0f;
-float br_angle_24 = 269.0f;
-float br_angle_21 = 224.0f;
-float br_angle_12 = 179.0f;
-
-// B_L
-
-float bl_angle_3 = 136.0f;
-float bl_angle_6 = 91.0f;
-float bl_angle_9 = 46.0f;
-float bl_angle_18 = 1.0f;
-float bl_angle_27 = 316.0f;
-float bl_angle_24 = 271.0f;
-float bl_angle_21 = 226.0f;
-float bl_angle_12 = 181.0f;
-
 // ========================================= COLUMN MOVEMENTS | LEFT MID RIGHT
 
 // COLUMN LEFT DOWN
@@ -212,7 +168,7 @@ float cld_angle_3 = 134.0f;
 float cld_angle_2 = 89.0f;
 float cld_angle_1 = 44.0f;
 float cld_angle_12 = 179.0f;
-float cld_angle_10 = 359.0f;
+float cld_angle_10 = 0.0f;
 float cld_angle_21 = 224.0f;
 float cld_angle_20 = 269.0f;
 float cld_angle_19 = 314.0f;
@@ -521,261 +477,11 @@ int main() {
       }
 
       // BOOL COLUMN LEFT DOWN
-      if (BCL_D) {
-        if (BCL_D_I) {
-          // CUBO 03  
-          if (cld_angle_3 > 45.0f) cld_angle_3 -= 1.0f;
-          else cld_angle_3 = 45.0f;
-          rubick_cube.cubitos[3]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(cld_angle_3)), 
-              kRadioLarge * cos(deg(cld_angle_3))));
-
-          rubick_cube.cubitos[3]->Rotate(kAroundXLeft);
-
-          // CUBO 02
-          if (cld_angle_2 > 0.0f) cld_angle_2 -= 1.0f;
-          else cld_angle_2 = 0.0f;
-          rubick_cube.cubitos[2]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal* sin(deg(cld_angle_2)), 
-              kRadioNormal* cos(deg(cld_angle_2))));
-
-          rubick_cube.cubitos[2]->Rotate(kAroundXLeft);
-
-          // CUBO 01
-          if (cld_angle_1 > -135.0f) cld_angle_1 -= 1.0f;
-          else cld_angle_1 = -135.0f;
-          rubick_cube.cubitos[1]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(cld_angle_1)), 
-              kRadioLarge * cos(deg(cld_angle_1))));
-
-          rubick_cube.cubitos[1]->Rotate(kAroundXLeft);
-
-          // CUBO 10
-          if (cld_angle_10 > 270.0f) cld_angle_10 -= 1.0f;
-          else cld_angle_10 = 270.0f;
-          rubick_cube.cubitos[10]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal* sin(deg(cld_angle_10)), 
-              kRadioNormal* cos(deg(cld_angle_10))));
-        
-          rubick_cube.cubitos[10]->Rotate(kAroundXLeft);
-
-          // CUBO 19
-          if (cld_angle_19 > 225.0f) cld_angle_19 -= 1.0f;
-          else cld_angle_19 = 225.0f;
-          rubick_cube.cubitos[19]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(cld_angle_19)), 
-              kRadioLarge * cos(deg(cld_angle_19))));
-
-          rubick_cube.cubitos[19]->Rotate(kAroundXLeft);
-
-          // CUBO 20
-          if (cld_angle_20 > 180.0f) cld_angle_20 -= 1.0f;
-          else cld_angle_20 = 180.0f;
-          rubick_cube.cubitos[20]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal * sin(deg(cld_angle_20)), 
-              kRadioNormal* cos(deg(cld_angle_20))));
-
-          rubick_cube.cubitos[20]->Rotate(kAroundXLeft);
-
-          // CUBO 21
-          if (cld_angle_21 > 135.0f) cld_angle_21 -= 1.0f;
-          else cld_angle_21 = 135.0f;
-          rubick_cube.cubitos[21]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(cld_angle_21)), 
-              kRadioLarge* cos(deg(cld_angle_21))));
-
-          rubick_cube.cubitos[21]->Rotate(kAroundXLeft);
-
-          // CUBO 12
-          if (cld_angle_12 > 90.0f) cld_angle_12 -= 1.0f;
-          else { cld_angle_12 = 90.0f; BCL_D_I = false; }
-          rubick_cube.cubitos[12]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal * sin(deg(cld_angle_12)), 
-              kRadioNormal * cos(deg(cld_angle_12))));
-
-          rubick_cube.cubitos[12]->Rotate(kAroundXLeft);
-
-          // CUBO 11
-          rubick_cube.cubitos[11]->Rotate(kAroundXLeft);
-        }
-        // REASIGN POINTER
-        else {
-          std::shared_ptr<Cubito> new_3 = rubick_cube.cubitos[3];
-          std::shared_ptr<Cubito> new_2 = rubick_cube.cubitos[2];
-          std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
-          std::shared_ptr<Cubito> new_12 = rubick_cube.cubitos[12];
-          std::shared_ptr<Cubito> new_10 = rubick_cube.cubitos[10];
-          std::shared_ptr<Cubito> new_21 = rubick_cube.cubitos[21];
-          std::shared_ptr<Cubito> new_20 = rubick_cube.cubitos[20];
-          std::shared_ptr<Cubito> new_19 = rubick_cube.cubitos[19];
-          rubick_cube.cubitos[3] = new_21;
-          rubick_cube.cubitos[2] = new_12;
-          rubick_cube.cubitos[1] = new_3;
-          rubick_cube.cubitos[10] = new_2;
-          rubick_cube.cubitos[19] = new_1;
-          rubick_cube.cubitos[12] = new_20;
-          rubick_cube.cubitos[21] = new_19;
-          rubick_cube.cubitos[20] = new_10;
-
-          cld_angle_3 = 134.0f;
-          cld_angle_2 = 89.0f;
-          cld_angle_1 = 44.0f;
-          cld_angle_12 = 179.0f;
-          cld_angle_10 = 359.0f;
-          cld_angle_21 = 224.0f;
-          cld_angle_20 = 269.0f;
-          cld_angle_19 = 314.0f;
-
-          BCL_D = false;
-          if (DEBUG) {
-            rubick_cube.cubitos[3]->MyData();
-            rubick_cube.cubitos[2]->MyData();
-            rubick_cube.cubitos[1]->MyData();
-            rubick_cube.cubitos[10]->MyData();
-            rubick_cube.cubitos[19]->MyData();
-            rubick_cube.cubitos[12]->MyData();
-            rubick_cube.cubitos[21]->MyData();
-            rubick_cube.cubitos[20]->MyData();
-            std::cout << std::endl;
-          }
-        }
+      if (BCL_D && BCL_D_I) {
+        ParallelAnimation();
       }
-
-      // BOOL COLUMN LEFT UP
-      if (BCL_U) {
-        if (BCL_U_I) {
-          // CUBO 03  
-          if (clu_angle_3 < 255.0f) clu_angle_3 += 1.0f;
-          else clu_angle_3 = 255.0f;
-          rubick_cube.cubitos[3]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(clu_angle_3)), 
-              kRadioLarge * cos(deg(clu_angle_3))));
-
-          rubick_cube.cubitos[3]->Rotate(kAroundXRight);
-
-          // CUBO 02
-          if (clu_angle_2 < 180.0f) clu_angle_2 += 1.0f;
-          else clu_angle_2 = 180.0f;
-          rubick_cube.cubitos[2]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal * sin(deg(clu_angle_2)), 
-              kRadioNormal * cos(deg(clu_angle_2))));
-
-          rubick_cube.cubitos[2]->Rotate(kAroundXRight);
-
-          // CUBO 01
-          if (clu_angle_1 < 135.0f) clu_angle_1 += 1.0f;
-          else clu_angle_1 = 135.0f;
-          rubick_cube.cubitos[1]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(clu_angle_1)), 
-              kRadioLarge * cos(deg(clu_angle_1))));
-
-          rubick_cube.cubitos[1]->Rotate(kAroundXRight);
-
-          // CUBO 10
-          if (clu_angle_10 < 90.0f) clu_angle_10 += 1.0f;
-          else clu_angle_10 = 90.0f;
-          rubick_cube.cubitos[10]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal * sin(deg(clu_angle_10)), 
-              kRadioNormal * cos(deg(clu_angle_10))));
-
-          rubick_cube.cubitos[10]->Rotate(kAroundXRight);
-
-          // CUBO 19
-          if (clu_angle_19 < 45.0f) clu_angle_19 += 1.0f;
-          else clu_angle_19 = 45.0f;
-          rubick_cube.cubitos[19]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(clu_angle_19)), 
-              kRadioLarge * cos(deg(clu_angle_19))));
-
-          rubick_cube.cubitos[19]->Rotate(kAroundXRight);
-
-          // CUBO 20
-          if (clu_angle_20 < 360.0f) clu_angle_20 += 1.0f;
-          else clu_angle_20 = 360.0f;
-          rubick_cube.cubitos[20]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal * sin(deg(clu_angle_20)), 
-              kRadioNormal * cos(deg(clu_angle_20))));
-
-          rubick_cube.cubitos[20]->Rotate(kAroundXRight);
-
-          // CUBO 21
-          if (clu_angle_21 < 315.0f) clu_angle_21 += 1.0f;
-          else clu_angle_21 = 315.0f;
-          rubick_cube.cubitos[21]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioLarge * sin(deg(clu_angle_21)), 
-              kRadioLarge * cos(deg(clu_angle_21))));
-
-          rubick_cube.cubitos[21]->Rotate(kAroundXRight);
-
-          // CUBO 12
-          if (clu_angle_12 < 270.0f) clu_angle_12 += 1.0f;
-          else { clu_angle_12 = 270.0f; BCL_U_I = false; }
-          rubick_cube.cubitos[12]->
-            Translate(glm::vec3(-0.5f, 
-              kRadioNormal * sin(deg(clu_angle_12)), 
-              kRadioNormal * cos(deg(clu_angle_12))));
-
-          rubick_cube.cubitos[12]->Rotate(kAroundXRight);
-
-          // CUBO 11
-          rubick_cube.cubitos[11]->Rotate(kAroundXRight);
-        }
-        // REASIGN POINTER
-        else {
-          std::shared_ptr<Cubito> new_3 = rubick_cube.cubitos[3];
-          std::shared_ptr<Cubito> new_2 = rubick_cube.cubitos[2];
-          std::shared_ptr<Cubito> new_1 = rubick_cube.cubitos[1];
-          std::shared_ptr<Cubito> new_12 = rubick_cube.cubitos[12];
-          std::shared_ptr<Cubito> new_10 = rubick_cube.cubitos[10];
-          std::shared_ptr<Cubito> new_21 = rubick_cube.cubitos[21];
-          std::shared_ptr<Cubito> new_20 = rubick_cube.cubitos[20];
-          std::shared_ptr<Cubito> new_19 = rubick_cube.cubitos[19];
-          rubick_cube.cubitos[3] = new_1;
-          rubick_cube.cubitos[2] = new_10;
-          rubick_cube.cubitos[1] = new_19;
-          rubick_cube.cubitos[10] = new_20;
-          rubick_cube.cubitos[19] = new_21;
-          rubick_cube.cubitos[12] = new_2;
-          rubick_cube.cubitos[21] = new_3;
-          rubick_cube.cubitos[20] = new_12;
-
-          clu_angle_3 = 136.0f;
-          clu_angle_2 = 91.0f;
-          clu_angle_1 = 46.0f;
-          clu_angle_12 = 181.0f;
-          clu_angle_10 = 1.0f;
-          clu_angle_21 = 226.0f;
-          clu_angle_20 = 271.0f;
-          clu_angle_19 = -45.0f;
-
-          BCL_U = false;
-          if (DEBUG) {
-            rubick_cube.cubitos[3]->MyData();
-            rubick_cube.cubitos[2]->MyData();
-            rubick_cube.cubitos[1]->MyData();
-            rubick_cube.cubitos[10]->MyData();
-            rubick_cube.cubitos[19]->MyData();
-            rubick_cube.cubitos[12]->MyData();
-            rubick_cube.cubitos[21]->MyData();
-            rubick_cube.cubitos[20]->MyData();
-            std::cout << std::endl;
-          }
-        }
+      if (BCL_U && BCL_U_I) {
+        ParallelAnimation();
       }
 
       // BOOL COLUMN MID DOWN
@@ -2146,18 +1852,6 @@ void processInput(GLFWwindow* window) {
 
   // COLUMNS MOVEMENTS
 
-  if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-    BCL_U = true;
-    BCL_U_I = true;
-    some_movement = true;
-  }
-
-  if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
-    BCL_D = true;
-    BCL_D_I = true;
-    some_movement = true;
-  }
-
   if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
     BCM_U = true;
     BCM_U_I = true;
@@ -2176,7 +1870,7 @@ void processInput(GLFWwindow* window) {
     some_movement = true;
   }
 
-  if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+  if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) {
     BCR_D = true;
     BCR_D_I = true;
     some_movement = true;
@@ -2191,23 +1885,34 @@ void processInput(GLFWwindow* window) {
       some_movement = true;
     }
 
-    if (
-      glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_L = true;
-      B_L_I = true;
-      some_movement = true;
-    }
-  }
-  else {
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
       B_R = true;
       B_R_I = true;
       some_movement = true;
     }
 
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+      BCL_U = true;
+      BCL_U_I = true;
+      some_movement = true;
+    }
+  }
+  else {
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+      B_L = true;
+      B_L_I = true;
+      some_movement = true;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
       F_R = true;
       F_R_I = true;
+      some_movement = true;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+      BCL_D = true;
+      BCL_D_I = true;
       some_movement = true;
     }
   }
@@ -2249,7 +1954,7 @@ float back_front_move_angles[8] = {
   315.0f,
 };
 
-float angles_left_limit[8] = {
+float angles_prime_limit[8] = {
   225.0f,
   180.0f,
   135.0f,
@@ -2260,7 +1965,7 @@ float angles_left_limit[8] = {
   405.0f,
 };
 
-float angles_right_limit[8] = {
+float angles_normal_limit[8] = {
   45.0f,
   0.0f,
   -45.0f,
@@ -2314,11 +2019,13 @@ void ParallelAnimation() {
   float step;
   int clockwise;
   Move current_move;
+  int normalMove = 1;
 
   if (F_R_I) {
     current_move = F;
     clockwise = 1;
-    angles_limit = angles_right_limit;
+    normalMove = 3;
+    angles_limit = angles_normal_limit;
     step = -1.0f;
 
     for (int i = 1; i <= 25; i += 3)
@@ -2327,7 +2034,8 @@ void ParallelAnimation() {
   else if (B_R_I) {
     current_move = B;
     clockwise = 1;
-    angles_limit = angles_right_limit;
+    normalMove = 3;
+    angles_limit = angles_normal_limit;
     step = -1.0f;
 
     for (int i = 3; i <= 27; i += 3)
@@ -2336,7 +2044,8 @@ void ParallelAnimation() {
   else if (F_L_I) {
     current_move = FP;
     clockwise = -1;
-    angles_limit = angles_left_limit;
+    normalMove = 3;
+    angles_limit = angles_prime_limit;
     step = 1.0f;
 
     for (int i = 1; i <= 25; i += 3)
@@ -2345,122 +2054,150 @@ void ParallelAnimation() {
   else if (B_L_I) {
     current_move = BP;
     clockwise = -1;
-    angles_limit = angles_left_limit;
+    normalMove = 3;
+    angles_limit = angles_prime_limit;
     step = 1.0f;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
   }
-  else if (BCL_D_I)
+  else if (BCL_D_I) {
+    current_move = L;
     clockwise = 1;
+    normalMove = -1;
+    angles_limit = angles_normal_limit;
+    step = -1.0f;
+
+    for (int i = 3; i <= 21; i += 9) {
+      cubitos.push_back(rubick_cube.cubitos[i]);
+      cubitos.push_back(rubick_cube.cubitos[i - 1]);
+      cubitos.push_back(rubick_cube.cubitos[i - 2]);
+    }
+  }
+  else if (BCL_U_I) {
+    current_move = LP;
+    clockwise = -1;
+    normalMove = -1;
+    angles_limit = angles_prime_limit;
+    step = 1.0f;
+
+    for (int i = 3; i <= 21; i += 9) {
+      cubitos.push_back(rubick_cube.cubitos[i]);
+      cubitos.push_back(rubick_cube.cubitos[i - 1]);
+      cubitos.push_back(rubick_cube.cubitos[i - 2]);
+    }
+  }
 
   // CUBO 01
   if (std::abs(angles_limit[0] - angles[0]) > 0.5f) angles[0] += step;
   else {
     angles[0] = angles_limit[0];
-    cubitos[0].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[0].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[0].get()->SetPosition(CalculateTranslatePosition(angles[0],
                                 current_move, kRadioLarge));
 
-  cubitos[0].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[0].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 04
   if (std::abs(angles_limit[1] - angles[1]) > 0.5f) angles[1] += step;
   else {
     angles[1] = angles_limit[1];
-    cubitos[1].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[1].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[1].get()->SetPosition(CalculateTranslatePosition(angles[1],
                                 current_move, kRadioNormal));
 
-  cubitos[1].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[1].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 07
   if (std::abs(angles_limit[2] - angles[2]) > 0.5f) angles[2] += step;
   else {
     angles[2] = angles_limit[2];
-    cubitos[2].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[2].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[2].get()->SetPosition(CalculateTranslatePosition(angles[2],
                                 current_move, kRadioLarge));
 
-  cubitos[2].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[2].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 10
   if (std::abs(angles_limit[3] - angles[3]) > 0.5f) angles[3] += step;
   else {
     angles[3] = angles_limit[3];
-    cubitos[3].get()->Rotate(kAroundZLeft * clockwise);
-    cubitos[4].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[3].get()->Rotate(normalMove * clockwise);
+    cubitos[4].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[3].get()->SetPosition(CalculateTranslatePosition(angles[3],
                                 current_move, kRadioNormal));
 
-  cubitos[3].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[3].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 13
-  cubitos[4].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[4].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 16
   if (std::abs(angles_limit[4] - angles[4]) > 0.5f) angles[4] += step;
   else {
     angles[4] = angles_limit[4];
-    cubitos[5].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[5].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[5].get()->SetPosition(CalculateTranslatePosition(angles[4],
                                 current_move, kRadioNormal));
 
-  cubitos[5].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[5].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 19
   if (std::abs(angles_limit[5] - angles[5]) > 0.5f) angles[5] += step;
   else {
     angles[5] = angles_limit[5];
-    cubitos[6].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[6].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[6].get()->SetPosition(CalculateTranslatePosition(angles[5],
                                 current_move, kRadioLarge));
 
-  cubitos[6].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[6].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 22
   if (std::abs(angles_limit[6] - angles[6]) > 0.5f) angles[6] += step;
   else {
     angles[6] = angles_limit[6];
-    cubitos[7].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[7].get()->Rotate(normalMove * clockwise);
   }
 
   cubitos[7].get()->SetPosition(CalculateTranslatePosition(angles[6],
                                 current_move, kRadioNormal));
 
-  cubitos[7].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[7].get()->Rotate(normalMove * -1 * clockwise);
 
   // CUBO 25
   if (std::abs(angles_limit[7] - angles[7]) > 0.5f) angles[7] += step;
   else {
     angles[7] = angles_limit[7];
-    cubitos[8].get()->Rotate(kAroundZLeft * clockwise);
+    cubitos[8].get()->Rotate(normalMove * clockwise);
     F_R_I = false;
     B_R_I = false;
     F_L_I = false;
     B_L_I = false;
+    BCL_D_I = false;
+    BCL_U_I = false;
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[7],
                                 current_move, kRadioLarge));
 
-  cubitos[8].get()->Rotate(kAroundZRight * clockwise);
+  cubitos[8].get()->Rotate(normalMove * -1 * clockwise);
 
   // REASIGN POINTER
   if ((B_R && !B_R_I) || (F_R && !F_R_I)
-      || (B_L && !B_L_I) || (F_L && !F_L_I)) {
+      || (B_L && !B_L_I) || (F_L && !F_L_I)
+      || (BCL_D && !BCL_D_I) || (BCL_U && !BCL_U_I)) {
     if (clockwise > 0) {
       auto temp = cubitos[0].get();
       cubitos[0].get() = cubitos[6].get();
@@ -2494,5 +2231,7 @@ void ParallelAnimation() {
     F_R = false;
     B_L = false;
     F_L = false;
+    BCL_D = false;
+    BCL_U = false;
   }
 }
