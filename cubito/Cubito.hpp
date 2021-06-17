@@ -28,7 +28,7 @@ public:
 	Cubito() {}
 	~Cubito();
 	void DrawSprite(glm::mat4&, glm::mat4&, glm::mat4&);
-	void Rotate(int);
+	void Rotate(int around_axis, float angle);
 	void MyData();
   void SetPosition(glm::vec3 new_position);
 };
@@ -87,7 +87,7 @@ void Cubito::SetPosition(glm::vec3 new_position) {
   this->position = new_position;
 }
 
-void Cubito::Rotate(int around_axis) {
+void Cubito::Rotate(int around_axis, float angle) {
 	// kAroundXLeft = 1;
 	// kAroundXRight = -1;
 	// kAroundYLeft = -2;
@@ -98,7 +98,7 @@ void Cubito::Rotate(int around_axis) {
 		case 1: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(1.0f),
+				glm::radians(angle),
 				glm::vec3(1.0f, 0.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -108,7 +108,7 @@ void Cubito::Rotate(int around_axis) {
 		case -1: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(-1.0f),
+				glm::radians(-angle),
 				glm::vec3(1.0f, 0.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -118,7 +118,7 @@ void Cubito::Rotate(int around_axis) {
 		case 2: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(-1.0f),
+				glm::radians(-angle),
 				glm::vec3(0.0f, 1.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -128,7 +128,7 @@ void Cubito::Rotate(int around_axis) {
 		case -2: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(1.0f),
+				glm::radians(angle),
 				glm::vec3(0.0f, 1.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -138,7 +138,7 @@ void Cubito::Rotate(int around_axis) {
 		case 3: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(1.0f),
+				glm::radians(angle),
 				glm::vec3(0.0f, 0.0f, 1.0f));
 
 			rotation = temporal * rotation;
@@ -148,7 +148,7 @@ void Cubito::Rotate(int around_axis) {
 		case -3: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(-1.0f),
+				glm::radians(-angle),
 				glm::vec3(0.0f, 0.0f, 1.0f));
 
 			rotation = temporal * rotation;
