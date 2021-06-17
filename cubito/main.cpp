@@ -104,6 +104,7 @@ float deg(float num) {
 float scale_figure = 1.0f;
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
+const float kEpsilon = 0.5f;
 
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 view = glm::mat4(1.0f);
@@ -672,7 +673,7 @@ void PlayAnimation() {
   }
 
   for (int i = 1; i <= 7; i += 2) {
-    if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
+    if (std::abs(angles_limit[i] - angles[i]) > kEpsilon) angles[i] += step;
     else {
       angles[i] = angles_limit[i];
       cubitos[i].get()->Rotate(normalMove * clockwise, speed);
@@ -686,7 +687,7 @@ void PlayAnimation() {
 
   for (int i = 0; i < 8; i += 2) {
     if (i != 4) {
-      if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
+      if (std::abs(angles_limit[i] - angles[i]) > kEpsilon) angles[i] += step;
       else {
         angles[i] = angles_limit[i];
         cubitos[i].get()->Rotate(normalMove * clockwise, speed);
@@ -699,7 +700,7 @@ void PlayAnimation() {
     cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
   }
 
-  if (std::abs(angles_limit[8] - angles[8]) > 0.5f) angles[8] += step;
+  if (std::abs(angles_limit[8] - angles[8]) > kEpsilon) angles[8] += step;
   else {
     angles[8] = angles_limit[8];
     cubitos[8].get()->Rotate(normalMove * clockwise, speed);
