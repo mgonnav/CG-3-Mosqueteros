@@ -521,7 +521,7 @@ void PlayAnimation() {
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
   const float* angles_limit;
-  float step;
+  float step, speed = 5.0f;
   int clockwise;
   Move current_move;
   int normalMove;
@@ -531,7 +531,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -541,7 +541,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -551,7 +551,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -561,7 +561,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -571,7 +571,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -584,7 +584,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -597,7 +597,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -610,7 +610,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -623,7 +623,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -636,7 +636,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -649,7 +649,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -662,7 +662,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -675,13 +675,13 @@ void PlayAnimation() {
     if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
     else {
       angles[i] = angles_limit[i];
-      cubitos[i].get()->Rotate(normalMove * clockwise);
+      cubitos[i].get()->Rotate(normalMove * clockwise, speed);
     }
 
     cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
                                   current_move, kRadioNormal));
 
-    cubitos[i].get()->Rotate(normalMove * -1 * clockwise);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
   }
 
   for (int i = 0; i < 8; i += 2) {
@@ -689,21 +689,21 @@ void PlayAnimation() {
       if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
       else {
         angles[i] = angles_limit[i];
-        cubitos[i].get()->Rotate(normalMove * clockwise);
+        cubitos[i].get()->Rotate(normalMove * clockwise, speed);
       }
 
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
                                     current_move, kRadioLarge));
     }
 
-    cubitos[i].get()->Rotate(normalMove * -1 * clockwise);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
   }
 
   if (std::abs(angles_limit[8] - angles[8]) > 0.5f) angles[8] += step;
   else {
     angles[8] = angles_limit[8];
-    cubitos[8].get()->Rotate(normalMove * clockwise);
-    cubitos[4].get()->Rotate(normalMove * clockwise);
+    cubitos[8].get()->Rotate(normalMove * clockwise, speed);
+    cubitos[4].get()->Rotate(normalMove * clockwise, speed);
     F_ANIM_I = false;
     B_ANIM_I = false;
     F_PRIME_ANIM_I = false;
@@ -722,7 +722,7 @@ void PlayAnimation() {
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
                                 current_move, kRadioLarge));
 
-  cubitos[8].get()->Rotate(normalMove * -1 * clockwise);
+  cubitos[8].get()->Rotate(normalMove * -1 * clockwise, speed);
 
   // REASIGN POINTER
   if (!some_movement) {
