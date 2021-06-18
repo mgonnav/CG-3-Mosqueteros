@@ -48,6 +48,8 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <random>
+#include <map>
 
 // IF YOU WANT TO KNOW INFO AFTER ONE MOVEMENT
 #define DEBUG 0
@@ -61,6 +63,18 @@ enum Move {
   B, BP
 };
 
+std::map<Move, std::string> move_to_string;
+std::map<std::string, Move> string_to_move;
+std::map<Move, bool*> move_to_anim;
+std::map<Move, bool*> move_to_anim_i;
+
+std::string str_scramble;
+std::string str_solution;
+std::vector<Move> scramble;
+std::vector<Move> solution;
+int idx_scramble = 0, idx_solution = 0;
+
+bool shuffle_anim = false, solution_anim = false;
 
 bool U_ANIM = false, U_ANIM_I = false;
 bool U_PRIME_ANIM = false, U_PRIME_ANIM_I = false;
@@ -94,6 +108,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void PlayAnimation();
+
+void StartParser();
+std::string GenScramble(int);
+std::vector<Move> ParseOutput(std::string);
 
 const double PI = 3.14159;
 
@@ -146,16 +164,12 @@ void PrintCommands() {
   std::cout << "\tF: F\n";
   std::cout << "\tShift + F: F'\n";
   std::cout << "\tB: B\n";
-  std::cout << "\tShift + B: B'" << std::endl;
+  std::cout << "\tShift + B: B'\n\n";
+  std::cout << "\tZ: Scramble\n";
+  std::cout << "\tX: Solve the cube\n" << std::endl;
 }
 
-int main() {
-  // ----- Test solver --- //
-
-  // std::string solution = rubik::solve("R' F U' D2 R F R' L2 F' B2 U' F2 B' R2 B D2 B' U2 R2");
-  // std::cout << "Solution: " << solution << std::endl;
-
-  // ----- Test solver --- //
+int main(int argc, char *argv[]) {
 
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -208,72 +222,80 @@ int main() {
   // CREATING EACH CUBITO OF RUBICK CUBE
   {
     rubick_cube.cubitos[3] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
-      input_colors[0]);
+                                                      glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
+                                                      input_colors[0]);
     rubick_cube.cubitos[6] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, -0.5f), 6, input_colors[19], input_colors[1]);
+                                                      glm::vec3(0.0f, 0.5f, -0.5f), 6, input_colors[19], input_colors[1]);
     rubick_cube.cubitos[9] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, -0.5f), 9, input_colors[18], input_colors[17],
-      input_colors[2]);
+                                                      glm::vec3(0.5f, 0.5f, -0.5f), 9, input_colors[18], input_colors[17],
+                                                      input_colors[2]);
     rubick_cube.cubitos[12] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, -0.5f), 12, input_colors[32], input_colors[21]);
+                                                       glm::vec3(-0.5f, 0.0f, -0.5f), 12, input_colors[32], input_colors[21]);
     rubick_cube.cubitos[15] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, -0.5f), 15, input_colors[31]);
+                                                       glm::vec3(0.0f, 0.0f, -0.5f), 15, input_colors[31]);
     rubick_cube.cubitos[18] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, -0.5f), 18, input_colors[30], input_colors[29]);
+                                                       glm::vec3(0.5f, 0.0f, -0.5f), 18, input_colors[30], input_colors[29]);
     rubick_cube.cubitos[21] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, -0.5f), 21, input_colors[44], input_colors[33],
-      input_colors[51]);
+                                                       glm::vec3(-0.5f, -0.5f, -0.5f), 21, input_colors[44], input_colors[33],
+                                                       input_colors[51]);
     rubick_cube.cubitos[24] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, -0.5f), 24, input_colors[43], input_colors[52]);
+                                                       glm::vec3(0.0f, -0.5f, -0.5f), 24, input_colors[43], input_colors[52]);
     rubick_cube.cubitos[27] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, -0.5f), 27, input_colors[42], input_colors[41],
-      input_colors[53]);
+                                                       glm::vec3(0.5f, -0.5f, -0.5f), 27, input_colors[42], input_colors[41],
+                                                       input_colors[53]);
 
     rubick_cube.cubitos[2] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, 0.0f), 2, input_colors[10], input_colors[3]);
+                                                      glm::vec3(-0.5f, 0.5f, 0.0f), 2, input_colors[10], input_colors[3]);
     rubick_cube.cubitos[5] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, 0.0f), 5, input_colors[4]);
+                                                      glm::vec3(0.0f, 0.5f, 0.0f), 5, input_colors[4]);
     rubick_cube.cubitos[8] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, 0.0f), 8, input_colors[16], input_colors[5]);
+                                                      glm::vec3(0.5f, 0.5f, 0.0f), 8, input_colors[16], input_colors[5]);
     rubick_cube.cubitos[11] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, 0.0f), 11, input_colors[22]);
+                                                       glm::vec3(-0.5f, 0.0f, 0.0f), 11, input_colors[22]);
     rubick_cube.cubitos[14] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, 0.0f), 14);
+                                                       glm::vec3(0.0f, 0.0f, 0.0f), 14);
     rubick_cube.cubitos[17] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, 0.0f), 17, input_colors[28]);
+                                                       glm::vec3(0.5f, 0.0f, 0.0f), 17, input_colors[28]);
     rubick_cube.cubitos[20] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, 0.0f), 20, input_colors[34], input_colors[48]);
+                                                       glm::vec3(-0.5f, -0.5f, 0.0f), 20, input_colors[34], input_colors[48]);
     rubick_cube.cubitos[23] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, 0.0f), 23, input_colors[49]);
+                                                       glm::vec3(0.0f, -0.5f, 0.0f), 23, input_colors[49]);
     rubick_cube.cubitos[26] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, 0.0f), 26, input_colors[40], input_colors[50]);
+                                                       glm::vec3(0.5f, -0.5f, 0.0f), 26, input_colors[40], input_colors[50]);
 
     rubick_cube.cubitos[1] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, 0.5f), 1, input_colors[12], input_colors[11],
-      input_colors[6]);
+                                                      glm::vec3(-0.5f, 0.5f, 0.5f), 1, input_colors[12], input_colors[11],
+                                                      input_colors[6]);
     rubick_cube.cubitos[4] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, 0.5f), 4, input_colors[13], input_colors[7]);
+                                                      glm::vec3(0.0f, 0.5f, 0.5f), 4, input_colors[13], input_colors[7]);
     rubick_cube.cubitos[7] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, 0.5f), 7, input_colors[14], input_colors[15],
-      input_colors[8]);
+                                                      glm::vec3(0.5f, 0.5f, 0.5f), 7, input_colors[14], input_colors[15],
+                                                      input_colors[8]);
     rubick_cube.cubitos[10] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, 0.5f), 10, input_colors[24], input_colors[23]);
+                                                       glm::vec3(-0.5f, 0.0f, 0.5f), 10, input_colors[24], input_colors[23]);
     rubick_cube.cubitos[13] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, 0.5f), 13, input_colors[25]);
+                                                       glm::vec3(0.0f, 0.0f, 0.5f), 13, input_colors[25]);
     rubick_cube.cubitos[16] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, 0.5f), 16, input_colors[26], input_colors[27]);
+                                                       glm::vec3(0.5f, 0.0f, 0.5f), 16, input_colors[26], input_colors[27]);
     rubick_cube.cubitos[19] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, 0.5f), 19, input_colors[36], input_colors[35],
-      input_colors[45]);
+                                                       glm::vec3(-0.5f, -0.5f, 0.5f), 19, input_colors[36], input_colors[35],
+                                                       input_colors[45]);
     rubick_cube.cubitos[22] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, 0.5f), 22, input_colors[37], input_colors[46]);
+                                                       glm::vec3(0.0f, -0.5f, 0.5f), 22, input_colors[37], input_colors[46]);
     rubick_cube.cubitos[25] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, 0.5f), 25, input_colors[38], input_colors[39],
-      input_colors[47]);
+                                                       glm::vec3(0.5f, -0.5f, 0.5f), 25, input_colors[38], input_colors[39],
+                                                       input_colors[47]);
   }
   
   PrintCommands();
+
+  StartParser();
+
+  if(argc == 2) {
+    str_scramble = std::string(argv[1]) + " ";
+    scramble = ParseOutput(str_scramble);
+    shuffle_anim = true;
+  }
 
   while (!glfwWindowShouldClose(window)) {
     float currentFrame = glfwGetTime();
@@ -291,6 +313,33 @@ int main() {
 
     if (some_movement) {
       PlayAnimation();
+    }
+    else {
+      if (shuffle_anim) {
+        if (idx_scramble == scramble.size()) {
+          shuffle_anim = false;
+          scramble.clear();
+          idx_scramble = 0;
+          continue;
+        }
+        *(move_to_anim[scramble[idx_scramble]]) = true;
+        *(move_to_anim_i[scramble[idx_scramble]]) = true;
+        some_movement = true;
+        ++idx_scramble;
+      }
+      else if (solution_anim){
+        if (idx_solution == solution.size()) {
+          solution_anim = false;
+          idx_solution = idx_scramble = 0;
+          str_solution = str_scramble = "";
+          solution.clear();
+          continue;
+        }
+        *(move_to_anim[solution[idx_solution]]) = true;
+        *(move_to_anim_i[solution[idx_solution]]) = true;
+        some_movement = true;
+        ++idx_solution;
+      }
     }
     
     rubick_cube.Draw(model, view, projection);
@@ -320,83 +369,186 @@ void processInput(GLFWwindow* window) {
 
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     camera.ProcessKeyboard(RIGHT, deltaTime);
-
-  // Standard rubik's cube movements
-  if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
-      glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      U_PRIME_ANIM = true;
-      U_PRIME_ANIM_I = true;
-      some_movement = true;
+  
+  // Solver
+  if (!solution_anim && !shuffle_anim && !some_movement) {
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+      std::string new_str_scramble = GenScramble(10);
+      scramble = ParseOutput(new_str_scramble);
+      str_scramble += new_str_scramble;
+      shuffle_anim = true;
     }
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-      D_PRIME_ANIM = true;
-      D_PRIME_ANIM_I = true;
-      some_movement = true;
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+      if (!str_scramble.empty()) {
+        str_solution = rubik::solve(str_scramble);
+        solution = ParseOutput(str_solution);
+        solution_anim = true;
+      }
     }
+    // Standard rubik's cube movements
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_PRIME_ANIM = true;
+        U_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "U' ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-      R_ANIM = true;
-      R_ANIM_I = true;
-      some_movement = true;
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_PRIME_ANIM = true;
+        D_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "D' ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_ANIM = true;
+        R_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "R' ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_PRIME_ANIM = true;
+        L_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "L' ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_PRIME_ANIM = true;
+        F_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "F' ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_ANIM = true;
+        B_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "B' ";
+      }
     }
+    else {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_ANIM = true;
+        U_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "U ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      L_PRIME_ANIM = true;
-      L_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_ANIM = true;
+        D_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "D ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-      F_PRIME_ANIM = true;
-      F_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_PRIME_ANIM = true;
+        R_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "R ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_ANIM = true;
-      B_ANIM_I = true;
-      some_movement = true;
+      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_ANIM = true;
+        L_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "L ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_ANIM = true;
+        F_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "F ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_PRIME_ANIM = true;
+        B_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "B ";
+      }
     }
   }
-  else {
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      U_ANIM = true;
-      U_ANIM_I = true;
-      some_movement = true;
-    }
+}
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-      D_ANIM = true;
-      D_ANIM_I = true;
-      some_movement = true;
-    }
+void StartParser() {
+  move_to_string[L] = "L";
+  move_to_string[R] = "R";
+  move_to_string[U] = "U";
+  move_to_string[D] = "D";
+  move_to_string[F] = "F";
+  move_to_string[B] = "B";
+  move_to_string[LP] = "L'";
+  move_to_string[RP] = "R'";
+  move_to_string[UP] = "U'";
+  move_to_string[DP] = "D'";
+  move_to_string[FP] = "F'";
+  move_to_string[BP] = "B'";
 
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-      R_PRIME_ANIM = true;
-      R_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      L_ANIM = true;
-      L_ANIM_I = true;
-      some_movement = true;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-      F_ANIM = true;
-      F_ANIM_I = true;
-      some_movement = true;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_PRIME_ANIM = true;
-      B_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+  for (auto &element : move_to_string) {
+    string_to_move[element.second] = element.first;
   }
+
+  move_to_anim[UP] = &U_PRIME_ANIM;
+  move_to_anim_i[UP] = &U_PRIME_ANIM_I;
+  move_to_anim[DP] = &D_PRIME_ANIM;
+  move_to_anim_i[DP] = &D_PRIME_ANIM_I;
+  move_to_anim[RP] = &R_ANIM;
+  move_to_anim_i[RP] = &R_ANIM_I;
+  move_to_anim[LP] = &L_PRIME_ANIM;
+  move_to_anim_i[LP] = &L_PRIME_ANIM_I;
+  move_to_anim[FP] = &F_PRIME_ANIM;
+  move_to_anim_i[FP] = &F_PRIME_ANIM_I;
+  move_to_anim[BP] = &B_ANIM;
+  move_to_anim_i[BP] = &B_ANIM_I;
+
+  move_to_anim[U] = &U_ANIM;
+  move_to_anim_i[U] = &U_ANIM_I;
+  move_to_anim[D] = &D_ANIM;
+  move_to_anim_i[D] = &D_ANIM_I;
+  move_to_anim[R] = &R_PRIME_ANIM;
+  move_to_anim_i[R] = &R_PRIME_ANIM_I;
+  move_to_anim[L] = &L_ANIM;
+  move_to_anim_i[L] = &L_ANIM_I;
+  move_to_anim[F] = &F_ANIM;
+  move_to_anim_i[F] = &F_ANIM_I;
+  move_to_anim[B] = &B_PRIME_ANIM;
+  move_to_anim_i[B] = &B_PRIME_ANIM_I;
+}
+
+std::string GenScramble(int count) {
+  std::random_device rd;
+  std::string movements;
+  for (int i = 0; i < count; ++i) {
+    Move current = Move(rd() % 12);
+    movements += move_to_string[current] + " ";
+  }
+  return movements;
+}
+
+std::vector<Move> ParseOutput(std::string output) {
+  std::string tmp;
+  std::vector<Move> movements;
+  bool two = false;
+  for (int i = 0; i < output.size(); ++i) {
+    if (output[i] == ' '){
+      movements.push_back(string_to_move[tmp]);
+      if (two)
+        movements.push_back(string_to_move[tmp]);
+      tmp = "";
+      two = false;
+    }
+    else if (output[i] == '2')
+      two = true;
+    else
+      tmp += output[i];
+  }
+  return movements;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -679,7 +831,7 @@ void PlayAnimation() {
     }
 
     cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-                                  current_move, kRadioNormal));
+                                                             current_move, kRadioNormal));
 
     cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
   }
@@ -693,7 +845,7 @@ void PlayAnimation() {
       }
 
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-                                    current_move, kRadioLarge));
+                                                               current_move, kRadioLarge));
     }
 
     cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
@@ -720,7 +872,7 @@ void PlayAnimation() {
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
-                                current_move, kRadioLarge));
+                                                           current_move, kRadioLarge));
 
   cubitos[8].get()->Rotate(normalMove * -1 * clockwise, speed);
 
