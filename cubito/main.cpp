@@ -48,6 +48,8 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <random>
+#include <map>
 
 // IF YOU WANT TO KNOW INFO AFTER ONE MOVEMENT
 #define DEBUG 0
@@ -61,6 +63,12 @@ enum Move {
   B, BP
 };
 
+std::map<Move, std::string> move_to_string;
+std::map<std::string, Move> string_to_move;
+std::map<Move, bool*> move_to_anim;
+std::map<Move, bool*> move_to_anim_i;
+
+bool shuffle_anim = false, solution_anim = false;
 
 bool U_ANIM = false, U_ANIM_I = false;
 bool U_PRIME_ANIM = false, U_PRIME_ANIM_I = false;
@@ -94,6 +102,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void PlayAnimation();
+
+void StartParser();
+std::string GenScramble(int);
+std::vector<Move> ParseOutput(std::string);
 
 const double PI = 3.14159;
 
@@ -275,6 +287,16 @@ int main() {
   
   PrintCommands();
 
+  StartParser();
+
+  std::string str_scramble = GenScramble(15);
+  std::string str_solution = rubik::solve(str_scramble);
+  //std::cout << str_scramble << std::endl;
+  //std::cout << str_solution << std::endl;
+  std::vector<Move> scramble = ParseOutput(str_scramble);
+  std::vector<Move> solution = ParseOutput(str_solution);
+  int idx_shuffle = 0, idx_solution = 0;
+
   while (!glfwWindowShouldClose(window)) {
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
@@ -291,6 +313,28 @@ int main() {
 
     if (some_movement) {
       PlayAnimation();
+    }
+    else {
+      if (shuffle_anim) {
+        if (idx_shuffle == scramble.size()) {
+          shuffle_anim = false;
+          continue;
+        }
+        *(move_to_anim[scramble[idx_shuffle]]) = true;
+        *(move_to_anim_i[scramble[idx_shuffle]]) = true;
+        some_movement = true;
+        ++idx_shuffle;
+      }
+      else if (solution_anim){
+        if (idx_solution == solution.size()) {
+          solution_anim = false;
+          continue;
+        }
+        *(move_to_anim[solution[idx_solution]]) = true;
+        *(move_to_anim_i[solution[idx_solution]]) = true;
+        some_movement = true;
+        ++idx_solution;
+      }
     }
     
     rubick_cube.Draw(model, view, projection);
@@ -320,6 +364,14 @@ void processInput(GLFWwindow* window) {
 
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     camera.ProcessKeyboard(RIGHT, deltaTime);
+  
+  // Solver
+  if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+    shuffle_anim = true;
+  }
+  if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+    solution_anim = true;
+  }
 
   // Standard rubik's cube movements
   if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
@@ -397,6 +449,81 @@ void processInput(GLFWwindow* window) {
       some_movement = true;
     }
   }
+}
+
+void StartParser() {
+  move_to_string[L] = "L";
+  move_to_string[R] = "R";
+  move_to_string[U] = "U";
+  move_to_string[D] = "D";
+  move_to_string[F] = "F";
+  move_to_string[B] = "B";
+  move_to_string[LP] = "L'";
+  move_to_string[RP] = "R'";
+  move_to_string[UP] = "U'";
+  move_to_string[DP] = "D'";
+  move_to_string[FP] = "F'";
+  move_to_string[BP] = "B'";
+
+  for (auto &element : move_to_string) {
+    string_to_move[element.second] = element.first;
+  }
+
+  move_to_anim[UP] = &U_PRIME_ANIM;
+  move_to_anim_i[UP] = &U_PRIME_ANIM_I;
+  move_to_anim[DP] = &D_PRIME_ANIM;
+  move_to_anim_i[DP] = &D_PRIME_ANIM_I;
+  move_to_anim[RP] = &R_ANIM;
+  move_to_anim_i[RP] = &R_ANIM_I;
+  move_to_anim[LP] = &L_PRIME_ANIM;
+  move_to_anim_i[LP] = &L_PRIME_ANIM_I;
+  move_to_anim[FP] = &F_PRIME_ANIM;
+  move_to_anim_i[FP] = &F_PRIME_ANIM_I;
+  move_to_anim[BP] = &B_ANIM;
+  move_to_anim_i[BP] = &B_ANIM_I;
+
+  move_to_anim[U] = &U_ANIM;
+  move_to_anim_i[U] = &U_ANIM_I;
+  move_to_anim[D] = &D_ANIM;
+  move_to_anim_i[D] = &D_ANIM_I;
+  move_to_anim[R] = &R_PRIME_ANIM;
+  move_to_anim_i[R] = &R_PRIME_ANIM_I;
+  move_to_anim[L] = &L_ANIM;
+  move_to_anim_i[L] = &L_ANIM_I;
+  move_to_anim[F] = &F_ANIM;
+  move_to_anim_i[F] = &F_ANIM_I;
+  move_to_anim[B] = &B_PRIME_ANIM;
+  move_to_anim_i[B] = &B_PRIME_ANIM_I;
+}
+
+std::string GenScramble(int count) {
+  std::random_device rd;
+  std::string movements;
+  for (int i = 0; i < count; ++i) {
+    Move current = Move(rd() % 12);
+    movements += move_to_string[current] + " ";
+  }
+  return movements;
+}
+
+std::vector<Move> ParseOutput(std::string output) {
+  std::string tmp;
+  std::vector<Move> movements;
+  bool two = false;
+  for (int i = 0; i < output.size(); ++i) {
+    if (output[i] == ' '){
+      movements.push_back(string_to_move[tmp]);
+      if (two)
+        movements.push_back(string_to_move[tmp]);
+      tmp = "";
+      two = false;
+    }
+    else if (output[i] == '2')
+      two = true;
+    else
+      tmp += output[i];
+  }
+  return movements;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
