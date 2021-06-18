@@ -68,6 +68,12 @@ std::map<std::string, Move> string_to_move;
 std::map<Move, bool*> move_to_anim;
 std::map<Move, bool*> move_to_anim_i;
 
+std::string str_scramble;
+std::string str_solution;
+std::vector<Move> scramble;
+std::vector<Move> solution;
+int idx_scramble = 0, idx_solution = 0;
+
 bool shuffle_anim = false, solution_anim = false;
 
 bool U_ANIM = false, U_ANIM_I = false;
@@ -285,11 +291,11 @@ int main(int argc, char *argv[]) {
 
   StartParser();
 
-  std::string str_scramble = (argc == 2 ? argv[1] : GenScramble(15));
-  std::string str_solution = rubik::solve(str_scramble);
-  std::vector<Move> scramble = ParseOutput(str_scramble);
-  std::vector<Move> solution = ParseOutput(str_solution);
-  int idx_shuffle = 0, idx_solution = 0;
+  if(argc == 2) {
+    str_scramble = std::string(argv[1]) + " ";
+    scramble = ParseOutput(str_scramble);
+    shuffle_anim = true;
+  }
 
   while (!glfwWindowShouldClose(window)) {
     float currentFrame = glfwGetTime();
@@ -310,18 +316,23 @@ int main(int argc, char *argv[]) {
     }
     else {
       if (shuffle_anim) {
-        if (idx_shuffle == scramble.size()) {
+        if (idx_scramble == scramble.size()) {
           shuffle_anim = false;
+          scramble.clear();
+          idx_scramble = 0;
           continue;
         }
-        *(move_to_anim[scramble[idx_shuffle]]) = true;
-        *(move_to_anim_i[scramble[idx_shuffle]]) = true;
+        *(move_to_anim[scramble[idx_scramble]]) = true;
+        *(move_to_anim_i[scramble[idx_scramble]]) = true;
         some_movement = true;
-        ++idx_shuffle;
+        ++idx_scramble;
       }
       else if (solution_anim){
         if (idx_solution == solution.size()) {
           solution_anim = false;
+          idx_solution = idx_scramble = 0;
+          str_solution = str_scramble = "";
+          solution.clear();
           continue;
         }
         *(move_to_anim[solution[idx_solution]]) = true;
@@ -360,87 +371,107 @@ void processInput(GLFWwindow* window) {
     camera.ProcessKeyboard(RIGHT, deltaTime);
   
   // Solver
-  if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-    shuffle_anim = true;
-  }
-  if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-    solution_anim = true;
-  }
-
-  // Standard rubik's cube movements
-  if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
-      glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      U_PRIME_ANIM = true;
-      U_PRIME_ANIM_I = true;
-      some_movement = true;
+  if (!solution_anim && !shuffle_anim && !some_movement) {
+    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
+      std::string new_str_scramble = GenScramble(10);
+      scramble = ParseOutput(new_str_scramble);
+      str_scramble += new_str_scramble;
+      shuffle_anim = true;
     }
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-      D_PRIME_ANIM = true;
-      D_PRIME_ANIM_I = true;
-      some_movement = true;
+    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
+      if (!str_scramble.empty()) {
+        str_solution = rubik::solve(str_scramble);
+        solution = ParseOutput(str_solution);
+        solution_anim = true;
+      }
     }
+    // Standard rubik's cube movements
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_PRIME_ANIM = true;
+        U_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "U' ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-      R_ANIM = true;
-      R_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_PRIME_ANIM = true;
+        D_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "D' ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      L_PRIME_ANIM = true;
-      L_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_ANIM = true;
+        R_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "R' ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-      F_PRIME_ANIM = true;
-      F_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_PRIME_ANIM = true;
+        L_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "L' ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_ANIM = true;
-      B_ANIM_I = true;
-      some_movement = true;
-    }
-  }
-  else {
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      U_ANIM = true;
-      U_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_PRIME_ANIM = true;
+        F_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "F' ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-      D_ANIM = true;
-      D_ANIM_I = true;
-      some_movement = true;
+      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_ANIM = true;
+        B_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "B' ";
+      }
     }
+    else {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_ANIM = true;
+        U_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "U ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-      R_PRIME_ANIM = true;
-      R_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_ANIM = true;
+        D_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "D ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      L_ANIM = true;
-      L_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_PRIME_ANIM = true;
+        R_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "R ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-      F_ANIM = true;
-      F_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_ANIM = true;
+        L_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "L ";
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_PRIME_ANIM = true;
-      B_PRIME_ANIM_I = true;
-      some_movement = true;
+      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_ANIM = true;
+        F_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "F ";
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_PRIME_ANIM = true;
+        B_PRIME_ANIM_I = true;
+        some_movement = true;
+        str_scramble += "B ";
+      }
     }
   }
 }
