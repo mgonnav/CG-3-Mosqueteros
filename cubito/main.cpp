@@ -96,6 +96,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void PlayAnimation();
 
 const double PI = 3.14159;
+const float kEpsilon = 0.5f;
 
 float deg(float num) {
   return (num * PI / 180);
@@ -104,7 +105,7 @@ float deg(float num) {
 float scale_figure = 1.0f;
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
-const float kEpsilon = 0.5f;
+float anim_speed;
 
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 view = glm::mat4(1.0f);
@@ -188,7 +189,7 @@ int main() {
 
   Shader cubito_program("src/shaders/cubito.vs", "src/shaders/cubito.fs");
 
-  //glfwSetKeyCallback(window, key_callback);
+  // glfwSetKeyCallback(window, key_callback);
   glfwSetScrollCallback(window, scroll_callback);
   glfwSetCursorPosCallback(window, mouse_callback);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -205,81 +206,82 @@ int main() {
   }
 
   fill_n(back_inserter(input_colors), 9, GREEN);
-  
+
   // CREATING EACH CUBITO OF RUBICK CUBE
   {
     rubick_cube.cubitos[3] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
-      input_colors[0]);
+                             glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
+                             input_colors[0]);
     rubick_cube.cubitos[6] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, -0.5f), 6, input_colors[19], input_colors[1]);
+                             glm::vec3(0.0f, 0.5f, -0.5f), 6, input_colors[19], input_colors[1]);
     rubick_cube.cubitos[9] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, -0.5f), 9, input_colors[18], input_colors[17],
-      input_colors[2]);
+                             glm::vec3(0.5f, 0.5f, -0.5f), 9, input_colors[18], input_colors[17],
+                             input_colors[2]);
     rubick_cube.cubitos[12] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, -0.5f), 12, input_colors[32], input_colors[21]);
+                              glm::vec3(-0.5f, 0.0f, -0.5f), 12, input_colors[32], input_colors[21]);
     rubick_cube.cubitos[15] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, -0.5f), 15, input_colors[31]);
+                              glm::vec3(0.0f, 0.0f, -0.5f), 15, input_colors[31]);
     rubick_cube.cubitos[18] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, -0.5f), 18, input_colors[30], input_colors[29]);
+                              glm::vec3(0.5f, 0.0f, -0.5f), 18, input_colors[30], input_colors[29]);
     rubick_cube.cubitos[21] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, -0.5f), 21, input_colors[44], input_colors[33],
-      input_colors[51]);
+                              glm::vec3(-0.5f, -0.5f, -0.5f), 21, input_colors[44], input_colors[33],
+                              input_colors[51]);
     rubick_cube.cubitos[24] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, -0.5f), 24, input_colors[43], input_colors[52]);
+                              glm::vec3(0.0f, -0.5f, -0.5f), 24, input_colors[43], input_colors[52]);
     rubick_cube.cubitos[27] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, -0.5f), 27, input_colors[42], input_colors[41],
-      input_colors[53]);
+                              glm::vec3(0.5f, -0.5f, -0.5f), 27, input_colors[42], input_colors[41],
+                              input_colors[53]);
 
     rubick_cube.cubitos[2] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, 0.0f), 2, input_colors[10], input_colors[3]);
+                             glm::vec3(-0.5f, 0.5f, 0.0f), 2, input_colors[10], input_colors[3]);
     rubick_cube.cubitos[5] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, 0.0f), 5, input_colors[4]);
+                             glm::vec3(0.0f, 0.5f, 0.0f), 5, input_colors[4]);
     rubick_cube.cubitos[8] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, 0.0f), 8, input_colors[16], input_colors[5]);
+                             glm::vec3(0.5f, 0.5f, 0.0f), 8, input_colors[16], input_colors[5]);
     rubick_cube.cubitos[11] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, 0.0f), 11, input_colors[22]);
+                              glm::vec3(-0.5f, 0.0f, 0.0f), 11, input_colors[22]);
     rubick_cube.cubitos[14] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, 0.0f), 14);
+                              glm::vec3(0.0f, 0.0f, 0.0f), 14);
     rubick_cube.cubitos[17] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, 0.0f), 17, input_colors[28]);
+                              glm::vec3(0.5f, 0.0f, 0.0f), 17, input_colors[28]);
     rubick_cube.cubitos[20] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, 0.0f), 20, input_colors[34], input_colors[48]);
+                              glm::vec3(-0.5f, -0.5f, 0.0f), 20, input_colors[34], input_colors[48]);
     rubick_cube.cubitos[23] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, 0.0f), 23, input_colors[49]);
+                              glm::vec3(0.0f, -0.5f, 0.0f), 23, input_colors[49]);
     rubick_cube.cubitos[26] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, 0.0f), 26, input_colors[40], input_colors[50]);
+                              glm::vec3(0.5f, -0.5f, 0.0f), 26, input_colors[40], input_colors[50]);
 
     rubick_cube.cubitos[1] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, 0.5f), 1, input_colors[12], input_colors[11],
-      input_colors[6]);
+                             glm::vec3(-0.5f, 0.5f, 0.5f), 1, input_colors[12], input_colors[11],
+                             input_colors[6]);
     rubick_cube.cubitos[4] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, 0.5f), 4, input_colors[13], input_colors[7]);
+                             glm::vec3(0.0f, 0.5f, 0.5f), 4, input_colors[13], input_colors[7]);
     rubick_cube.cubitos[7] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, 0.5f), 7, input_colors[14], input_colors[15],
-      input_colors[8]);
+                             glm::vec3(0.5f, 0.5f, 0.5f), 7, input_colors[14], input_colors[15],
+                             input_colors[8]);
     rubick_cube.cubitos[10] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, 0.5f), 10, input_colors[24], input_colors[23]);
+                              glm::vec3(-0.5f, 0.0f, 0.5f), 10, input_colors[24], input_colors[23]);
     rubick_cube.cubitos[13] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, 0.5f), 13, input_colors[25]);
+                              glm::vec3(0.0f, 0.0f, 0.5f), 13, input_colors[25]);
     rubick_cube.cubitos[16] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, 0.5f), 16, input_colors[26], input_colors[27]);
+                              glm::vec3(0.5f, 0.0f, 0.5f), 16, input_colors[26], input_colors[27]);
     rubick_cube.cubitos[19] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, 0.5f), 19, input_colors[36], input_colors[35],
-      input_colors[45]);
+                              glm::vec3(-0.5f, -0.5f, 0.5f), 19, input_colors[36], input_colors[35],
+                              input_colors[45]);
     rubick_cube.cubitos[22] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, 0.5f), 22, input_colors[37], input_colors[46]);
+                              glm::vec3(0.0f, -0.5f, 0.5f), 22, input_colors[37], input_colors[46]);
     rubick_cube.cubitos[25] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, 0.5f), 25, input_colors[38], input_colors[39],
-      input_colors[47]);
+                              glm::vec3(0.5f, -0.5f, 0.5f), 25, input_colors[38], input_colors[39],
+                              input_colors[47]);
   }
-  
+
   PrintCommands();
 
   while (!glfwWindowShouldClose(window)) {
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
+    anim_speed = 180.0f * deltaTime;
 
     processInput(window);
 
@@ -290,10 +292,9 @@ int main() {
                                   (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     view = camera.GetViewMatrix();
 
-    if (some_movement) {
+    if (some_movement)
       PlayAnimation();
-    }
-    
+
     rubick_cube.Draw(model, view, projection);
 
     glfwSwapBuffers(window);
@@ -308,8 +309,6 @@ void processInput(GLFWwindow* window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
-  float cameraSpeed = 2.5 * deltaTime;
-
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     camera.ProcessKeyboard(FORWARD, deltaTime);
 
@@ -323,79 +322,81 @@ void processInput(GLFWwindow* window) {
     camera.ProcessKeyboard(RIGHT, deltaTime);
 
   // Standard rubik's cube movements
-  if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
-      glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      U_PRIME_ANIM = true;
-      U_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+  if (!some_movement) {
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_PRIME_ANIM = true;
+        U_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-      D_PRIME_ANIM = true;
-      D_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_PRIME_ANIM = true;
+        D_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-      R_ANIM = true;
-      R_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_ANIM = true;
+        R_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      L_PRIME_ANIM = true;
-      L_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_PRIME_ANIM = true;
+        L_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-      F_PRIME_ANIM = true;
-      F_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_PRIME_ANIM = true;
+        F_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_ANIM = true;
-      B_ANIM_I = true;
-      some_movement = true;
+      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_ANIM = true;
+        B_ANIM_I = true;
+        some_movement = true;
+      }
     }
-  }
-  else {
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      U_ANIM = true;
-      U_ANIM_I = true;
-      some_movement = true;
-    }
+    else {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_ANIM = true;
+        U_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-      D_ANIM = true;
-      D_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_ANIM = true;
+        D_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-      R_PRIME_ANIM = true;
-      R_PRIME_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_PRIME_ANIM = true;
+        R_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      L_ANIM = true;
-      L_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_ANIM = true;
+        L_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-      F_ANIM = true;
-      F_ANIM_I = true;
-      some_movement = true;
-    }
+      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_ANIM = true;
+        F_ANIM_I = true;
+        some_movement = true;
+      }
 
-    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-      B_PRIME_ANIM = true;
-      B_PRIME_ANIM_I = true;
-      some_movement = true;
+      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_PRIME_ANIM = true;
+        B_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
     }
   }
 }
@@ -491,7 +492,7 @@ glm::vec3 CalculateTranslatePosition(float angle, Move m, const float& radius) {
 
     case R:
     case RP:
-      return glm::vec3(0.5f, 
+      return glm::vec3(0.5f,
                        radius * sin(deg(angle)),
                        radius * cos(deg(angle)));
       break;
@@ -522,7 +523,7 @@ void PlayAnimation() {
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
   const float* angles_limit;
-  float step, speed = 5.0f;
+  float step;
   int clockwise;
   Move current_move;
   int normalMove;
@@ -532,7 +533,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -speed;
+    step = -anim_speed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -542,7 +543,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = speed;
+    step = anim_speed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -552,7 +553,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -speed;
+    step = -anim_speed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -562,7 +563,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = speed;
+    step = anim_speed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -572,7 +573,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -speed;
+    step = -anim_speed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -585,7 +586,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = speed;
+    step = anim_speed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -598,7 +599,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -speed;
+    step = -anim_speed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -611,7 +612,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = speed;
+    step = anim_speed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -624,7 +625,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = speed;
+    step = anim_speed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -637,7 +638,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -speed;
+    step = -anim_speed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -650,7 +651,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = speed;
+    step = anim_speed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -663,7 +664,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -speed;
+    step = -anim_speed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -676,13 +677,13 @@ void PlayAnimation() {
     if (std::abs(angles_limit[i] - angles[i]) > kEpsilon) angles[i] += step;
     else {
       angles[i] = angles_limit[i];
-      cubitos[i].get()->Rotate(normalMove * clockwise, speed);
+      cubitos[i].get()->Rotate(normalMove * clockwise, anim_speed);
     }
 
     cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
                                   current_move, kRadioNormal));
 
-    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, anim_speed);
   }
 
   for (int i = 0; i < 8; i += 2) {
@@ -690,21 +691,21 @@ void PlayAnimation() {
       if (std::abs(angles_limit[i] - angles[i]) > kEpsilon) angles[i] += step;
       else {
         angles[i] = angles_limit[i];
-        cubitos[i].get()->Rotate(normalMove * clockwise, speed);
+        cubitos[i].get()->Rotate(normalMove * clockwise, anim_speed);
       }
 
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
                                     current_move, kRadioLarge));
     }
 
-    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, anim_speed);
   }
 
   if (std::abs(angles_limit[8] - angles[8]) > kEpsilon) angles[8] += step;
   else {
     angles[8] = angles_limit[8];
-    cubitos[8].get()->Rotate(normalMove * clockwise, speed);
-    cubitos[4].get()->Rotate(normalMove * clockwise, speed);
+    cubitos[8].get()->Rotate(normalMove * clockwise, anim_speed);
+    cubitos[4].get()->Rotate(normalMove * clockwise, anim_speed);
     F_ANIM_I = false;
     B_ANIM_I = false;
     F_PRIME_ANIM_I = false;
@@ -723,7 +724,7 @@ void PlayAnimation() {
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
                                 current_move, kRadioLarge));
 
-  cubitos[8].get()->Rotate(normalMove * -1 * clockwise, speed);
+  cubitos[8].get()->Rotate(normalMove * -1 * clockwise, anim_speed);
 
   // REASIGN POINTER
   if (!some_movement) {
