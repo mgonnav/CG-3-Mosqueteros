@@ -96,7 +96,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void PlayAnimation();
 
 const double PI = 3.14159;
-const float kEpsilon = 0.5f;
+float kAnimationSpeed = 5.0f;
 
 float deg(float num) {
   return (num * PI / 180);
@@ -105,7 +105,6 @@ float deg(float num) {
 float scale_figure = 1.0f;
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
-float anim_speed;
 
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 view = glm::mat4(1.0f);
@@ -119,6 +118,7 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = 500.0f;
 float lastY = 500.0f;
 bool first_time_mouse = true;
+bool can_press = true;
 
 const int kAroundXLeft = 1;
 const int kAroundXRight = -1;
@@ -189,7 +189,7 @@ int main() {
 
   Shader cubito_program("src/shaders/cubito.vs", "src/shaders/cubito.fs");
 
-  // glfwSetKeyCallback(window, key_callback);
+  glfwSetKeyCallback(window, key_callback);
   glfwSetScrollCallback(window, scroll_callback);
   glfwSetCursorPosCallback(window, mouse_callback);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -281,7 +281,14 @@ int main() {
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
-    anim_speed = 180.0f * deltaTime;
+
+    if (some_movement) {
+      can_press = false;
+      PlayAnimation();
+    }
+    else {
+      can_press = true;
+    }
 
     processInput(window);
 
@@ -292,9 +299,6 @@ int main() {
                                   (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     view = camera.GetViewMatrix();
 
-    if (some_movement)
-      PlayAnimation();
-
     rubick_cube.Draw(model, view, projection);
 
     glfwSwapBuffers(window);
@@ -303,6 +307,88 @@ int main() {
 
   glfwTerminate();
   return 0;
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action,
+                  int mods) {
+  // Standard rubik's cube movements
+  if (can_press) {
+    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
+        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_PRIME_ANIM = true;
+        U_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_PRIME_ANIM = true;
+        D_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_ANIM = true;
+        R_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_PRIME_ANIM = true;
+        L_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_PRIME_ANIM = true;
+        F_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_ANIM = true;
+        B_ANIM_I = true;
+        some_movement = true;
+      }
+    }
+    else {
+      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+        U_ANIM = true;
+        U_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        D_ANIM = true;
+        D_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        R_PRIME_ANIM = true;
+        R_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        L_ANIM = true;
+        L_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+        F_ANIM = true;
+        F_ANIM_I = true;
+        some_movement = true;
+      }
+
+      else if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        B_PRIME_ANIM = true;
+        B_PRIME_ANIM_I = true;
+        some_movement = true;
+      }
+    }
+  }
 }
 
 void processInput(GLFWwindow* window) {
@@ -320,85 +406,6 @@ void processInput(GLFWwindow* window) {
 
   if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     camera.ProcessKeyboard(RIGHT, deltaTime);
-
-  // Standard rubik's cube movements
-  if (!some_movement) {
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-        U_PRIME_ANIM = true;
-        U_PRIME_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        D_PRIME_ANIM = true;
-        D_PRIME_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        R_ANIM = true;
-        R_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        L_PRIME_ANIM = true;
-        L_PRIME_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        F_PRIME_ANIM = true;
-        F_PRIME_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-        B_ANIM = true;
-        B_ANIM_I = true;
-        some_movement = true;
-      }
-    }
-    else {
-      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-        U_ANIM = true;
-        U_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        D_ANIM = true;
-        D_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        R_PRIME_ANIM = true;
-        R_PRIME_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        L_ANIM = true;
-        L_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        F_ANIM = true;
-        F_ANIM_I = true;
-        some_movement = true;
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-        B_PRIME_ANIM = true;
-        B_PRIME_ANIM_I = true;
-        some_movement = true;
-      }
-    }
-  }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -519,6 +526,28 @@ glm::vec3 CalculateTranslatePosition(float angle, Move m, const float& radius) {
   }
 }
 
+bool CompareAngles(const float& angle_limit, const float& angle, Move m) {
+  switch (m) {
+    case U:
+    case DP:
+    case RP:
+    case LP:
+    case FP:
+    case BP:
+      return angle < angle_limit;
+      break;
+
+    case UP:
+    case D:
+    case R:
+    case L:
+    case F:
+    case B:
+      return angle > angle_limit;
+      break;
+  }
+}
+
 void PlayAnimation() {
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
@@ -533,7 +562,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -anim_speed;
+    step = -kAnimationSpeed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -543,7 +572,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = anim_speed;
+    step = kAnimationSpeed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -553,7 +582,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -anim_speed;
+    step = -kAnimationSpeed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -563,7 +592,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = anim_speed;
+    step = kAnimationSpeed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -573,7 +602,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -anim_speed;
+    step = -kAnimationSpeed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -586,7 +615,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = anim_speed;
+    step = kAnimationSpeed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -599,7 +628,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -anim_speed;
+    step = -kAnimationSpeed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -612,7 +641,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = anim_speed;
+    step = kAnimationSpeed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -625,7 +654,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = anim_speed;
+    step = kAnimationSpeed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -638,7 +667,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -anim_speed;
+    step = -kAnimationSpeed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -651,7 +680,7 @@ void PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = anim_speed;
+    step = kAnimationSpeed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -664,7 +693,7 @@ void PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -anim_speed;
+    step = -kAnimationSpeed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -674,38 +703,38 @@ void PlayAnimation() {
   }
 
   for (int i = 1; i <= 7; i += 2) {
-    if (std::abs(angles_limit[i] - angles[i]) > kEpsilon) angles[i] += step;
+    if (CompareAngles(angles_limit[i], angles[i], current_move)) angles[i] += step;
     else {
       angles[i] = angles_limit[i];
-      cubitos[i].get()->Rotate(normalMove * clockwise, anim_speed);
+      cubitos[i].get()->Rotate(normalMove * clockwise, kAnimationSpeed);
     }
 
     cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
                                   current_move, kRadioNormal));
 
-    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, anim_speed);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, kAnimationSpeed);
   }
 
   for (int i = 0; i < 8; i += 2) {
     if (i != 4) {
-      if (std::abs(angles_limit[i] - angles[i]) > kEpsilon) angles[i] += step;
+      if (CompareAngles(angles_limit[i], angles[i], current_move)) angles[i] += step;
       else {
         angles[i] = angles_limit[i];
-        cubitos[i].get()->Rotate(normalMove * clockwise, anim_speed);
+        cubitos[i].get()->Rotate(normalMove * clockwise, kAnimationSpeed);
       }
 
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
                                     current_move, kRadioLarge));
     }
 
-    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, anim_speed);
+    cubitos[i].get()->Rotate(normalMove * -1 * clockwise, kAnimationSpeed);
   }
 
-  if (std::abs(angles_limit[8] - angles[8]) > kEpsilon) angles[8] += step;
+  if (CompareAngles(angles_limit[8], angles[8], current_move)) angles[8] += step;
   else {
     angles[8] = angles_limit[8];
-    cubitos[8].get()->Rotate(normalMove * clockwise, anim_speed);
-    cubitos[4].get()->Rotate(normalMove * clockwise, anim_speed);
+    cubitos[8].get()->Rotate(normalMove * clockwise, kAnimationSpeed);
+    cubitos[4].get()->Rotate(normalMove * clockwise, kAnimationSpeed);
     F_ANIM_I = false;
     B_ANIM_I = false;
     F_PRIME_ANIM_I = false;
@@ -724,7 +753,7 @@ void PlayAnimation() {
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
                                 current_move, kRadioLarge));
 
-  cubitos[8].get()->Rotate(normalMove * -1 * clockwise, anim_speed);
+  cubitos[8].get()->Rotate(normalMove * -1 * clockwise, kAnimationSpeed);
 
   // REASIGN POINTER
   if (!some_movement) {
