@@ -158,16 +158,12 @@ void PrintCommands() {
   std::cout << "\tF: F\n";
   std::cout << "\tShift + F: F'\n";
   std::cout << "\tB: B\n";
-  std::cout << "\tShift + B: B'" << std::endl;
+  std::cout << "\tShift + B: B'\n\n";
+  std::cout << "\tZ: Scramble\n";
+  std::cout << "\tX: Solve the cube\n" << std::endl;
 }
 
-int main() {
-  // ----- Test solver --- //
-
-  // std::string solution = rubik::solve("R' F U' D2 R F R' L2 F' B2 U' F2 B' R2 B D2 B' U2 R2");
-  // std::cout << "Solution: " << solution << std::endl;
-
-  // ----- Test solver --- //
+int main(int argc, char *argv[]) {
 
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -220,79 +216,77 @@ int main() {
   // CREATING EACH CUBITO OF RUBICK CUBE
   {
     rubick_cube.cubitos[3] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
-      input_colors[0]);
+                                                      glm::vec3(-0.5f, 0.5f, -0.5f), 3, input_colors[20], input_colors[9],
+                                                      input_colors[0]);
     rubick_cube.cubitos[6] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, -0.5f), 6, input_colors[19], input_colors[1]);
+                                                      glm::vec3(0.0f, 0.5f, -0.5f), 6, input_colors[19], input_colors[1]);
     rubick_cube.cubitos[9] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, -0.5f), 9, input_colors[18], input_colors[17],
-      input_colors[2]);
+                                                      glm::vec3(0.5f, 0.5f, -0.5f), 9, input_colors[18], input_colors[17],
+                                                      input_colors[2]);
     rubick_cube.cubitos[12] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, -0.5f), 12, input_colors[32], input_colors[21]);
+                                                       glm::vec3(-0.5f, 0.0f, -0.5f), 12, input_colors[32], input_colors[21]);
     rubick_cube.cubitos[15] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, -0.5f), 15, input_colors[31]);
+                                                       glm::vec3(0.0f, 0.0f, -0.5f), 15, input_colors[31]);
     rubick_cube.cubitos[18] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, -0.5f), 18, input_colors[30], input_colors[29]);
+                                                       glm::vec3(0.5f, 0.0f, -0.5f), 18, input_colors[30], input_colors[29]);
     rubick_cube.cubitos[21] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, -0.5f), 21, input_colors[44], input_colors[33],
-      input_colors[51]);
+                                                       glm::vec3(-0.5f, -0.5f, -0.5f), 21, input_colors[44], input_colors[33],
+                                                       input_colors[51]);
     rubick_cube.cubitos[24] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, -0.5f), 24, input_colors[43], input_colors[52]);
+                                                       glm::vec3(0.0f, -0.5f, -0.5f), 24, input_colors[43], input_colors[52]);
     rubick_cube.cubitos[27] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, -0.5f), 27, input_colors[42], input_colors[41],
-      input_colors[53]);
+                                                       glm::vec3(0.5f, -0.5f, -0.5f), 27, input_colors[42], input_colors[41],
+                                                       input_colors[53]);
 
     rubick_cube.cubitos[2] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, 0.0f), 2, input_colors[10], input_colors[3]);
+                                                      glm::vec3(-0.5f, 0.5f, 0.0f), 2, input_colors[10], input_colors[3]);
     rubick_cube.cubitos[5] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, 0.0f), 5, input_colors[4]);
+                                                      glm::vec3(0.0f, 0.5f, 0.0f), 5, input_colors[4]);
     rubick_cube.cubitos[8] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, 0.0f), 8, input_colors[16], input_colors[5]);
+                                                      glm::vec3(0.5f, 0.5f, 0.0f), 8, input_colors[16], input_colors[5]);
     rubick_cube.cubitos[11] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, 0.0f), 11, input_colors[22]);
+                                                       glm::vec3(-0.5f, 0.0f, 0.0f), 11, input_colors[22]);
     rubick_cube.cubitos[14] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, 0.0f), 14);
+                                                       glm::vec3(0.0f, 0.0f, 0.0f), 14);
     rubick_cube.cubitos[17] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, 0.0f), 17, input_colors[28]);
+                                                       glm::vec3(0.5f, 0.0f, 0.0f), 17, input_colors[28]);
     rubick_cube.cubitos[20] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, 0.0f), 20, input_colors[34], input_colors[48]);
+                                                       glm::vec3(-0.5f, -0.5f, 0.0f), 20, input_colors[34], input_colors[48]);
     rubick_cube.cubitos[23] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, 0.0f), 23, input_colors[49]);
+                                                       glm::vec3(0.0f, -0.5f, 0.0f), 23, input_colors[49]);
     rubick_cube.cubitos[26] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, 0.0f), 26, input_colors[40], input_colors[50]);
+                                                       glm::vec3(0.5f, -0.5f, 0.0f), 26, input_colors[40], input_colors[50]);
 
     rubick_cube.cubitos[1] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.5f, 0.5f), 1, input_colors[12], input_colors[11],
-      input_colors[6]);
+                                                      glm::vec3(-0.5f, 0.5f, 0.5f), 1, input_colors[12], input_colors[11],
+                                                      input_colors[6]);
     rubick_cube.cubitos[4] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.5f, 0.5f), 4, input_colors[13], input_colors[7]);
+                                                      glm::vec3(0.0f, 0.5f, 0.5f), 4, input_colors[13], input_colors[7]);
     rubick_cube.cubitos[7] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.5f, 0.5f), 7, input_colors[14], input_colors[15],
-      input_colors[8]);
+                                                      glm::vec3(0.5f, 0.5f, 0.5f), 7, input_colors[14], input_colors[15],
+                                                      input_colors[8]);
     rubick_cube.cubitos[10] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, 0.0f, 0.5f), 10, input_colors[24], input_colors[23]);
+                                                       glm::vec3(-0.5f, 0.0f, 0.5f), 10, input_colors[24], input_colors[23]);
     rubick_cube.cubitos[13] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, 0.0f, 0.5f), 13, input_colors[25]);
+                                                       glm::vec3(0.0f, 0.0f, 0.5f), 13, input_colors[25]);
     rubick_cube.cubitos[16] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, 0.0f, 0.5f), 16, input_colors[26], input_colors[27]);
+                                                       glm::vec3(0.5f, 0.0f, 0.5f), 16, input_colors[26], input_colors[27]);
     rubick_cube.cubitos[19] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(-0.5f, -0.5f, 0.5f), 19, input_colors[36], input_colors[35],
-      input_colors[45]);
+                                                       glm::vec3(-0.5f, -0.5f, 0.5f), 19, input_colors[36], input_colors[35],
+                                                       input_colors[45]);
     rubick_cube.cubitos[22] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.0f, -0.5f, 0.5f), 22, input_colors[37], input_colors[46]);
+                                                       glm::vec3(0.0f, -0.5f, 0.5f), 22, input_colors[37], input_colors[46]);
     rubick_cube.cubitos[25] = std::make_shared<Cubito>(cubito_program,
-      glm::vec3(0.5f, -0.5f, 0.5f), 25, input_colors[38], input_colors[39],
-      input_colors[47]);
+                                                       glm::vec3(0.5f, -0.5f, 0.5f), 25, input_colors[38], input_colors[39],
+                                                       input_colors[47]);
   }
   
   PrintCommands();
 
   StartParser();
 
-  std::string str_scramble = GenScramble(15);
+  std::string str_scramble = (argc == 2 ? argv[1] : GenScramble(15));
   std::string str_solution = rubik::solve(str_scramble);
-  //std::cout << str_scramble << std::endl;
-  //std::cout << str_solution << std::endl;
   std::vector<Move> scramble = ParseOutput(str_scramble);
   std::vector<Move> solution = ParseOutput(str_solution);
   int idx_shuffle = 0, idx_solution = 0;
@@ -806,7 +800,7 @@ void PlayAnimation() {
     }
 
     cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-                                  current_move, kRadioNormal));
+                                                             current_move, kRadioNormal));
 
     cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
   }
@@ -820,7 +814,7 @@ void PlayAnimation() {
       }
 
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-                                    current_move, kRadioLarge));
+                                                               current_move, kRadioLarge));
     }
 
     cubitos[i].get()->Rotate(normalMove * -1 * clockwise, speed);
@@ -847,7 +841,7 @@ void PlayAnimation() {
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
-                                current_move, kRadioLarge));
+                                                           current_move, kRadioLarge));
 
   cubitos[8].get()->Rotate(normalMove * -1 * clockwise, speed);
 
