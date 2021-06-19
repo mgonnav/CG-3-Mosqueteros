@@ -32,9 +32,7 @@
 #include "stb_image.h"
 #include "Shader.h"
 #include "GameController.hpp"
-#include "solver/Rubik.hpp"
 #include "Setting.hpp"
-
 
 // IF YOU WANT TO KNOW INFO AFTER ONE MOVEMENT
 #define DEBUG 0
@@ -111,11 +109,11 @@ int main(int argc, char *argv[]) {
     view = camera.GetViewMatrix();
 
     // God actions
-    game_controller.ProcessInput(deltaTime);
+    game_controller.ProcessInput();
     
     game_controller.UpdateMatrices(model,view,projection);
 
-    game_controller.UpdateGame(deltaTime);
+    game_controller.UpdateGame();
 
     // Render All
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -136,124 +134,21 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
-  if (game_controller.can_press) {
+  if (key == GLFW_KEY_LEFT_SHIFT ||
+      key == GLFW_KEY_RIGHT_SHIFT) {
+    game_controller.keys_press[key] = true;
+  }
+
+  if (game_controller.can_press && !game_controller.shuffle_anim
+      && !game_controller.solution_anim) {
     if (key >= 0 && key < 1024)
       if (action == GLFW_PRESS)
         game_controller.keys_press[key] = true;
   }
-  else {}
 
   if (action == GLFW_RELEASE) {
     game_controller.keys_press[key] = false;
     game_controller.keys_already_press[key] = false;
-  }
-
-  // Solver
-  if (!game_controller.solution_anim && !game_controller.shuffle_anim
-      && !game_controller.some_movement) {
-    if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS) {
-      std::string new_str_scramble = game_controller.GenScramble(10);
-      game_controller.scramble = game_controller.ParseOutput(new_str_scramble);
-      game_controller.str_scramble += new_str_scramble;
-      game_controller.shuffle_anim = true;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
-      if (!game_controller.str_scramble.empty()) {
-       game_controller.str_solution = rubik::solve(game_controller.str_scramble);
-       game_controller.solution = game_controller.ParseOutput(game_controller.str_solution);
-       game_controller.solution_anim = true;
-      }
-    }
-
-    // Standard rubik's cube movements
-    if (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS ||
-        glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-        game_controller.U_PRIME_ANIM = true;
-        game_controller.U_PRIME_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "U' ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        game_controller.D_PRIME_ANIM = true;
-        game_controller.D_PRIME_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "D' ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        game_controller.R_ANIM = true;
-        game_controller.R_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "R' ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        game_controller.L_PRIME_ANIM = true;
-        game_controller.L_PRIME_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "L' ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        game_controller.F_PRIME_ANIM = true;
-        game_controller.F_PRIME_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "F' ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-        game_controller.B_ANIM = true;
-        game_controller.B_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "B' ";
-      }
-    }
-    else {
-      if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-        game_controller.U_ANIM = true;
-        game_controller.U_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "U ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        game_controller.D_ANIM = true;
-        game_controller.D_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "D ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        game_controller.R_PRIME_ANIM = true;
-        game_controller.R_PRIME_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "R ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-        game_controller.L_ANIM = true;
-        game_controller.L_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "L ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
-        game_controller.F_ANIM = true;
-        game_controller.F_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "F ";
-      }
-
-      if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
-        game_controller.B_PRIME_ANIM = true;
-        game_controller.B_PRIME_ANIM_I = true;
-        game_controller.some_movement = true;
-        game_controller.str_scramble += "B ";
-      }
-    }
   }
 }
 

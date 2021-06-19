@@ -17,6 +17,7 @@
 #include "Rendered.hpp"
 #include "Resources.hpp"
 #include "Setting.hpp"
+#include "solver/Rubik.hpp"
 
 class GameController {
 
@@ -86,15 +87,14 @@ class GameController {
   void Render();
   void ResetAngles();
   void PlayAnimation();
-  void UpdateGame(float);
-  void ProcessInput(float);
+  void UpdateGame();
+  void ProcessInput();
   void UpdateMatrices(glm::mat4, glm::mat4, glm::mat4);
   glm::vec3 CalculateTranslatePosition(float, Move, const float&);
 
   void StartParser();
   std::string GenScramble(int);
   std::vector<Move> ParseOutput(std::string);
-
 };
 
 // --------------------------------------------------------------------------------------
@@ -411,131 +411,135 @@ void GameController::Init() {
   }
 }
 
-void GameController::ProcessInput(float delta_time) {
-    if (( this->keys_press[GLFW_KEY_RIGHT_SHIFT] && !this->keys_already_press[GLFW_KEY_RIGHT_SHIFT]) ||
-      (this->keys_press[GLFW_KEY_LEFT_SHIFT] && !this->keys_already_press[GLFW_KEY_LEFT_SHIFT])) {
-      
-        if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U])
-        {
-          U_PRIME_ANIM = true;
-          U_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_U] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-
-        if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D])
-        {
-          D_PRIME_ANIM = true;
-          D_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_D] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-
-        if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R])
-        {
-          R_ANIM = true;
-          R_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_R] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-        
-        if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L])
-        {
-          L_PRIME_ANIM = true;
-          L_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_L] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-
-        if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F])
-        {
-          F_PRIME_ANIM = true;
-          F_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_F] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-      
-        if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B])
-        {
-          B_ANIM = true;
-          B_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_B] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
+void GameController::ProcessInput() {
+  if (this->keys_press[GLFW_KEY_RIGHT_SHIFT] ||
+      this->keys_press[GLFW_KEY_LEFT_SHIFT]) {
+    if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U]) {
+      this->U_PRIME_ANIM = true;
+      this->U_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_U] = true;
+      this->str_scramble += "U' ";
     }
-    else {
-      if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U])
-      {
-        U_ANIM = true;
-        U_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_U] = true;
-      }
 
-      if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D])
-      {
-        D_ANIM = true;
-        D_ANIM_I = true;
-        this->some_movement = true;
-        this->can_press = false;
-        this->keys_already_press[GLFW_KEY_D] = true;
-      }
-
-      if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R])
-      {
-        R_PRIME_ANIM = true;
-        R_PRIME_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_R] = true;
-      }
-      
-      if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L])
-      {
-        L_ANIM = true;
-        L_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_L] = true;
-      }
-      
-      if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F])
-      {
-        F_ANIM = true;
-        F_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_F] = true;
-      }
-     
-      if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B])
-      {
-        B_PRIME_ANIM = true;
-        B_PRIME_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_B] = true;
-      }
+    if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D]) {
+      this->D_PRIME_ANIM = true;
+      this->D_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_D] = true;
+      this->str_scramble += "D' ";
     }
+
+    if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R]) {
+      this->R_ANIM = true;
+      this->R_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_R] = true;
+      this->str_scramble += "R' ";
+    }
+
+    if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L]) {
+      this->L_PRIME_ANIM = true;
+      this->L_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_L] = true;
+      this->str_scramble += "L' ";
+    }
+
+    if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F]) {
+      this->F_PRIME_ANIM = true;
+      this->F_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_F] = true;
+      this->str_scramble += "F' ";
+    }
+
+    if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B]) {
+      this->B_ANIM = true;
+      this->B_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_B] = true;
+      this->str_scramble += "B' ";
+    }
+  }
+  else {
+    if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U]) {
+      this->U_ANIM = true;
+      this->U_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_U] = true;
+      this->str_scramble += "U ";
+    }
+
+    if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D]) {
+      this->D_ANIM = true;
+      this->D_ANIM_I = true;
+      this->some_movement = true;
+      this->can_press = false;
+      this->keys_already_press[GLFW_KEY_D] = true;
+      this->str_scramble += "D ";
+    }
+
+    if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R]) {
+      this->R_PRIME_ANIM = true;
+      this->R_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_R] = true;
+      this->str_scramble += "R ";
+    }
+
+    if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L]) {
+      this->L_ANIM = true;
+      this->L_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_L] = true;
+      this->str_scramble += "L ";
+    }
+
+    if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F]) {
+      this->F_ANIM = true;
+      this->F_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_F] = true;
+      this->str_scramble += "F ";
+    }
+
+    if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B]) {
+      this->B_PRIME_ANIM = true;
+      this->B_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_B] = true;
+      this->str_scramble += "B ";
+    }
+  }
+
+  if (this->keys_press[GLFW_KEY_Z] && !this->keys_already_press[GLFW_KEY_Z]) {
+    std::string new_str_scramble = GenScramble(10);
+    this->scramble = ParseOutput(new_str_scramble);
+    this->str_scramble += new_str_scramble;
+    this->can_press = false;
+    this->shuffle_anim = true;
+    this->keys_already_press[GLFW_KEY_Z] = true;
+  }
+
+  if (this->keys_press[GLFW_KEY_X] && !this->keys_already_press[GLFW_KEY_X]) {
+    this->str_solution = rubik::solve(str_scramble);
+    this->solution = ParseOutput(str_solution);
+    this->can_press = false;
+    this->solution_anim = true;
+    this->keys_already_press[GLFW_KEY_X] = true;
+  }
 }
 
 void GameController::Render() {
@@ -557,12 +561,12 @@ void GameController::ResetAngles() {
   move_angles[8] = 315.0f;
 }
 
-void GameController::UpdateGame(float delta_time) {
+void GameController::UpdateGame() {
   if (this->some_movement) {
     this->PlayAnimation();
   }
   else {
-    if (shuffle_anim) {
+    if (this->shuffle_anim) {
       if (idx_scramble == scramble.size()) {
         shuffle_anim = false;
         scramble.clear();
@@ -842,6 +846,7 @@ void GameController::PlayAnimation() {
     U_PRIME_ANIM = false;
     D_ANIM = false;
     D_PRIME_ANIM = false;
+    can_press = true;
   }
 }
 
