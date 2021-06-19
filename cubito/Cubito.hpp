@@ -1,5 +1,5 @@
-#ifndef CUBITO_H
-#define CUBITO_H
+#ifndef CUBITO_CUBITO_HPP
+#define CUBITO_CUBITO_HPP
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -7,71 +7,88 @@
 #include <glm/gtx/io.hpp>
 
 #include "Shader.h"
+#include "Rendered.hpp"
 
+class Cubito {
 
-class Cubito
-{
 private:
+
+	int id = -1;
 	Shader shader;
-	unsigned int quadVAO;
-	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::mat4 GetPositionOnWorld(glm::mat4&);
-	glm::vec3 color1;
-	glm::vec3 color2;
-	glm::vec3 color3;
-	int id;
+	Texture texture1;
+	Texture texture2;
+	Texture texture3;
+	Texture texture4;
+	unsigned int quadVAO = -1;
+	glm::vec3 color1 = glm::vec3(0.1f, 0.1f, 0.1f);
+	glm::vec3 color2 = glm::vec3(0.1f, 0.1f, 0.1f);
+	glm::vec3 color3 = glm::vec3(0.1f, 0.1f, 0.1f);
 	glm::mat4 rotation = glm::mat4(1.0f);
+	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+	
+	glm::mat4 GetPositionOnWorld(glm::mat4&);
 
 public:
-	void InitialRender();
-	Cubito(Shader&, glm::vec3, int, glm::vec3, glm::vec3, glm::vec3);
+
+	Cubito(Texture, Texture, Texture, Texture, const Shader&, 
+				 glm::vec3, int, glm::vec3, glm::vec3, glm::vec3);
 	Cubito() {}
-	~Cubito();
-	void DrawSprite(glm::mat4&, glm::mat4&, glm::mat4&);
-	void Rotate(int around_axis, float angle);
-	void MyData();
-  void SetPosition(glm::vec3 new_position);
+  ~Cubito();
+
+	void AllData();
+	void InitialRender();
+	void RotateAround(int around_axis, float angle);
+  void SetPosition(glm::vec3);
+	void Draw(Rendered&, glm::mat4&, glm::mat4&, glm::mat4&);
 };
 
-//==============================================================================================
+// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
 
-Cubito::Cubito (Shader& shader,
-								glm::vec3 first_position,
-								int new_id,
-								glm::vec3 color1n = glm::vec3(0.1f, 0.1f, 0.1f),
-								glm::vec3 color2n = glm::vec3(0.1f, 0.1f, 0.1f),
-								glm::vec3 color3n = glm::vec3(0.1f, 0.1f, 0.1f)) {
-	this->id = new_id;
-	this->shader = shader;
-	position = first_position;
-	this->color1 = color1n;
-	this->color2 = color2n;
-	this->color3 = color3n;
+Cubito::Cubito (
+	Texture new_texture1,
+	Texture new_texture2,
+	Texture new_texture3,
+	Texture new_texture4,
+	const Shader& shader,
+	glm::vec3 first_position,
+	int new_id,
+	glm::vec3 color1n = glm::vec3(0.1f, 0.1f, 0.1f),
+	glm::vec3 color2n = glm::vec3(0.1f, 0.1f, 0.1f),
+	glm::vec3 color3n = glm::vec3(0.1f, 0.1f, 0.1f)) :
+	texture1(new_texture1),
+	texture2(new_texture2),
+	texture3(new_texture3),
+	texture4(new_texture4),
+	id(new_id),
+	shader(shader),
+	position(first_position),
+	color1(color1n),
+	color2(color2n),
+	color3(color3n) {
 	this->InitialRender();
 }
 
-Cubito::~Cubito()
-{
+Cubito::~Cubito() {
 	glDeleteVertexArrays(1, &this->quadVAO);
 }
 
-void Cubito::DrawSprite(glm::mat4& model, glm::mat4& view, glm::mat4& projection) {
-	this->shader.use();
-
-	glm::mat4 position_on_world = GetPositionOnWorld(model);
-	
-	unsigned int model_location = glGetUniformLocation(this->shader.ID, "model");
-	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
-	
-	unsigned int view_location = glGetUniformLocation(this->shader.ID, "view");
-	glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
-	
-	unsigned int projection_location = glGetUniformLocation(this->shader.ID, "projection");
-	glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
-
-	glBindVertexArray(this->quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
-	glBindVertexArray(0);
+void Cubito::Draw(Rendered &rendered, 
+	glm::mat4& model, 
+	glm::mat4& view, 
+	glm::mat4& projection) {
+	rendered.DrawSprite(this->id, 
+		this->quadVAO, 
+		this->texture1, 
+		this->texture2,
+		this->texture3,
+		this->texture4,
+		this->position, 
+		this->rotation, 
+		model, 
+		view, 
+		projection);
 }
 
 glm::mat4 Cubito::GetPositionOnWorld(glm::mat4& model) {
@@ -87,7 +104,7 @@ void Cubito::SetPosition(glm::vec3 new_position) {
   this->position = new_position;
 }
 
-void Cubito::Rotate(int around_axis, float angle) {
+void Cubito::RotateAround(int around_axis, float angle) {
 	// kAroundXLeft = 1;
 	// kAroundXRight = -1;
 	// kAroundYLeft = -2;
@@ -160,7 +177,6 @@ void Cubito::Rotate(int around_axis, float angle) {
 
 void Cubito::InitialRender() {
   unsigned int VBO;
-
 
 	float vertices_1[28][288] = {
 	{
@@ -1556,9 +1572,9 @@ void Cubito::InitialRender() {
 
 }
 
-void Cubito::MyData() {
+void Cubito::AllData() {
 	std::cout << " rotation: " << this->rotation << std::endl;
 	std::cout << " position: " << this->position << std::endl;
 }
 
-#endif // CUBITO_H
+#endif // CUBITO_CUBITO_HPP

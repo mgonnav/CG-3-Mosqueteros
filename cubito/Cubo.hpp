@@ -1,49 +1,38 @@
-#ifndef CUBO_H
-#define CUBO_H
-
-#include "Cubito.hpp"
-#include "Shader.h"
+#ifndef CUBITO_CUBO_HPP
+#define CUBITO_CUBO_HPP
 
 #include <vector>
 #include <memory>
 
+#include "Cubito.hpp"
+#include "Shader.h"
+#include "Rendered.hpp"
+
 class Cubo {
+
  public:
+	
 	Cubo();
+
 	std::vector<std::shared_ptr<Cubito>> cubitos;
-	void Draw(glm::mat4&, glm::mat4&, glm::mat4&);
-	void Move(int);
+	void Draw(Rendered&, glm::mat4&, glm::mat4&, glm::mat4&);
+
 };
 
-// =========================================================
-// =========================================================
-// =========================================================
+// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------
 
 Cubo::Cubo() {
 	cubitos.resize(28);
 }
 
-void Cubo::Draw(glm::mat4& model, glm::mat4& view, glm::mat4& projection) {
+void Cubo::Draw(Rendered& rendered, 
+	glm::mat4& model, 
+	glm::mat4& view, 
+	glm::mat4& projection) {
 	for (int i = 1; i <= 27; ++i)
-		this->cubitos[i]->DrawSprite(model, view, projection);
+		this->cubitos[i]->Draw(rendered, model, view, projection);
 }
 
-void Cubo::Move (int move) {
-	switch (move)	{
-	case 1: {std::cout << "MOVE VERTICAL LEFT - UP" << std::endl; break; }
-	case 2: {std::cout << "MOVE VERTICAL LEFT - DOWN" << std::endl; break; }
-	case 3: {std::cout << "MOVE VERTICAL MID - DOWN" << std::endl; break; }
-	case 4: {std::cout << "MOVE VERTICAL MID - UP" << std::endl; break; }
-	case 5: {std::cout << "MOVE VERTICAL RIGHT - UP" << std::endl; break; }
-	case 6: {std::cout << "MOVE VERTICAL RIGHT - DOWN" << std::endl; break; }
-	case 7: {std::cout << "MOVE HORIZONTAL UP- LEFT" << std::endl; break; }
-	case 8: {std::cout << "MOVE HORIZONTAL UP - RIGHT" << std::endl; break; }
-	case 9: {std::cout << "MOVE HORIZONTAL MID - LEFT" << std::endl; break; }
-	case 10: {std::cout << "MOVE HORIZONTAL MID - RIGHT" << std::endl; break; }
-	case 11: {std::cout << "MOVE HORIZONTAL DOWN - LEFT" << std::endl; break; }
-	case 12: {std::cout << "MOVE HORIZONTAL DOWN - RIGHT" << std::endl; break; }
-	default: {	std::cout << "THIS DOESNT PRINT" << std::endl; break; }
-	}
-};
-
-#endif // CUBO_H
+#endif // CUBITO_CUBO_HPP
