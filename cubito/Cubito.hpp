@@ -30,14 +30,14 @@ private:
 
 public:
 
-	Cubito(Texture, Texture, Texture, Texture, Shader&, 
+	Cubito(Texture, Texture, Texture, Texture, const Shader&, 
 				 glm::vec3, int, glm::vec3, glm::vec3, glm::vec3);
 	Cubito() {}
   ~Cubito();
 
 	void AllData();
 	void InitialRender();
-	void RotateAround(int);
+	void RotateAround(int around_axis, float angle);
   void SetPosition(glm::vec3);
 	void Draw(Rendered&, glm::mat4&, glm::mat4&, glm::mat4&);
 };
@@ -51,7 +51,7 @@ Cubito::Cubito (
 	Texture new_texture2,
 	Texture new_texture3,
 	Texture new_texture4,
-	Shader& shader,
+	const Shader& shader,
 	glm::vec3 first_position,
 	int new_id,
 	glm::vec3 color1n = glm::vec3(0.1f, 0.1f, 0.1f),
@@ -104,7 +104,7 @@ void Cubito::SetPosition(glm::vec3 new_position) {
   this->position = new_position;
 }
 
-void Cubito::RotateAround(int around_axis) {
+void Cubito::RotateAround(int around_axis, float angle) {
 	// kAroundXLeft = 1;
 	// kAroundXRight = -1;
 	// kAroundYLeft = -2;
@@ -115,7 +115,7 @@ void Cubito::RotateAround(int around_axis) {
 		case 1: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(1.0f),
+				glm::radians(angle),
 				glm::vec3(1.0f, 0.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -125,7 +125,7 @@ void Cubito::RotateAround(int around_axis) {
 		case -1: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(-1.0f),
+				glm::radians(-angle),
 				glm::vec3(1.0f, 0.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -135,7 +135,7 @@ void Cubito::RotateAround(int around_axis) {
 		case 2: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(-1.0f),
+				glm::radians(-angle),
 				glm::vec3(0.0f, 1.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -145,7 +145,7 @@ void Cubito::RotateAround(int around_axis) {
 		case -2: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(1.0f),
+				glm::radians(angle),
 				glm::vec3(0.0f, 1.0f, 0.0f));
 
 			rotation = temporal * rotation;
@@ -155,7 +155,7 @@ void Cubito::RotateAround(int around_axis) {
 		case 3: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(1.0f),
+				glm::radians(angle),
 				glm::vec3(0.0f, 0.0f, 1.0f));
 
 			rotation = temporal * rotation;
@@ -165,7 +165,7 @@ void Cubito::RotateAround(int around_axis) {
 		case -3: {
 			glm::mat4 temporal = glm::mat4(1.0f);
 			temporal = glm::rotate(temporal,
-				glm::radians(-1.0f),
+				glm::radians(-angle),
 				glm::vec3(0.0f, 0.0f, 1.0f));
 
 			rotation = temporal * rotation;

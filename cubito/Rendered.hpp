@@ -12,7 +12,7 @@ class Rendered {
 
  public:
 
-  Rendered(Shader &shader);
+  Rendered(const Shader &shader);
   ~Rendered();
 
   void DrawSprite(int, unsigned int, Texture&, Texture&, Texture&, Texture&, 
@@ -28,7 +28,7 @@ class Rendered {
 // --------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------
 
-Rendered::Rendered(Shader &shader) {
+Rendered::Rendered(const Shader &shader) {
     this->shader = shader;
 }
 

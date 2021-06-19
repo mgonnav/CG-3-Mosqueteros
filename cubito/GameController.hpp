@@ -12,6 +12,7 @@
 #include <tuple>
 #include <sstream>
 #include <vector>
+#include <string>
 
 #include "Rendered.hpp"
 #include "Resources.hpp"
@@ -20,11 +21,11 @@
 class GameController {
 
  public:
-  
+
   // COntructor and destructor
   GameController(unsigned int, unsigned int);
   ~GameController();
-      
+
   // Things on game
   Rendered* Renderer = nullptr;
   Cubo rubick_cube;
@@ -35,12 +36,12 @@ class GameController {
   glm::mat4 model = glm::mat4(1.0f);
   glm::mat4 view = glm::mat4(1.0f);
   glm::mat4 projection = glm::mat4(1.0f);
-  
+
   // Variables that control key press
   bool can_press = true;
   bool some_movement = false;
-  bool keys_press[1024]{false};
-  bool keys_already_press[1024]{false};
+  bool keys_press[1024] {false};
+  bool keys_already_press[1024] {false};
 
   // Variables to control rotations rubick_cube
   bool U_ANIM = false, U_ANIM_I = false;
@@ -56,17 +57,30 @@ class GameController {
   bool B_ANIM = false, B_ANIM_I = false;
   bool B_PRIME_ANIM = false, B_PRIME_ANIM_I = false;
   float move_angles[9] = {
-  135.0f,
-  90.0f,
-  45.0f,
-  180.0f,
-  0.0f,
-  0.0f,
-  225.0f,
-  270.0f,
-  315.0f,
-    };
-    
+    135.0f,
+    90.0f,
+    45.0f,
+    180.0f,
+    0.0f,
+    0.0f,
+    225.0f,
+    270.0f,
+    315.0f,
+  };
+
+  std::map<Move, std::string> move_to_string;
+  std::map<std::string, Move> string_to_move;
+  std::map<Move, bool*> move_to_anim;
+  std::map<Move, bool*> move_to_anim_i;
+
+  std::string str_scramble;
+  std::string str_solution;
+  std::vector<Move> scramble;
+  std::vector<Move> solution;
+  int idx_scramble = 0, idx_solution = 0;
+
+  bool shuffle_anim = false, solution_anim = false;
+
   // Functions of game
   void Init();
   void Render();
@@ -76,6 +90,10 @@ class GameController {
   void ProcessInput(float);
   void UpdateMatrices(glm::mat4, glm::mat4, glm::mat4);
   glm::vec3 CalculateTranslatePosition(float, Move, const float&);
+
+  void StartParser();
+  std::string GenScramble(int);
+  std::vector<Move> ParseOutput(std::string);
 
 };
 
@@ -540,14 +558,45 @@ void GameController::ResetAngles() {
 }
 
 void GameController::UpdateGame(float delta_time) {
-  if (this->some_movement) this->PlayAnimation();
+  if (this->some_movement) {
+    this->PlayAnimation();
+  }
+  else {
+    if (shuffle_anim) {
+      if (idx_scramble == scramble.size()) {
+        shuffle_anim = false;
+        scramble.clear();
+        idx_scramble = 0;
+        return;
+      }
+
+      *(move_to_anim[scramble[idx_scramble]]) = true;
+      *(move_to_anim_i[scramble[idx_scramble]]) = true;
+      some_movement = true;
+      ++idx_scramble;
+    }
+    else if (solution_anim) {
+      if (idx_solution == solution.size()) {
+        solution_anim = false;
+        idx_solution = idx_scramble = 0;
+        str_solution = str_scramble = "";
+        solution.clear();
+        return;
+      }
+
+      *(move_to_anim[solution[idx_solution]]) = true;
+      *(move_to_anim_i[solution[idx_solution]]) = true;
+      some_movement = true;
+      ++idx_solution;
+    }
+  }
 }
 
 void GameController::PlayAnimation() {
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
   const float* angles_limit;
-  float step;
+  float step, speed = 5.0f;
   int clockwise;
   Move current_move;
   int normalMove;
@@ -557,7 +606,7 @@ void GameController::PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -567,7 +616,7 @@ void GameController::PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 1; i <= 25; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -577,7 +626,7 @@ void GameController::PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundZLeft;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -587,7 +636,7 @@ void GameController::PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundZLeft;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 3; i <= 27; i += 3)
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -597,7 +646,7 @@ void GameController::PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -610,7 +659,7 @@ void GameController::PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 3; i <= 21; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -623,7 +672,7 @@ void GameController::PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundXRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -636,7 +685,7 @@ void GameController::PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundXRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 9; i <= 27; i += 9) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -649,7 +698,7 @@ void GameController::PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -662,7 +711,7 @@ void GameController::PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 1; i <= 9; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -675,7 +724,7 @@ void GameController::PlayAnimation() {
     clockwise = -1;
     normalMove = kAroundYRight;
     angles_limit = angles_upper_limit;
-    step = 1.0f;
+    step = speed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -688,7 +737,7 @@ void GameController::PlayAnimation() {
     clockwise = 1;
     normalMove = kAroundYRight;
     angles_limit = angles_lower_limit;
-    step = -1.0f;
+    step = -speed;
 
     for (int i = 19; i <= 21; ++i) {
       cubitos.push_back(rubick_cube.cubitos[i]);
@@ -698,37 +747,38 @@ void GameController::PlayAnimation() {
   }
 
   for (int i = 1; i <= 7; i += 2) {
-    if (std::abs(angles_limit[i] - angles[i]) > 0.4f) angles[i] += step;
+    if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
     else {
       angles[i] = angles_limit[i];
-      cubitos[i].get()->RotateAround(normalMove * clockwise);
+      cubitos[i].get()->RotateAround(normalMove * clockwise, speed);
     }
-    cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-      current_move, kRadioNormal));
 
-    cubitos[i].get()->RotateAround(normalMove * -1 * clockwise);
+    cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
+                                  current_move, kRadioNormal));
+
+    cubitos[i].get()->RotateAround(normalMove * -1 * clockwise, speed);
   }
 
   for (int i = 0; i < 8; i += 2) {
     if (i != 4) {
-      if (std::abs(angles_limit[i] - angles[i]) > 0.4f) angles[i] += step;
+      if (std::abs(angles_limit[i] - angles[i]) > 0.5f) angles[i] += step;
       else {
         angles[i] = angles_limit[i];
-        cubitos[i].get()->RotateAround(normalMove * clockwise);
+        cubitos[i].get()->RotateAround(normalMove * clockwise, speed);
       }
 
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-        current_move, kRadioLarge));
+                                    current_move, kRadioLarge));
     }
 
-    cubitos[i].get()->RotateAround(normalMove * -1 * clockwise);
+    cubitos[i].get()->RotateAround(normalMove * -1 * clockwise, speed);
   }
 
-  if (std::abs(angles_limit[8] - angles[8]) > 0.4f) angles[8] += step;
+  if (std::abs(angles_limit[8] - angles[8]) > 0.5f) angles[8] += step;
   else {
     angles[8] = angles_limit[8];
-    cubitos[8].get()->RotateAround(normalMove * clockwise);
-    cubitos[4].get()->RotateAround(normalMove * clockwise);
+    cubitos[8].get()->RotateAround(normalMove * clockwise, speed);
+    cubitos[4].get()->RotateAround(normalMove * clockwise, speed);
     F_ANIM_I = false;
     B_ANIM_I = false;
     F_PRIME_ANIM_I = false;
@@ -741,17 +791,16 @@ void GameController::PlayAnimation() {
     U_PRIME_ANIM_I = false;
     D_ANIM_I = false;
     D_PRIME_ANIM_I = false;
-    this->some_movement = false;
-    this->can_press = true;
+    some_movement = false;
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
-    current_move, kRadioLarge));
+                                current_move, kRadioLarge));
 
-  cubitos[8].get()->RotateAround(normalMove * -1 * clockwise);
+  cubitos[8].get()->RotateAround(normalMove * -1 * clockwise, speed);
 
   // REASIGN POINTER
-  if (!this->some_movement) {
+  if (!some_movement) {
     if (clockwise > 0) {
       auto temp = cubitos[0].get();
       cubitos[0].get() = cubitos[6].get();
@@ -779,7 +828,7 @@ void GameController::PlayAnimation() {
       cubitos[3].get() = temp;
     }
 
-    this->ResetAngles();
+    ResetAngles();
 
     B_ANIM = false;
     B_PRIME_ANIM = false;
@@ -848,5 +897,81 @@ glm::vec3 GameController::CalculateTranslatePosition(float angle, Move m, const 
       radius * sin(deg(angle)));
   }
 }
+
+void GameController::StartParser() {
+  move_to_string[Move::L] = "L";
+  move_to_string[Move::R] = "R";
+  move_to_string[Move::U] = "U";
+  move_to_string[Move::D] = "D";
+  move_to_string[Move::F] = "F";
+  move_to_string[Move::B] = "B";
+  move_to_string[Move::LP] = "L'";
+  move_to_string[Move::RP] = "R'";
+  move_to_string[Move::UP] = "U'";
+  move_to_string[Move::DP] = "D'";
+  move_to_string[Move::FP] = "F'";
+  move_to_string[Move::BP] = "B'";
+
+  for (auto &element : move_to_string) {
+    string_to_move[element.second] = element.first;
+  }
+
+  move_to_anim[Move::UP] = &U_PRIME_ANIM;
+  move_to_anim_i[Move::UP] = &U_PRIME_ANIM_I;
+  move_to_anim[Move::DP] = &D_PRIME_ANIM;
+  move_to_anim_i[Move::DP] = &D_PRIME_ANIM_I;
+  move_to_anim[Move::RP] = &R_ANIM;
+  move_to_anim_i[Move::RP] = &R_ANIM_I;
+  move_to_anim[Move::LP] = &L_PRIME_ANIM;
+  move_to_anim_i[Move::LP] = &L_PRIME_ANIM_I;
+  move_to_anim[Move::FP] = &F_PRIME_ANIM;
+  move_to_anim_i[Move::FP] = &F_PRIME_ANIM_I;
+  move_to_anim[Move::BP] = &B_ANIM;
+  move_to_anim_i[Move::BP] = &B_ANIM_I;
+
+  move_to_anim[Move::U] = &U_ANIM;
+  move_to_anim_i[Move::U] = &U_ANIM_I;
+  move_to_anim[Move::D] = &D_ANIM;
+  move_to_anim_i[Move::D] = &D_ANIM_I;
+  move_to_anim[Move::R] = &R_PRIME_ANIM;
+  move_to_anim_i[Move::R] = &R_PRIME_ANIM_I;
+  move_to_anim[Move::L] = &L_ANIM;
+  move_to_anim_i[Move::L] = &L_ANIM_I;
+  move_to_anim[Move::F] = &F_ANIM;
+  move_to_anim_i[Move::F] = &F_ANIM_I;
+  move_to_anim[Move::B] = &B_PRIME_ANIM;
+  move_to_anim_i[Move::B] = &B_PRIME_ANIM_I;
+}
+
+std::string GameController::GenScramble(int count) {
+  std::random_device rd;
+  std::string movements;
+  for (int i = 0; i < count; ++i) {
+    Move current = Move(rd() % 12);
+    movements += move_to_string[current] + " ";
+  }
+  return movements;
+}
+
+std::vector<Move> GameController::ParseOutput(std::string output) {
+  std::string tmp;
+  std::vector<Move> movements;
+  bool two = false;
+  for (int i = 0; i < output.size(); ++i) {
+    if (output[i] == ' '){
+      movements.push_back(string_to_move[tmp]);
+      if (two)
+        movements.push_back(string_to_move[tmp]);
+      tmp = "";
+      two = false;
+    }
+    else if (output[i] == '2')
+      two = true;
+    else
+      tmp += output[i];
+  }
+  return movements;
+}
+
 
 #endif // CUBITO_GAME_CONTROLLER_HPP
