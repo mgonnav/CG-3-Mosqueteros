@@ -7,7 +7,7 @@
 
 #include <vector>
 
-enum Camera_Movement {
+enum class CameraMovement {
   FORWARD,
   BACKWARD,
   LEFT,
@@ -46,7 +46,7 @@ class Camera {
          float pitch = PITCH);
   Camera(float, float, float, float , float, float, float, float);
   glm::mat4 GetViewMatrix();
-  void ProcessKeyboard(Camera_Movement, float);
+  void ProcessKeyboard(CameraMovement, float);
   void ProcessMouseMovement(float, float, GLboolean);
   void ProcessMouseScroll(float yoffset);
 };
@@ -77,15 +77,15 @@ glm::mat4 Camera::GetViewMatrix() {
   return glm::lookAt(Position, Position + Front, Up);
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
   float velocity = MovementSpeed * deltaTime;
-  if (direction == FORWARD)
+  if (direction == CameraMovement::FORWARD)
     Position += Front * velocity;
-  if (direction == BACKWARD)
+  if (direction == CameraMovement::BACKWARD)
     Position -= Front * velocity;
-  if (direction == LEFT)
+  if (direction == CameraMovement::LEFT)
     Position -= Right * velocity;
-  if (direction == RIGHT)
+  if (direction == CameraMovement::RIGHT)
     Position += Right * velocity;
 }
 
