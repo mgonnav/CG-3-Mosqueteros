@@ -138,6 +138,17 @@ void GameController::Init() {
   Resources::LoadTexture("src/images/ucsp8.png", true, "ucsp8");
   Resources::LoadTexture("src/images/ucsp9.png", true, "ucsp9");
 
+  Resources::LoadTexture("src/images/sacerdote1.png", true, "sacerdote1");
+  Resources::LoadTexture("src/images/sacerdote2.png", true, "sacerdote2");
+  Resources::LoadTexture("src/images/sacerdote3.png", true, "sacerdote3");
+  Resources::LoadTexture("src/images/sacerdote4.png", true, "sacerdote4");
+  Resources::LoadTexture("src/images/sacerdote5.png", true, "sacerdote5");
+  Resources::LoadTexture("src/images/sacerdote6.png", true, "sacerdote6");
+  Resources::LoadTexture("src/images/sacerdote7.png", true, "sacerdote7");
+  Resources::LoadTexture("src/images/sacerdote8.png", true, "sacerdote8");
+  Resources::LoadTexture("src/images/sacerdote9.png", true, "sacerdote9");
+
+
   Resources::LoadTexture("src/images/background.jpg", false, "background");
 
   // Assing textures integers
@@ -165,13 +176,13 @@ void GameController::Init() {
     this->rubick_cube.cubitos[3] = std::make_shared<Cubito>(
       Resources::GetTexture("red"),
       Resources::GetTexture("piksar1"),
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote3"),
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       glm::vec3(-distance_b_cubes, distance_b_cubes, -distance_b_cubes), 3, 
       input_colors[20], input_colors[9], input_colors[0]);
     this->rubick_cube.cubitos[6] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote2"),
       Resources::GetTexture("red"),
       Resources::GetTexture("negro"),
       Resources::GetTexture("negro"),
@@ -179,7 +190,7 @@ void GameController::Init() {
       glm::vec3(0.0f, distance_b_cubes, -distance_b_cubes), 6, 
       input_colors[19], input_colors[1]);
     this->rubick_cube.cubitos[9] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote1"),
       Resources::GetTexture("red"),
       Resources::GetTexture("yi3"),
       Resources::GetTexture("negro"),
@@ -187,7 +198,7 @@ void GameController::Init() {
       glm::vec3(distance_b_cubes, distance_b_cubes, -distance_b_cubes), 9, 
       input_colors[18], input_colors[17], input_colors[2]);
     this->rubick_cube.cubitos[12] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote6"),
       Resources::GetTexture("piksar4"),
       Resources::GetTexture("negro"),
       Resources::GetTexture("negro"),
@@ -195,7 +206,7 @@ void GameController::Init() {
       glm::vec3(-distance_b_cubes, 0.0f, -distance_b_cubes), 12, 
       input_colors[32], input_colors[21]);
     this->rubick_cube.cubitos[15] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote5"),
       Resources::GetTexture("negro"),
       Resources::GetTexture("negro"),
       Resources::GetTexture("negro"),
@@ -203,7 +214,7 @@ void GameController::Init() {
       glm::vec3(0.0f, 0.0f, -distance_b_cubes), 15, 
       input_colors[31]);
     this->rubick_cube.cubitos[18] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote4"),
       Resources::GetTexture("yi6"),
       Resources::GetTexture("negro"),
       Resources::GetTexture("negro"),
@@ -211,7 +222,7 @@ void GameController::Init() {
       glm::vec3(distance_b_cubes, 0.0f, -distance_b_cubes), 18, 
       input_colors[30], input_colors[29]);
     this->rubick_cube.cubitos[21] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote9"),
       Resources::GetTexture("piksar7"),
       Resources::GetTexture("orange"),
       Resources::GetTexture("negro"),
@@ -219,7 +230,7 @@ void GameController::Init() {
       glm::vec3(-distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 21, 
       input_colors[44], input_colors[33], input_colors[51]);
     this->rubick_cube.cubitos[24] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote8"),
       Resources::GetTexture("orange"),
       Resources::GetTexture("negro"),
       Resources::GetTexture("negro"),
@@ -227,7 +238,7 @@ void GameController::Init() {
       glm::vec3(0.0f, -distance_b_cubes, -distance_b_cubes), 24, 
       input_colors[43], input_colors[52]);
     this->rubick_cube.cubitos[27] = std::make_shared<Cubito>(
-      Resources::GetTexture("blue"),
+      Resources::GetTexture("sacerdote7"),
       Resources::GetTexture("yi9"),
       Resources::GetTexture("orange"),
       Resources::GetTexture("negro"),
