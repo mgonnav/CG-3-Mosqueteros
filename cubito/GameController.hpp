@@ -553,15 +553,15 @@ void GameController::Render() {
 }
 
 void GameController::ResetAngles() {
-  move_angles[0] = 135.0f;
-  move_angles[1] = 90.0f;
-  move_angles[2] = 45.0f;
-  move_angles[3] = 180.0f;
-  move_angles[4] = 0.0f;
-  move_angles[5] = 0.0f;
-  move_angles[6] = 225.0f;
-  move_angles[7] = 270.0f;
-  move_angles[8] = 315.0f;
+  this->move_angles[0] = 135.0f;
+  this->move_angles[1] = 90.0f;
+  this->move_angles[2] = 45.0f;
+  this->move_angles[3] = 180.0f;
+  this->move_angles[4] = 0.0f;
+  this->move_angles[5] = 0.0f;
+  this->move_angles[6] = 225.0f;
+  this->move_angles[7] = 270.0f;
+  this->move_angles[8] = 315.0f;
 }
 
 void GameController::UpdateGame(float delta_time) {
@@ -598,7 +598,7 @@ void GameController::UpdateGame(float delta_time) {
     }
   }
 }
-int i = 0;
+
 void GameController::PlayAnimation() {
 
   // Expand contract function start
@@ -830,6 +830,8 @@ void GameController::PlayAnimation() {
     }
     // Expand contract function end
 
+    // Solving middle cube rotation
+    cubitos[4].get()->CorrectRotate();
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
