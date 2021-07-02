@@ -44,6 +44,11 @@ void PrintCommands() {
   std::cout << "\tShift + F: F'\n";
   std::cout << "\tB: B\n";
   std::cout << "\tShift + B: B'" << std::endl;
+
+  std::cout << "\n\t\t     SOLVER CONTROLS\n\n";
+
+  std::cout << "\tRandom movements: z\n";
+  std::cout << "\tSolve rubick-cube: x" << std::endl;
 }
 
 // Main object that control game

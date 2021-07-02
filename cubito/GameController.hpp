@@ -613,8 +613,6 @@ void GameController::PlayAnimation() {
   if (this->kRadioNormal > 1.4f) this->expand_contract = false;
   // Expand contract function end
 
-  std::cout <<i++<< " Normal " << this->kRadioNormal << std::endl;
-  std::cout << "Large " << this->kRadioLarge << std::endl;
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
   const float* angles_limit{};
