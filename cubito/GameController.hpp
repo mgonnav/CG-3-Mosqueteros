@@ -68,6 +68,12 @@ class GameController {
     315.0f,
   };
 
+  // Expand variables
+  bool expand_contract = true;
+  float kRadioLarge = 0.0f;
+  float kRadioNormal = 0.0f;
+
+  // variables solver
   std::map<Move, std::string> move_to_string;
   std::map<std::string, Move> string_to_move;
   std::map<Move, bool*> move_to_anim;
@@ -166,7 +172,6 @@ void GameController::Init() {
   Resources::LoadTexture("src/images/sacerdote8.png", true, "sacerdote8");
   Resources::LoadTexture("src/images/sacerdote9.png", true, "sacerdote9");
 
-
   Resources::LoadTexture("src/images/background.jpg", false, "background");
 
   // Assing textures integers
@@ -176,17 +181,19 @@ void GameController::Init() {
   // Create main Rendered
   this->Renderer = new Rendered(Resources::GetShader("cubito"));
 
-  // RANDOM COLOR TO INIT RUBICK CUBE
+  // set angle rotation
+  this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
+  this->kRadioNormal = distance_b_cubes;
+  
+  // Fill input_color variable
   std::vector<glm::vec3> input_colors;
   fill_n(back_inserter(input_colors), 9, BLUE);
-
   for (int i = 0; i < 3; ++i) {
     fill_n(back_inserter(input_colors), 3, ORANGE);
     fill_n(back_inserter(input_colors), 3, WHITE);
     fill_n(back_inserter(input_colors), 3, RED);
     fill_n(back_inserter(input_colors), 3, YELLOW);
   }
-
   fill_n(back_inserter(input_colors), 9, GREEN);
 
   // Creating cubitos inside rubick_cube
@@ -572,7 +579,7 @@ void GameController::UpdateGame(float delta_time) {
 
       *(move_to_anim[scramble[idx_scramble]]) = true;
       *(move_to_anim_i[scramble[idx_scramble]]) = true;
-      some_movement = true;
+      this->some_movement = true;
       ++idx_scramble;
     }
     else if (solution_anim) {
@@ -586,20 +593,35 @@ void GameController::UpdateGame(float delta_time) {
 
       *(move_to_anim[solution[idx_solution]]) = true;
       *(move_to_anim_i[solution[idx_solution]]) = true;
-      some_movement = true;
+      this->some_movement = true;
       ++idx_solution;
     }
   }
 }
-
+int i = 0;
 void GameController::PlayAnimation() {
+
+  // Expand contract function start
+  if (this->expand_contract) {
+    this->kRadioLarge += 0.1f;
+    this->kRadioNormal += 0.1f;
+  }
+  else {
+    this->kRadioLarge -= 0.1f;
+    this->kRadioNormal -= 0.1f;
+  }
+  if (this->kRadioNormal > 1.4f) this->expand_contract = false;
+  // Expand contract function end
+
+  std::cout <<i++<< " Normal " << this->kRadioNormal << std::endl;
+  std::cout << "Large " << this->kRadioLarge << std::endl;
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
-  const float* angles_limit;
-  float step, speed = 5.0f;
-  int clockwise;
-  Move current_move;
-  int normalMove;
+  const float* angles_limit{};
+  float step{}, speed = 5.0f;
+  int clockwise{};
+  Move current_move{};
+  int normalMove{};
 
   if (F_ANIM_I) {
     current_move = Move::F;
@@ -791,7 +813,25 @@ void GameController::PlayAnimation() {
     U_PRIME_ANIM_I = false;
     D_ANIM_I = false;
     D_PRIME_ANIM_I = false;
-    some_movement = false;
+    this->some_movement = false;
+
+    // Expand contract function start
+    this->expand_contract = true;
+    this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
+    this->kRadioNormal = distance_b_cubes;
+
+    for (int i = 1; i <= 7; i += 2) {
+      cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
+        current_move, kRadioNormal));
+    }
+    for (int i = 0; i < 8; i += 2) {
+      if (i != 4) {
+        cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
+          current_move, kRadioLarge));
+      }
+    }
+    // Expand contract function end
+
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],
@@ -800,7 +840,7 @@ void GameController::PlayAnimation() {
   cubitos[8].get()->RotateAround(normalMove * -1 * clockwise, speed);
 
   // REASIGN POINTER
-  if (!some_movement) {
+  if (!this->some_movement) {
     if (clockwise > 0) {
       auto temp = cubitos[0].get();
       cubitos[0].get() = cubitos[6].get();
@@ -972,6 +1012,5 @@ std::vector<Move> GameController::ParseOutput(std::string output) {
   }
   return movements;
 }
-
 
 #endif // CUBITO_GAME_CONTROLLER_HPP

@@ -1,14 +1,11 @@
-//        ID CUBE RUBICK
-//
-//           03 06 09
-//           02 05 08
-//           01 04 07
-//  03 02 01 01 04 07 07 08 09 09 06 03
-//  12 11 10 10 13 16 16 17 18 18 15 12
-//  21 20 19 19 22 25 25 26 27 27 24 21
-//           19 22 25
-//           20 23 26
-//           21 24 27
+/*
+* Copyright: Mosqueteros UCSP
+* Trabajo final Computación gráfica
+* 
+*  Gonzales Navarrete Mateo
+*  Palma Ugarte Joaquin
+*  Nieto Miguel
+*/
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -34,10 +31,6 @@
 #include "GameController.hpp"
 #include "solver/Rubik.hpp"
 #include "Setting.hpp"
-
-
-// IF YOU WANT TO KNOW INFO AFTER ONE MOVEMENT
-#define DEBUG 0
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void ProcessInputMouse(GLFWwindow* window);
@@ -97,7 +90,7 @@ int main(int argc, char *argv[]) {
   }
 
   while (!glfwWindowShouldClose(window)) {
-    float currentFrame = glfwGetTime();
+    float currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
@@ -118,7 +111,7 @@ int main(int argc, char *argv[]) {
     game_controller.UpdateGame(deltaTime);
 
     // Render All
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.0f, 0.9f, 0.6f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     game_controller.Render();
@@ -261,7 +254,7 @@ void ProcessInputMouse(GLFWwindow* window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
 
-  float cameraSpeed = 2.5 * deltaTime;
+  float cameraSpeed = static_cast<float>(2.5 * deltaTime);
 
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
@@ -282,19 +275,19 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
   if (first_time_mouse) {
-    lastX = xpos;
-    lastY = ypos;
+    lastX = static_cast<float>(xpos);
+    lastY = static_cast<float>(ypos);
     first_time_mouse = false;
   }
 
-  float xoffset = xpos - lastX;
-  float yoffset = lastY - ypos;
-  lastX = xpos;
-  lastY = ypos;
+  float xoffset = static_cast<float>(xpos - lastX);
+  float yoffset = static_cast<float>(lastY - ypos);
+  lastX = static_cast<float>(xpos);
+  lastY = static_cast<float>(ypos);
 
   camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-  camera.ProcessMouseScroll(yoffset);
+  camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
