@@ -25,7 +25,7 @@ const glm::vec3 YELLOW = glm::vec3(1.0f, 1.0f, 0.0f);
 
 // General functions
 float deg(float num) { // warning posible loss of data
-  return (num * PI / 180);
+  return (static_cast<float>(num * PI / 180));
 }
 
 void PrintCommands() {
@@ -44,6 +44,11 @@ void PrintCommands() {
   std::cout << "\tShift + F: F'\n";
   std::cout << "\tB: B\n";
   std::cout << "\tShift + B: B'" << std::endl;
+
+  std::cout << "\n\t\t     SOLVER CONTROLS\n\n";
+
+  std::cout << "\tRandom movements: z\n";
+  std::cout << "\tSolve rubick-cube: x" << std::endl;
 }
 
 // Main object that control game
@@ -66,8 +71,6 @@ enum class Move {
 
 // Const variables of rubick_cube
 const float distance_b_cubes = 0.4f;
-const float kRadioLarge = distance_b_cubes * sqrt(2);
-const float kRadioNormal = distance_b_cubes;
 
 const float angles_upper_limit[9] = {
   225.0f,

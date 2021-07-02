@@ -38,7 +38,8 @@ public:
 	void AllData();
 	void InitialRender();
 	void RotateAround(int around_axis, float angle);
-  void SetPosition(glm::vec3);
+	void CorrectRotate();
+	void SetPosition(glm::vec3);
 	void Draw(Rendered&, glm::mat4&, glm::mat4&, glm::mat4&);
 };
 
@@ -105,12 +106,6 @@ void Cubito::SetPosition(glm::vec3 new_position) {
 }
 
 void Cubito::RotateAround(int around_axis, float angle) {
-	// kAroundXLeft = 1;
-	// kAroundXRight = -1;
-	// kAroundYLeft = -2;
-	// kAroundYRight = 2;
-	// kAroundZLeft = 3;
-	// kAroundZRight = -3;
 	switch (around_axis) {
 		case 1: {
 			glm::mat4 temporal = glm::mat4(1.0f);
@@ -118,7 +113,7 @@ void Cubito::RotateAround(int around_axis, float angle) {
 				glm::radians(angle),
 				glm::vec3(1.0f, 0.0f, 0.0f));
 
-			rotation = temporal * rotation;
+			this->rotation = temporal * rotation;
 
 			break;
 		}
@@ -128,7 +123,7 @@ void Cubito::RotateAround(int around_axis, float angle) {
 				glm::radians(-angle),
 				glm::vec3(1.0f, 0.0f, 0.0f));
 
-			rotation = temporal * rotation;
+			this->rotation = temporal * rotation;
 
 			break;
 		}
@@ -138,7 +133,7 @@ void Cubito::RotateAround(int around_axis, float angle) {
 				glm::radians(-angle),
 				glm::vec3(0.0f, 1.0f, 0.0f));
 
-			rotation = temporal * rotation;
+			this->rotation = temporal * rotation;
 
 			break;
 		}
@@ -148,7 +143,7 @@ void Cubito::RotateAround(int around_axis, float angle) {
 				glm::radians(angle),
 				glm::vec3(0.0f, 1.0f, 0.0f));
 
-			rotation = temporal * rotation;
+			this->rotation = temporal * rotation;
 
 			break;
 		}
@@ -158,7 +153,7 @@ void Cubito::RotateAround(int around_axis, float angle) {
 				glm::radians(angle),
 				glm::vec3(0.0f, 0.0f, 1.0f));
 
-			rotation = temporal * rotation;
+			this->rotation = temporal * rotation;
 
 			break;
 		}
@@ -168,11 +163,15 @@ void Cubito::RotateAround(int around_axis, float angle) {
 				glm::radians(-angle),
 				glm::vec3(0.0f, 0.0f, 1.0f));
 
-			rotation = temporal * rotation;
+			this->rotation = temporal * rotation;
 
 			break;
 		}
 	}
+}
+
+void Cubito::CorrectRotate() {
+		this->rotation = glm::mat4(1.0f);
 }
 
 void Cubito::InitialRender() {
