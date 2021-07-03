@@ -19,9 +19,7 @@
 #include "Setting.hpp"
 
 class GameController {
-
  public:
-
   // COntructor and destructor
   GameController(unsigned int, unsigned int);
   ~GameController();
@@ -69,6 +67,12 @@ class GameController {
     315.0f,
   };
 
+  float camera_angle_z = 0.0f;
+  float camera_angle_height = 0.0f;
+  float camera_angle_z_velocity = 0.2f;
+  float camera_angle_height_velocity = 0.2f;
+  float camera_acceleration = 0.5f;
+
   // Expand variables
   bool is_expanding = true;
   float kRadioLarge = 0.0f;
@@ -96,12 +100,11 @@ class GameController {
   void UpdateGame(float);
   void ProcessInput(float);
   void UpdateMatrices(glm::mat4, glm::mat4, glm::mat4);
-  glm::vec3 CalculateTranslatePosition(float, Move, const float&);
+  glm::vec3 CalculateTranslatePosition(const float&, const Move&, const float&);
 
   void StartParser();
   std::string GenScramble(int);
   std::vector<Move> ParseOutput(std::string);
-
 };
 
 // --------------------------------------------------------------------------------------
@@ -109,10 +112,10 @@ class GameController {
 // --------------------------------------------------------------------------------------
 
 GameController::GameController(unsigned int width, unsigned int height)
-  : keys_press(), 
-  keys_already_press(), 
-  width(width), 
-  height(height) { 
+  : keys_press(),
+    keys_already_press(),
+    width(width),
+    height(height) {
 }
 
 GameController::~GameController() {
@@ -120,10 +123,11 @@ GameController::~GameController() {
 }
 
 void GameController::Init() {
-  
+
   // Loading programs
-  Resources::LoadShader("src/shaders/cubito.vs", "src/shaders/cubito.fs", nullptr, "cubito");
-  
+  Resources::LoadShader("src/shaders/cubito.vs", "src/shaders/cubito.fs", nullptr,
+                        "cubito");
+
   // Loading textures
   Resources::LoadTexture("src/images/negro.png", true, "negro");
   Resources::LoadTexture("src/images/amarillo.png", true, "yellow");
@@ -132,7 +136,7 @@ void GameController::Init() {
   Resources::LoadTexture("src/images/blue.png", true, "blue");
   Resources::LoadTexture("src/images/naranja.png", true, "orange");
   Resources::LoadTexture("src/images/green.png", true, "green");
-  
+
   Resources::LoadTexture("src/images/piksar1.png", true, "piksar1");
   Resources::LoadTexture("src/images/piksar2.png", true, "piksar2");
   Resources::LoadTexture("src/images/piksar3.png", true, "piksar3");
@@ -152,7 +156,7 @@ void GameController::Init() {
   Resources::LoadTexture("src/images/yi7.png", true, "yi7");
   Resources::LoadTexture("src/images/yi8.png", true, "yi8");
   Resources::LoadTexture("src/images/yi9.png", true, "yi9");
-  
+
   Resources::LoadTexture("src/images/ucsp1.png", true, "ucsp1");
   Resources::LoadTexture("src/images/ucsp2.png", true, "ucsp2");
   Resources::LoadTexture("src/images/ucsp3.png", true, "ucsp3");
@@ -185,365 +189,375 @@ void GameController::Init() {
   // set angle rotation
   this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
   this->kRadioNormal = distance_b_cubes;
-  
+
   // Fill input_color variable
   std::vector<glm::vec3> input_colors;
   fill_n(back_inserter(input_colors), 9, BLUE);
+
   for (int i = 0; i < 3; ++i) {
     fill_n(back_inserter(input_colors), 3, ORANGE);
     fill_n(back_inserter(input_colors), 3, WHITE);
     fill_n(back_inserter(input_colors), 3, RED);
     fill_n(back_inserter(input_colors), 3, YELLOW);
   }
+
   fill_n(back_inserter(input_colors), 9, GREEN);
 
   // Creating cubitos inside rubick_cube
   {
     this->rubick_cube.cubitos[3] = std::make_shared<Cubito>(
-      Resources::GetTexture("red"),
-      Resources::GetTexture("piksar1"),
-      Resources::GetTexture("sacerdote3"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, distance_b_cubes, -distance_b_cubes), 3, 
-      input_colors[20], input_colors[9], input_colors[0]);
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("piksar1"),
+                                     Resources::GetTexture("sacerdote3"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(-distance_b_cubes, distance_b_cubes, -distance_b_cubes), 3,
+                                     input_colors[20], input_colors[9], input_colors[0]);
     this->rubick_cube.cubitos[6] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote2"),
-      Resources::GetTexture("red"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, distance_b_cubes, -distance_b_cubes), 6, 
-      input_colors[19], input_colors[1]);
+                                     Resources::GetTexture("sacerdote2"),
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(0.0f, distance_b_cubes, -distance_b_cubes), 6,
+                                     input_colors[19], input_colors[1]);
     this->rubick_cube.cubitos[9] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote1"),
-      Resources::GetTexture("red"),
-      Resources::GetTexture("yi3"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, distance_b_cubes, -distance_b_cubes), 9, 
-      input_colors[18], input_colors[17], input_colors[2]);
+                                     Resources::GetTexture("sacerdote1"),
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("yi3"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(distance_b_cubes, distance_b_cubes, -distance_b_cubes), 9,
+                                     input_colors[18], input_colors[17], input_colors[2]);
     this->rubick_cube.cubitos[12] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote6"),
-      Resources::GetTexture("piksar4"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, 0.0f, -distance_b_cubes), 12, 
-      input_colors[32], input_colors[21]);
+                                      Resources::GetTexture("sacerdote6"),
+                                      Resources::GetTexture("piksar4"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(-distance_b_cubes, 0.0f, -distance_b_cubes), 12,
+                                      input_colors[32], input_colors[21]);
     this->rubick_cube.cubitos[15] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote5"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, 0.0f, -distance_b_cubes), 15, 
-      input_colors[31]);
+                                      Resources::GetTexture("sacerdote5"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(0.0f, 0.0f, -distance_b_cubes), 15,
+                                      input_colors[31]);
     this->rubick_cube.cubitos[18] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote4"),
-      Resources::GetTexture("yi6"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, 0.0f, -distance_b_cubes), 18, 
-      input_colors[30], input_colors[29]);
+                                      Resources::GetTexture("sacerdote4"),
+                                      Resources::GetTexture("yi6"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(distance_b_cubes, 0.0f, -distance_b_cubes), 18,
+                                      input_colors[30], input_colors[29]);
     this->rubick_cube.cubitos[21] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote9"),
-      Resources::GetTexture("piksar7"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 21, 
-      input_colors[44], input_colors[33], input_colors[51]);
+                                      Resources::GetTexture("sacerdote9"),
+                                      Resources::GetTexture("piksar7"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(-distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 21,
+                                      input_colors[44], input_colors[33], input_colors[51]);
     this->rubick_cube.cubitos[24] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote8"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, -distance_b_cubes, -distance_b_cubes), 24, 
-      input_colors[43], input_colors[52]);
+                                      Resources::GetTexture("sacerdote8"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(0.0f, -distance_b_cubes, -distance_b_cubes), 24,
+                                      input_colors[43], input_colors[52]);
     this->rubick_cube.cubitos[27] = std::make_shared<Cubito>(
-      Resources::GetTexture("sacerdote7"),
-      Resources::GetTexture("yi9"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 27, 
-      input_colors[42], input_colors[41], input_colors[53]);
+                                      Resources::GetTexture("sacerdote7"),
+                                      Resources::GetTexture("yi9"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 27,
+                                      input_colors[42], input_colors[41], input_colors[53]);
 
     this->rubick_cube.cubitos[2] = std::make_shared<Cubito>(
-      Resources::GetTexture("red"),
-      Resources::GetTexture("piksar2"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, distance_b_cubes, 0.0f), 2, 
-      input_colors[10], input_colors[3]);
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("piksar2"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(-distance_b_cubes, distance_b_cubes, 0.0f), 2,
+                                     input_colors[10], input_colors[3]);
     this->rubick_cube.cubitos[5] = std::make_shared<Cubito>(
-      Resources::GetTexture("red"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, distance_b_cubes, 0.0f), 5, 
-      input_colors[4]);
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(0.0f, distance_b_cubes, 0.0f), 5,
+                                     input_colors[4]);
     this->rubick_cube.cubitos[8] = std::make_shared<Cubito>(
-      Resources::GetTexture("red"),
-      Resources::GetTexture("yi2"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, distance_b_cubes, 0.0f), 8, 
-      input_colors[16], input_colors[5]);
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("yi2"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(distance_b_cubes, distance_b_cubes, 0.0f), 8,
+                                     input_colors[16], input_colors[5]);
     this->rubick_cube.cubitos[11] = std::make_shared<Cubito>(
-      Resources::GetTexture("piksar5"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, 0.0f, 0.0f), 11, 
-      input_colors[22]);
+                                      Resources::GetTexture("piksar5"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(-distance_b_cubes, 0.0f, 0.0f), 11,
+                                      input_colors[22]);
     this->rubick_cube.cubitos[14] = std::make_shared<Cubito>(
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, 0.0f, 0.0f), 14);
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(0.0f, 0.0f, 0.0f), 14);
     this->rubick_cube.cubitos[17] = std::make_shared<Cubito>(
-      Resources::GetTexture("yi5"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, 0.0f, 0.0f), 17, 
-      input_colors[28]);
+                                      Resources::GetTexture("yi5"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(distance_b_cubes, 0.0f, 0.0f), 17,
+                                      input_colors[28]);
     this->rubick_cube.cubitos[20] = std::make_shared<Cubito>(
-      Resources::GetTexture("piksar8"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, -distance_b_cubes, 0.0f), 20, 
-      input_colors[34], input_colors[48]);
+                                      Resources::GetTexture("piksar8"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(-distance_b_cubes, -distance_b_cubes, 0.0f), 20,
+                                      input_colors[34], input_colors[48]);
     this->rubick_cube.cubitos[23] = std::make_shared<Cubito>(
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, -distance_b_cubes, 0.0f), 23, 
-      input_colors[49]);
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(0.0f, -distance_b_cubes, 0.0f), 23,
+                                      input_colors[49]);
     this->rubick_cube.cubitos[26] = std::make_shared<Cubito>(
-      Resources::GetTexture("yi8"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, -distance_b_cubes, 0.0f), 26, 
-      input_colors[40], input_colors[50]);
+                                      Resources::GetTexture("yi8"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(distance_b_cubes, -distance_b_cubes, 0.0f), 26,
+                                      input_colors[40], input_colors[50]);
 
     this->rubick_cube.cubitos[1] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp1"),
-      Resources::GetTexture("piksar3"),
-      Resources::GetTexture("red"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, distance_b_cubes, distance_b_cubes), 1, 
-      input_colors[12], input_colors[11], input_colors[6]);
+                                     Resources::GetTexture("ucsp1"),
+                                     Resources::GetTexture("piksar3"),
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(-distance_b_cubes, distance_b_cubes, distance_b_cubes), 1,
+                                     input_colors[12], input_colors[11], input_colors[6]);
     this->rubick_cube.cubitos[4] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp2"),
-      Resources::GetTexture("red"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, distance_b_cubes, distance_b_cubes), 4, 
-      input_colors[13], input_colors[7]);
+                                     Resources::GetTexture("ucsp2"),
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(0.0f, distance_b_cubes, distance_b_cubes), 4,
+                                     input_colors[13], input_colors[7]);
     this->rubick_cube.cubitos[7] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp3"),
-      Resources::GetTexture("red"),
-      Resources::GetTexture("yi1"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, distance_b_cubes, distance_b_cubes), 7, 
-      input_colors[14], input_colors[15], input_colors[8]);
+                                     Resources::GetTexture("ucsp3"),
+                                     Resources::GetTexture("red"),
+                                     Resources::GetTexture("yi1"),
+                                     Resources::GetTexture("negro"),
+                                     Resources::GetShader("cubito"),
+                                     glm::vec3(distance_b_cubes, distance_b_cubes, distance_b_cubes), 7,
+                                     input_colors[14], input_colors[15], input_colors[8]);
     this->rubick_cube.cubitos[10] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp4"),
-      Resources::GetTexture("piksar6"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, 0.0f, distance_b_cubes), 10, 
-      input_colors[24], input_colors[23]);
+                                      Resources::GetTexture("ucsp4"),
+                                      Resources::GetTexture("piksar6"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(-distance_b_cubes, 0.0f, distance_b_cubes), 10,
+                                      input_colors[24], input_colors[23]);
     this->rubick_cube.cubitos[13] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp5"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, 0.0f, distance_b_cubes), 13, 
-      input_colors[25]);
+                                      Resources::GetTexture("ucsp5"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(0.0f, 0.0f, distance_b_cubes), 13,
+                                      input_colors[25]);
     this->rubick_cube.cubitos[16] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp6"),
-      Resources::GetTexture("yi4"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, 0.0f, distance_b_cubes), 16, 
-      input_colors[26], input_colors[27]);
+                                      Resources::GetTexture("ucsp6"),
+                                      Resources::GetTexture("yi4"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(distance_b_cubes, 0.0f, distance_b_cubes), 16,
+                                      input_colors[26], input_colors[27]);
     this->rubick_cube.cubitos[19] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp7"),
-      Resources::GetTexture("piksar9"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(-distance_b_cubes, -distance_b_cubes, distance_b_cubes), 19, 
-      input_colors[36], input_colors[35], input_colors[45]);
+                                      Resources::GetTexture("ucsp7"),
+                                      Resources::GetTexture("piksar9"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(-distance_b_cubes, -distance_b_cubes, distance_b_cubes), 19,
+                                      input_colors[36], input_colors[35], input_colors[45]);
     this->rubick_cube.cubitos[22] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp8"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(0.0f, -distance_b_cubes, distance_b_cubes), 22, 
-      input_colors[37], input_colors[46]);
+                                      Resources::GetTexture("ucsp8"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(0.0f, -distance_b_cubes, distance_b_cubes), 22,
+                                      input_colors[37], input_colors[46]);
     this->rubick_cube.cubitos[25] = std::make_shared<Cubito>(
-      Resources::GetTexture("ucsp9"),
-      Resources::GetTexture("yi7"),
-      Resources::GetTexture("orange"),
-      Resources::GetTexture("negro"),
-      Resources::GetShader("cubito"),
-      glm::vec3(distance_b_cubes, -distance_b_cubes, distance_b_cubes), 25, 
-      input_colors[38], input_colors[39], input_colors[47]);
+                                      Resources::GetTexture("ucsp9"),
+                                      Resources::GetTexture("yi7"),
+                                      Resources::GetTexture("orange"),
+                                      Resources::GetTexture("negro"),
+                                      Resources::GetShader("cubito"),
+                                      glm::vec3(distance_b_cubes, -distance_b_cubes, distance_b_cubes), 25,
+                                      input_colors[38], input_colors[39], input_colors[47]);
   }
 }
 
+void UpdateCameraVelocity(float& cam_vel, float acceleration) {
+  cam_vel += acceleration;
+
+  if (cam_vel < 0.2f) cam_vel = 0.2f;
+  else if (cam_vel > 2.5f) cam_vel = 4.0f;
+}
+
 void GameController::ProcessInput(float delta_time) {
-    if (( this->keys_press[GLFW_KEY_RIGHT_SHIFT] && !this->keys_already_press[GLFW_KEY_RIGHT_SHIFT]) ||
-      (this->keys_press[GLFW_KEY_LEFT_SHIFT] && !this->keys_already_press[GLFW_KEY_LEFT_SHIFT])) {
-      
-        if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U])
-        {
-          U_PRIME_ANIM = true;
-          U_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_U] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-
-        if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D])
-        {
-          D_PRIME_ANIM = true;
-          D_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_D] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-
-        if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R])
-        {
-          R_ANIM = true;
-          R_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_R] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-        
-        if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L])
-        {
-          L_PRIME_ANIM = true;
-          L_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_L] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-
-        if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F])
-        {
-          F_PRIME_ANIM = true;
-          F_PRIME_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_F] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
-      
-        if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B])
-        {
-          B_ANIM = true;
-          B_ANIM_I = true;
-          this->can_press = false;
-          this->some_movement = true;
-          this->keys_already_press[GLFW_KEY_B] = true;
-          this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
-          this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
-        }
+  if (( this->keys_press[GLFW_KEY_RIGHT_SHIFT]
+        && !this->keys_already_press[GLFW_KEY_RIGHT_SHIFT]) ||
+      (this->keys_press[GLFW_KEY_LEFT_SHIFT]
+       && !this->keys_already_press[GLFW_KEY_LEFT_SHIFT])) {
+    if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U]) {
+      U_PRIME_ANIM = true;
+      U_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_U] = true;
+      this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
+      this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, camera_acceleration);
     }
-    else {
-      if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U])
-      {
-        U_ANIM = true;
-        U_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_U] = true;
-      }
 
-      if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D])
-      {
-        D_ANIM = true;
-        D_ANIM_I = true;
-        this->some_movement = true;
-        this->can_press = false;
-        this->keys_already_press[GLFW_KEY_D] = true;
-      }
-
-      if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R])
-      {
-        R_PRIME_ANIM = true;
-        R_PRIME_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_R] = true;
-      }
-      
-      if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L])
-      {
-        L_ANIM = true;
-        L_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_L] = true;
-      }
-      
-      if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F])
-      {
-        F_ANIM = true;
-        F_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_F] = true;
-      }
-     
-      if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B])
-      {
-        B_PRIME_ANIM = true;
-        B_PRIME_ANIM_I = true;
-        this->can_press = false;
-        this->some_movement = true;
-        this->keys_already_press[GLFW_KEY_B] = true;
-      }
+    if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D]) {
+      D_PRIME_ANIM = true;
+      D_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_D] = true;
+      this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
+      this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, -camera_acceleration);
     }
+
+    if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R]) {
+      R_ANIM = true;
+      R_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_R] = true;
+      this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
+      this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
+      UpdateCameraVelocity(camera_angle_height_velocity, -camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L]) {
+      L_PRIME_ANIM = true;
+      L_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_L] = true;
+      this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
+      this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
+      UpdateCameraVelocity(camera_angle_height_velocity, camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F]) {
+      F_PRIME_ANIM = true;
+      F_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_F] = true;
+      this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
+      this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, -camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B]) {
+      B_ANIM = true;
+      B_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_B] = true;
+      this->keys_already_press[GLFW_KEY_RIGHT_SHIFT] = true;
+      this->keys_already_press[GLFW_KEY_LEFT_SHIFT] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, -camera_acceleration);
+    }
+  }
+  else {
+    if (this->keys_press[GLFW_KEY_U] && !this->keys_already_press[GLFW_KEY_U]) {
+      U_ANIM = true;
+      U_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_U] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, -camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_D] && !this->keys_already_press[GLFW_KEY_D]) {
+      D_ANIM = true;
+      D_ANIM_I = true;
+      this->some_movement = true;
+      this->can_press = false;
+      this->keys_already_press[GLFW_KEY_D] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_R] && !this->keys_already_press[GLFW_KEY_R]) {
+      R_PRIME_ANIM = true;
+      R_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_R] = true;
+      UpdateCameraVelocity(camera_angle_height_velocity, camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_L] && !this->keys_already_press[GLFW_KEY_L]) {
+      L_ANIM = true;
+      L_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_L] = true;
+      UpdateCameraVelocity(camera_angle_height_velocity, -camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_F] && !this->keys_already_press[GLFW_KEY_F]) {
+      F_ANIM = true;
+      F_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_F] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, camera_acceleration);
+    }
+
+    if (this->keys_press[GLFW_KEY_B] && !this->keys_already_press[GLFW_KEY_B]) {
+      B_PRIME_ANIM = true;
+      B_PRIME_ANIM_I = true;
+      this->can_press = false;
+      this->some_movement = true;
+      this->keys_already_press[GLFW_KEY_B] = true;
+      UpdateCameraVelocity(camera_angle_z_velocity, camera_acceleration);
+    }
+  }
 }
 
 void GameController::Render() {
@@ -601,9 +615,7 @@ void GameController::UpdateGame(float delta_time) {
 }
 
 void GameController::PlayAnimation() {
-
   if (this->expand_contract_efect) {
-  
     if (this->is_expanding) {
       this->kRadioLarge += 0.1f;
       this->kRadioNormal += 0.1f;
@@ -612,13 +624,12 @@ void GameController::PlayAnimation() {
       this->kRadioLarge -= 0.1f;
       this->kRadioNormal -= 0.1f;
     }
-    if (this->kRadioNormal > 1.4f) this->is_expanding = false;
-  
-  } else {
 
+    if (this->kRadioNormal > 1.4f) this->is_expanding = false;
+  }
+  else {
     this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
     this->kRadioNormal = distance_b_cubes;
-  
   }
 
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
@@ -828,14 +839,16 @@ void GameController::PlayAnimation() {
 
     for (int i = 1; i <= 7; i += 2) {
       cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-        current_move, kRadioNormal));
+                                    current_move, kRadioNormal));
     }
+
     for (int i = 0; i < 8; i += 2) {
       if (i != 4) {
         cubitos[i].get()->SetPosition(CalculateTranslatePosition(angles[i],
-          current_move, kRadioLarge));
+                                      current_move, kRadioLarge));
       }
     }
+
     // Expand contract function end
 
     // Solving middle cube rotation
@@ -893,56 +906,57 @@ void GameController::PlayAnimation() {
   }
 }
 
-void GameController::UpdateMatrices(glm::mat4 new_model, 
-  glm::mat4 new_view, 
-  glm::mat4 new_proyection) {
+void GameController::UpdateMatrices(glm::mat4 new_model,
+                                    glm::mat4 new_view,
+                                    glm::mat4 new_proyection) {
   this->model = new_model;
   this->view = new_view;
   this->projection = new_proyection;
 }
 
-glm::vec3 GameController::CalculateTranslatePosition(float angle, Move m, const float& radius) {
+glm::vec3 GameController::CalculateTranslatePosition(const float& angle,
+    const Move& m, const float& radius) {
   switch (m) {
-  case Move::F:
-  case Move::FP:
-    return glm::vec3(radius * cos(deg(angle)),
-      radius * sin(deg(angle)),
-      distance_b_cubes);
-    break;
+    case Move::F:
+    case Move::FP:
+      return glm::vec3(radius * cos(deg(angle)),
+                       radius * sin(deg(angle)),
+                       distance_b_cubes);
+      break;
 
-  case Move::B:
-  case Move::BP:
-    return glm::vec3(radius * cos(deg(angle)),
-      radius * sin(deg(angle)),
-      -distance_b_cubes);
-    break;
+    case Move::B:
+    case Move::BP:
+      return glm::vec3(radius * cos(deg(angle)),
+                       radius * sin(deg(angle)),
+                       -distance_b_cubes);
+      break;
 
-  case Move::R:
-  case Move::RP:
-    return glm::vec3(distance_b_cubes,
-      radius * sin(deg(angle)),
-      radius * cos(deg(angle)));
-    break;
+    case Move::R:
+    case Move::RP:
+      return glm::vec3(distance_b_cubes,
+                       radius * sin(deg(angle)),
+                       radius * cos(deg(angle)));
+      break;
 
-  case Move::L:
-  case Move::LP:
-    return glm::vec3(-distance_b_cubes,
-      radius * sin(deg(angle)),
-      radius * cos(deg(angle)));
-    break;
+    case Move::L:
+    case Move::LP:
+      return glm::vec3(-distance_b_cubes,
+                       radius * sin(deg(angle)),
+                       radius * cos(deg(angle)));
+      break;
 
-  case Move::U:
-  case Move::UP:
-    return glm::vec3(radius * cos(deg(angle)),
-      distance_b_cubes,
-      radius * sin(deg(angle)));
-    break;
+    case Move::U:
+    case Move::UP:
+      return glm::vec3(radius * cos(deg(angle)),
+                       distance_b_cubes,
+                       radius * sin(deg(angle)));
+      break;
 
-  case Move::D:
-  case Move::DP:
-    return glm::vec3(radius * cos(deg(angle)),
-      -distance_b_cubes,
-      radius * sin(deg(angle)));
+    case Move::D:
+    case Move::DP:
+      return glm::vec3(radius * cos(deg(angle)),
+                       -distance_b_cubes,
+                       radius * sin(deg(angle)));
   }
 }
 
@@ -960,7 +974,7 @@ void GameController::StartParser() {
   move_to_string[Move::FP] = "F'";
   move_to_string[Move::BP] = "B'";
 
-  for (auto &element : move_to_string) {
+  for (auto& element : move_to_string) {
     string_to_move[element.second] = element.first;
   }
 
@@ -994,10 +1008,12 @@ void GameController::StartParser() {
 std::string GameController::GenScramble(int count) {
   std::random_device rd;
   std::string movements;
+
   for (int i = 0; i < count; ++i) {
     Move current = Move(rd() % 12);
     movements += move_to_string[current] + " ";
   }
+
   return movements;
 }
 
@@ -1005,11 +1021,14 @@ std::vector<Move> GameController::ParseOutput(std::string output) {
   std::string tmp;
   std::vector<Move> movements;
   bool two = false;
+
   for (int i = 0; i < output.size(); ++i) {
-    if (output[i] == ' '){
+    if (output[i] == ' ') {
       movements.push_back(string_to_move[tmp]);
+
       if (two)
         movements.push_back(string_to_move[tmp]);
+
       tmp = "";
       two = false;
     }
@@ -1018,6 +1037,7 @@ std::vector<Move> GameController::ParseOutput(std::string output) {
     else
       tmp += output[i];
   }
+
   return movements;
 }
 

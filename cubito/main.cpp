@@ -1,10 +1,10 @@
 /*
-* Copyright: Mosqueteros UCSP
-* Trabajo final Computación gráfica
-* 
-*  Gonzales Navarrete Mateo
-*  Palma Ugarte Joaquin
-*  Nieto Miguel
+ * Copyright: Mosqueteros UCSP
+ * Trabajo final Computacion grafica
+ *
+ *  Gonzales Navarrete, Mateo
+ *  Nieto Rosas, Miguel
+ *  Palma Ugarte, Joaquin
 */
 
 #include <glad/glad.h>
@@ -43,7 +43,7 @@ void AutomaticCamera();
 // Create main controller of game
 GameController game_controller(SCR_WIDTH, SCR_HEIGHT);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
 
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
   glfwSetCursorPosCallback(window, mouse_callback);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetKeyCallback(window, key_callback);
-  
+
   PrintCommands();
 
   // Init main controller of game
@@ -84,9 +84,10 @@ int main(int argc, char *argv[]) {
 
   game_controller.StartParser();
 
-  if(argc == 2) {
+  if (argc == 2) {
     game_controller.str_scramble = std::string(argv[1]) + " ";
-    game_controller.scramble = game_controller.ParseOutput(game_controller.str_scramble);
+    game_controller.scramble = game_controller.ParseOutput(
+                                 game_controller.str_scramble);
     game_controller.shuffle_anim = true;
   }
 
@@ -98,32 +99,33 @@ int main(int argc, char *argv[]) {
     // Camera automatic
     if (auto_camera) {
       projection = glm::perspective(glm::radians(camera.Zoom),
-        (float)SCR_WIDTH / (float)SCR_HEIGHT,
-        0.1f,
-        100.0f);
+                                    (float)SCR_WIDTH / (float)SCR_HEIGHT,
+                                    0.1f,
+                                    100.0f);
 
       AutomaticCamera();
-    } else {
+    }
+    else {
       ProcessInputMouse(window);
 
       projection = glm::perspective(glm::radians(camera.Zoom),
-        (float)SCR_WIDTH / (float)SCR_HEIGHT,
-        0.1f,
-        100.0f);
+                                    (float)SCR_WIDTH / (float)SCR_HEIGHT,
+                                    0.1f,
+                                    100.0f);
       view = camera.GetViewMatrix();
     }
 
     // God actions
     game_controller.ProcessInput(deltaTime);
-    
-    game_controller.UpdateMatrices(model,view,projection);
+
+    game_controller.UpdateMatrices(model, view, projection);
 
     game_controller.UpdateGame(deltaTime);
 
     // Render All
     glClearColor(0.0f, 0.9f, 0.6f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+
     game_controller.Render();
 
     glfwSwapBuffers(window);
@@ -163,9 +165,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
 
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS) {
       if (!game_controller.str_scramble.empty()) {
-       game_controller.str_solution = rubik::solve(game_controller.str_scramble);
-       game_controller.solution = game_controller.ParseOutput(game_controller.str_solution);
-       game_controller.solution_anim = true;
+        game_controller.str_solution = rubik::solve(game_controller.str_scramble);
+        game_controller.solution = game_controller.ParseOutput(
+                                     game_controller.str_solution);
+        game_controller.solution_anim = true;
       }
     }
 
@@ -213,7 +216,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.some_movement = true;
         game_controller.str_scramble += "B' ";
       }
-    
+
       if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         auto_camera = false;
       }
@@ -264,11 +267,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.some_movement = true;
         game_controller.str_scramble += "B ";
       }
-    
+
       if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         auto_camera = true;
       }
-      
+
       if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         game_controller.expand_contract_efect = true;
       }
@@ -315,27 +318,22 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 
 void AutomaticCamera() {
   const float distance_f_object = 6.0f;
-  float cam_x = sin(glfwGetTime()) * distance_f_object;
-  float cam_z = cos(glfwGetTime()) * distance_f_object;
-  
-  // y efect automatic camera (commend and uncommend to decide efect go or not)
-  
-  // With Y efect
-  if (up_down_camera) {
-    cam_y += 0.08f;
-    if (cam_y >= 4.0f) up_down_camera = false;
-  }
-  else { 
-    cam_y -= 0.08f;
-    if (cam_y <= -4.0f) up_down_camera = true;
-  }
-  
-  view = glm::lookAt( glm::vec3(cam_x, cam_y, cam_z),
-                      glm::vec3(0.0f, 0.0f, 0.0f),
-                      glm::vec3(0.0f, 1.0f, 0.0f));
 
-  // Without Y efect
-  //view = glm::lookAt(glm::vec3(cam_x, 2.0f, cam_z),
-  //  glm::vec3(0.0f, 0.0f, 0.0f),
-  //  glm::vec3(0.0f, 1.0f, 0.0f));
+  game_controller.camera_angle_z += game_controller.camera_angle_z_velocity;
+  game_controller.camera_angle_height += game_controller.camera_angle_height_velocity;
+  if (game_controller.camera_angle_z > 360.0f)
+    game_controller.camera_angle_z = 0.0f;
+  if (game_controller.camera_angle_height > 360.0f)
+    game_controller.camera_angle_height = 0.0f;
+
+  float z_rad = glm::radians(game_controller.camera_angle_z);
+  float height_rad = glm::radians(game_controller.camera_angle_height);
+
+  float cam_x = cos(z_rad) * sin(height_rad) * distance_f_object;
+  float cam_y = sin(z_rad) * sin(height_rad) * distance_f_object;
+  float cam_z = cos(height_rad) * distance_f_object;
+
+  view = glm::lookAt(glm::vec3(cam_x, cam_y, cam_z),
+                     glm::vec3(0.0f, 0.0f, 0.0f),
+                     glm::vec3(0.0f, 1.0f, 0.0f));
 }
