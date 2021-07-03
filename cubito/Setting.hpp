@@ -29,37 +29,60 @@ float deg(float num) { // warning posible loss of data
 }
 
 void PrintCommands() {
-  std::cout << "\t\tWELCOME TO CUBITO MOSQUETERO\n";
-  std::cout << "\t\t     CONTROLS TO PLAY\n\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|          WELCOME TO CUBITO MOSQUETERO        |\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|               CONTROLS TO PLAY               |\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|   U: U                                       |\n";
+  std::cout << "\t|   Shift + U: U'                              |\n";
+  std::cout << "\t|   D: D                                       |\n";
+  std::cout << "\t|   Shift + D: D'                              |\n";
+  std::cout << "\t|   R: R                                       |\n";
+  std::cout << "\t|   Shift + R: R'                              |\n";
+  std::cout << "\t|   L: L                                       |\n";
+  std::cout << "\t|   Shift + L: L'                              |\n";
+  std::cout << "\t|   F: F                                       |\n";
+  std::cout << "\t|   Shift + F: F'                              |\n";
+  std::cout << "\t|   B: B                                       |\n";
+  std::cout << "\t|   Shift + B: B'                              |\n";
 
-  std::cout << "\tU: U\n";
-  std::cout << "\tShift + U: U'\n";
-  std::cout << "\tD: D\n";
-  std::cout << "\tShift + D: D'\n";
-  std::cout << "\tR: R\n";
-  std::cout << "\tShift + R: R'\n";
-  std::cout << "\tL: L\n";
-  std::cout << "\tShift + L: L'\n";
-  std::cout << "\tF: F\n";
-  std::cout << "\tShift + F: F'\n";
-  std::cout << "\tB: B\n";
-  std::cout << "\tShift + B: B'" << std::endl;
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|              SOLVER CONTROLS                 |\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|   Random movements: Z                        |\n";
+  std::cout << "\t|   Solve rubick-cube: X                       |\n";
 
-  std::cout << "\n\t\t     SOLVER CONTROLS\n\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|     CAMERA CONTROLS (if automatic if off)    |\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|   4 Arrow: up, down, left, right             |\n";
+  std::cout << "\t|   Mouse movement                             |\n";
 
-  std::cout << "\tRandom movements: z\n";
-  std::cout << "\tSolve rubick-cube: x" << std::endl;
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|               EFECTS CONTROLS                |\n";
+  std::cout << "\t+----------------------------------------------+\n";
+  std::cout << "\t|   Automatic camera on: A                     |\n";
+  std::cout << "\t|   Automatic camera off: Shift + A            |\n";
+  std::cout << "\t|   Expand-contract efect ON: Q                |\n";
+  std::cout << "\t|   Expand-contract efect OFF: Shift + Q       |\n";
+  std::cout << "\t+----------------------------------------------+" << std::endl;
+  std::cout << "\t|   Don't try press multiple key, please.      |" << std::endl;
+  std::cout << "\t+----------------------------------------------+" << std::endl;
 }
 
 // Main object that control game
 
 // Thing of camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 5.0f)); // initial position of camera
 float lastX = 500.0f;
 float lastY = 500.0f;
 bool first_time_mouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+bool auto_camera = false;
+float cam_y = -4.0f;
+bool up_down_camera = true;
 enum class Move {
   L, LP,
   R, RP,

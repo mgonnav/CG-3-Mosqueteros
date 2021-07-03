@@ -56,6 +56,7 @@ class GameController {
   bool F_PRIME_ANIM = false, F_PRIME_ANIM_I = false;
   bool B_ANIM = false, B_ANIM_I = false;
   bool B_PRIME_ANIM = false, B_PRIME_ANIM_I = false;
+  bool expand_contract_efect = false;
   float move_angles[9] = {
     135.0f,
     90.0f,
@@ -69,7 +70,7 @@ class GameController {
   };
 
   // Expand variables
-  bool expand_contract = true;
+  bool is_expanding = true;
   float kRadioLarge = 0.0f;
   float kRadioNormal = 0.0f;
 
@@ -601,17 +602,24 @@ void GameController::UpdateGame(float delta_time) {
 
 void GameController::PlayAnimation() {
 
-  // Expand contract function start
-  if (this->expand_contract) {
-    this->kRadioLarge += 0.1f;
-    this->kRadioNormal += 0.1f;
+  if (this->expand_contract_efect) {
+  
+    if (this->is_expanding) {
+      this->kRadioLarge += 0.1f;
+      this->kRadioNormal += 0.1f;
+    }
+    else {
+      this->kRadioLarge -= 0.1f;
+      this->kRadioNormal -= 0.1f;
+    }
+    if (this->kRadioNormal > 1.4f) this->is_expanding = false;
+  
+  } else {
+
+    this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
+    this->kRadioNormal = distance_b_cubes;
+  
   }
-  else {
-    this->kRadioLarge -= 0.1f;
-    this->kRadioNormal -= 0.1f;
-  }
-  if (this->kRadioNormal > 1.4f) this->expand_contract = false;
-  // Expand contract function end
 
   std::vector<std::reference_wrapper<std::shared_ptr<Cubito>>> cubitos;
   float* angles = move_angles;
@@ -814,7 +822,7 @@ void GameController::PlayAnimation() {
     this->some_movement = false;
 
     // Expand contract function start
-    this->expand_contract = true;
+    this->is_expanding = true;
     this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
     this->kRadioNormal = distance_b_cubes;
 
@@ -831,7 +839,7 @@ void GameController::PlayAnimation() {
     // Expand contract function end
 
     // Solving middle cube rotation
-    cubitos[4].get()->CorrectRotate();
+    // cubitos[4].get()->CorrectRotate();
   }
 
   cubitos[8].get()->SetPosition(CalculateTranslatePosition(angles[8],

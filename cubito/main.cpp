@@ -38,6 +38,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
                   int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void AutomaticCamera();
 
 // Create main controller of game
 GameController game_controller(SCR_WIDTH, SCR_HEIGHT);
@@ -94,14 +95,23 @@ int main(int argc, char *argv[]) {
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
-    // Camera calculations
-    ProcessInputMouse(window);
+    // Camera automatic
+    if (auto_camera) {
+      projection = glm::perspective(glm::radians(camera.Zoom),
+        (float)SCR_WIDTH / (float)SCR_HEIGHT,
+        0.1f,
+        100.0f);
 
-    projection = glm::perspective(glm::radians(camera.Zoom),
-      (float)SCR_WIDTH / (float)SCR_HEIGHT, 
-      0.1f, 
-      100.0f);
-    view = camera.GetViewMatrix();
+      AutomaticCamera();
+    } else {
+      ProcessInputMouse(window);
+
+      projection = glm::perspective(glm::radians(camera.Zoom),
+        (float)SCR_WIDTH / (float)SCR_HEIGHT,
+        0.1f,
+        100.0f);
+      view = camera.GetViewMatrix();
+    }
 
     // God actions
     game_controller.ProcessInput(deltaTime);
@@ -203,6 +213,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.some_movement = true;
         game_controller.str_scramble += "B' ";
       }
+    
+      if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        auto_camera = false;
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        game_controller.expand_contract_efect = false;
+      }
     }
     else {
       if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
@@ -246,16 +264,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.some_movement = true;
         game_controller.str_scramble += "B ";
       }
+    
+      if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        auto_camera = true;
+      }
+      
+      if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        game_controller.expand_contract_efect = true;
+      }
     }
   }
 }
 
 void ProcessInputMouse(GLFWwindow* window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-
-  float cameraSpeed = static_cast<float>(2.5 * deltaTime);
-
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 
@@ -290,4 +311,31 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
   camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+void AutomaticCamera() {
+  const float distance_f_object = 6.0f;
+  float cam_x = sin(glfwGetTime()) * distance_f_object;
+  float cam_z = cos(glfwGetTime()) * distance_f_object;
+  
+  // y efect automatic camera (commend and uncommend to decide efect go or not)
+  
+  // With Y efect
+  if (up_down_camera) {
+    cam_y += 0.08f;
+    if (cam_y >= 4.0f) up_down_camera = false;
+  }
+  else { 
+    cam_y -= 0.08f;
+    if (cam_y <= -4.0f) up_down_camera = true;
+  }
+  
+  view = glm::lookAt( glm::vec3(cam_x, cam_y, cam_z),
+                      glm::vec3(0.0f, 0.0f, 0.0f),
+                      glm::vec3(0.0f, 1.0f, 0.0f));
+
+  // Without Y efect
+  //view = glm::lookAt(glm::vec3(cam_x, 2.0f, cam_z),
+  //  glm::vec3(0.0f, 0.0f, 0.0f),
+  //  glm::vec3(0.0f, 1.0f, 0.0f));
 }
