@@ -317,25 +317,10 @@ void AutomaticCamera() {
   const float distance_f_object = 6.0f;
   float cam_x = sin(glfwGetTime()) * distance_f_object;
   float cam_z = cos(glfwGetTime()) * distance_f_object;
+  float cam_y = cos(glfwGetTime()) * distance_f_object;
   
-  // y efect automatic camera (commend and uncommend to decide efect go or not)
-  
-  // With Y efect
-  if (up_down_camera) {
-    cam_y += 0.08f;
-    if (cam_y >= 4.0f) up_down_camera = false;
-  }
-  else { 
-    cam_y -= 0.08f;
-    if (cam_y <= -4.0f) up_down_camera = true;
-  }
   
   view = glm::lookAt( glm::vec3(cam_x, cam_y, cam_z),
                       glm::vec3(0.0f, 0.0f, 0.0f),
                       glm::vec3(0.0f, 1.0f, 0.0f));
-
-  // Without Y efect
-  //view = glm::lookAt(glm::vec3(cam_x, 2.0f, cam_z),
-  //  glm::vec3(0.0f, 0.0f, 0.0f),
-  //  glm::vec3(0.0f, 1.0f, 0.0f));
 }
