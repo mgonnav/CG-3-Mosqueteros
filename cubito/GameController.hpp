@@ -17,6 +17,9 @@
 #include "Rendered.hpp"
 #include "Resources.hpp"
 #include "Setting.hpp"
+#include "Floor.hpp"
+#include "Grass.hpp"
+#include "World.hpp"
 
 class GameController {
 
@@ -28,7 +31,11 @@ class GameController {
 
   // Things on game
   Rendered* Renderer = nullptr;
+  Rendered* Renderer_floor = nullptr;
   Cubo rubick_cube;
+  Floor* floor;
+  Grass* grass;
+  World* world;
 
   // General variables of game_controller
   unsigned int width = 0;
@@ -123,6 +130,9 @@ void GameController::Init() {
   
   // Loading programs
   Resources::LoadShader("src/shaders/cubito.vs", "src/shaders/cubito.fs", nullptr, "cubito");
+  Resources::LoadShader("src/shaders/floor.vs", "src/shaders/floor.fs", nullptr, "floor");
+  Resources::LoadShader("src/shaders/grass.vs", "src/shaders/grass.fs", nullptr, "grass");
+  Resources::LoadShader("src/shaders/skybox.vs", "src/shaders/skybox.fs", nullptr, "skybox");
   
   // Loading textures
   Resources::LoadTexture("src/images/negro.png", true, "negro");
@@ -172,6 +182,8 @@ void GameController::Init() {
   Resources::LoadTexture("src/images/sacerdote7.png", true, "sacerdote7");
   Resources::LoadTexture("src/images/sacerdote8.png", true, "sacerdote8");
   Resources::LoadTexture("src/images/sacerdote9.png", true, "sacerdote9");
+  Resources::LoadTexture("src/images/metal.png", false, "metal");
+  Resources::LoadTexture("src/images/grass.png", true, "tgrass");
 
   Resources::LoadTexture("src/images/background.jpg", false, "background");
 
@@ -179,8 +191,13 @@ void GameController::Init() {
   Resources::GetShader("cubito").Use().SetInteger("main_image_texture", 0);
   Resources::GetShader("cubito").Use().SetInteger("background_texture", 1);
 
+  Resources::GetShader("floor").Use().SetInteger("texture1", 0);
+
+  Resources::GetShader("grass").Use().SetInteger("texture1", 0);
+
   // Create main Rendered
   this->Renderer = new Rendered(Resources::GetShader("cubito"));
+  this->Renderer_floor = new Rendered(Resources::GetShader("floor"));
 
   // set angle rotation
   this->kRadioLarge = static_cast<float>(distance_b_cubes * sqrt(2));
@@ -197,6 +214,19 @@ void GameController::Init() {
   }
   fill_n(back_inserter(input_colors), 9, GREEN);
 
+  // Floor
+  this->floor = new Floor(
+    Resources::GetTexture("metal"),
+    Resources::GetShader("floor"), 999);
+
+  // Grass
+  this->grass = new Grass(
+    Resources::GetTexture("tgrass"),
+    Resources::GetShader("grass"), 998);
+
+  // World
+  world = new World(
+    Resources::GetShader("skybox"), 998);
   // Creating cubitos inside rubick_cube
   {
     this->rubick_cube.cubitos[3] = std::make_shared<Cubito>(
@@ -547,10 +577,16 @@ void GameController::ProcessInput(float delta_time) {
 }
 
 void GameController::Render() {
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS);
+
   // Render rubick_cube
   rubick_cube.Draw(*Renderer, this->model, this->view, this->projection);
 
   // Here We render all things of game
+  //this->floor->Draw(*Renderer_floor, this->model, this->view, this->projection);
+  //this->grass->Draw(this->model, this->view, this->projection);
+  this->world->Draw(this->model, this->view, this->projection, camera.GetViewMatrix());
 }
 
 void GameController::ResetAngles() {

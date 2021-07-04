@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
     game_controller.UpdateGame(deltaTime);
 
     // Render All
-    glClearColor(0.0f, 0.9f, 0.6f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     game_controller.Render();
@@ -314,10 +314,10 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void AutomaticCamera() {
-  const float distance_f_object = 6.0f;
-  float cam_x = sin(glfwGetTime()) * distance_f_object;
-  float cam_z = cos(glfwGetTime()) * distance_f_object;
-  float cam_y = cos(glfwGetTime()) * distance_f_object;
+  const float distance_f_object = 4.0f;
+  float cam_x = static_cast<float>(sin(glfwGetTime()) * distance_f_object);
+  float cam_z = static_cast<float>(cos(glfwGetTime()) * distance_f_object);
+  float cam_y = static_cast<float>(cos(glfwGetTime()) * distance_f_object);
   
   
   view = glm::lookAt( glm::vec3(cam_x, cam_y, cam_z),

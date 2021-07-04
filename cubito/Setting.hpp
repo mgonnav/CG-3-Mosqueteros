@@ -54,7 +54,7 @@ void PrintCommands() {
   std::cout << "\t|   Solve rubick-cube: X                       |\n";
 
   std::cout << "\t+----------------------------------------------+\n";
-  std::cout << "\t|     CAMERA CONTROLS (if automatic if off)    |\n";
+  std::cout << "\t|     CAMERA CONTROLS (if automatic is off)    |\n";
   std::cout << "\t+----------------------------------------------+\n";
   std::cout << "\t|   4 Arrow: up, down, left, right             |\n";
   std::cout << "\t|   Mouse movement                             |\n";
