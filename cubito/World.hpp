@@ -46,7 +46,7 @@ World::World(
 
 	this->InitialRender();
 
-	std::vector<std::string> faces{
+	std::vector<std::string> night{
 	"src/images/nright.jpg",
 	"src/images/nleft.jpg",
 	"src/images/ntop.jpg",
@@ -55,7 +55,7 @@ World::World(
 	"src/images/nback.jpg"
 	};
 
-	std::vector<std::string> ocean_faces{
+	std::vector<std::string> ocean{
 	"src/images/right.jpg",
 	"src/images/left.jpg",
 	"src/images/top.jpg",
@@ -64,7 +64,7 @@ World::World(
 	"src/images/back.jpg"
 	};
 
-	cubemapTexture = loadCubemap(ocean_faces);
+	cubemapTexture = loadCubemap(night);
 
 	this->shader.SetInteger("skybox", 0);
 }

@@ -103,6 +103,8 @@ int main(int argc, char *argv[]) {
         100.0f);
 
       AutomaticCamera();
+      view = camera.GetViewMatrix();
+
     } else {
       ProcessInputMouse(window);
 
@@ -306,7 +308,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
   lastX = static_cast<float>(xpos);
   lastY = static_cast<float>(ypos);
 
-  camera.ProcessMouseMovement(xoffset, yoffset);
+  camera.ProcessMouseMovement(xoffset, yoffset, false);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
@@ -314,13 +316,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void AutomaticCamera() {
-  const float distance_f_object = 4.0f;
-  float cam_x = static_cast<float>(sin(glfwGetTime()) * distance_f_object);
-  float cam_z = static_cast<float>(cos(glfwGetTime()) * distance_f_object);
-  float cam_y = static_cast<float>(cos(glfwGetTime()) * distance_f_object);
-  
-  
-  view = glm::lookAt( glm::vec3(cam_x, cam_y, cam_z),
-                      glm::vec3(0.0f, 0.0f, 0.0f),
-                      glm::vec3(0.0f, 1.0f, 0.0f));
+  float distance_from_cube = 5.0f;
+  camera.Automatic(distance_from_cube, glfwGetTime());
 }

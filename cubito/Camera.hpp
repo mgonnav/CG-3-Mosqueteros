@@ -22,10 +22,9 @@ const float ZOOM = 45.0f;
 
 class Camera {
  private:
-
-  void updateCameraVectors();
  
  public:
+  void updateCameraVectors();
   // camera Attributes
   glm::vec3 Position;
   glm::vec3 Front;
@@ -46,8 +45,10 @@ class Camera {
          float pitch = PITCH);
   Camera(float, float, float, float , float, float, float, float);
   glm::mat4 GetViewMatrix();
+  glm::mat4 GetViewAirPlane();
   void ProcessKeyboard(CameraMovement, float);
   void ProcessMouseMovement(float, float, GLboolean);
+  void Automatic(float, double);
   void ProcessMouseScroll(float yoffset);
 };
 
@@ -77,6 +78,10 @@ glm::mat4 Camera::GetViewMatrix() {
   return glm::lookAt(Position, Position + Front, Up);
 }
 
+glm::mat4 Camera::GetViewAirPlane() {
+  return glm::lookAt(Position, Front, Up);
+}
+
 void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
   float velocity = MovementSpeed * deltaTime;
   if (direction == CameraMovement::FORWARD)
@@ -89,23 +94,36 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
     Position += Right * velocity;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
-  xoffset *= MouseSensitivity;
-  yoffset *= MouseSensitivity;
+void Camera::Automatic(float distance_f_cube, double time) {
 
-  Yaw += xoffset;
-  Pitch += yoffset;
+  float cam_x = static_cast<float>(sin(time) * distance_f_cube);
+  float cam_y = static_cast<float>(sin(time) * distance_f_cube + 10.5f);
+  float cam_z = static_cast<float>(cos(time) * distance_f_cube);
 
-  // make sure that when pitch is out of bounds, screen doesn't get flipped
-  //if (constrainPitch)
-  //{
-  //  if (Pitch > 89.0f)
-  //    Pitch = 89.0f;
-  //  if (Pitch < -89.0f)
-  //    Pitch = -89.0f;
-  //}
+  float target_x = static_cast<float>(sin(time) * (distance_f_cube - 1.0f));
+  float target_y = static_cast<float>(sin(time) * (distance_f_cube - 1.0f) + 10.5f);
+  float target_z = static_cast<float>(cos(time) * (distance_f_cube - 1.0f));
 
-  // update Front, Right and Up Vectors using the updated Euler angles
+  this->Position = glm::vec3(cam_x, cam_y, cam_z);
+  glm::vec3 target = glm::vec3(target_x, target_y, target_z);
+  this->Front = target - this->Position;
+
+}
+
+  void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
+  xoffset *= this->MouseSensitivity;
+  yoffset *= this->MouseSensitivity;
+
+  this->Yaw += xoffset;
+  this->Pitch += yoffset;
+
+  if (constrainPitch)  {
+    if (this->Pitch > 89.0f)
+      this->Pitch = 89.0f;
+    if (this->Pitch < -89.0f)
+      this->Pitch = -89.0f;
+  }
+
   updateCameraVectors();
 }
 
@@ -119,12 +137,12 @@ void Camera::ProcessMouseScroll(float yoffset) {
 
 void Camera::updateCameraVectors() {
   glm::vec3 front;
-  front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-  front.y = sin(glm::radians(Pitch));
-  front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-  Front = glm::normalize(front);
-  Right = glm::normalize(glm::cross(Front, WorldUp));  
-  Up = glm::normalize(glm::cross(Right, Front));
+  front.x = cos(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+  front.y = sin(glm::radians(this->Pitch));
+  front.z = sin(glm::radians(this->Yaw)) * cos(glm::radians(this->Pitch));
+  this->Front = glm::normalize(front);
+  this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));
+  this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 }
 
 #endif // CUBITO_CAMERA_H

@@ -80,9 +80,11 @@ float lastY = 500.0f;
 bool first_time_mouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-bool auto_camera = false;
+bool auto_camera = true;
 float cam_y = -4.0f;
 bool up_down_camera = true;
+
+
 enum class Move {
   L, LP,
   R, RP,
