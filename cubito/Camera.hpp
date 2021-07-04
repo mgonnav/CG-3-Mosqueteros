@@ -97,16 +97,22 @@ void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime) {
 void Camera::Automatic(float distance_f_cube, double time) {
 
   float cam_x = static_cast<float>(sin(time) * distance_f_cube);
-  float cam_y = static_cast<float>(sin(time) * distance_f_cube + 10.5f);
+  float cam_y = static_cast<float>(sin(time) * distance_f_cube);
   float cam_z = static_cast<float>(cos(time) * distance_f_cube);
 
   float target_x = static_cast<float>(sin(time) * (distance_f_cube - 1.0f));
-  float target_y = static_cast<float>(sin(time) * (distance_f_cube - 1.0f) + 10.5f);
+  float target_y = static_cast<float>(sin(time) * (distance_f_cube - 1.0f));
   float target_z = static_cast<float>(cos(time) * (distance_f_cube - 1.0f));
 
   this->Position = glm::vec3(cam_x, cam_y, cam_z);
   glm::vec3 target = glm::vec3(target_x, target_y, target_z);
   this->Front = target - this->Position;
+
+  // saving last position Pitch and Yaw
+  this->Pitch = glm::degrees(asin(this->Front.y));
+  this->Yaw = glm::degrees( asin( this->Front.x / (cos(glm::radians(this->Pitch))) ) );
+  this->Right = glm::normalize(glm::cross(this->Front, this->WorldUp));
+  this->Up = glm::normalize(glm::cross(this->Right, this->Front));
 
 }
 

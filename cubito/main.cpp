@@ -218,6 +218,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
     
       if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         auto_camera = false;
+        camera.Pitch = -25.0f;
+        camera.Yaw = -70.0f;
+        camera.Position = glm::vec3(-2.0f, 2.0f, 5.0f);
+        camera.updateCameraVectors();
       }
 
       if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
