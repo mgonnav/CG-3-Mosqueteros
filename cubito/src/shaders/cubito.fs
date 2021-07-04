@@ -4,6 +4,12 @@ out vec4 FragColor;
 in vec3 ourColor;
 in vec2 TexCoord;
 
+in vec3 Normal;
+in vec3 Position;
+
+uniform vec3 cameraPos;
+uniform samplerCube skybox;
+
 // texture samplers
 uniform sampler2D main_image_texture;
 uniform sampler2D background_texture;
