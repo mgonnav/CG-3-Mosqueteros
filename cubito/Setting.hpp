@@ -66,8 +66,9 @@ void PrintCommands() {
   std::cout << "\t|   Automatic camera off: Shift + A            |\n";
   std::cout << "\t|   Expand-contract efect ON: Q                |\n";
   std::cout << "\t|   Expand-contract efect OFF: Shift + Q       |\n";
-  std::cout << "\t|   Change Background: O                       |\n";
-  std::cout << "\t|   Mirrow Cube : P (again to normal state)    |\n";
+  std::cout << "\t|   Change Background: G                       |\n";
+  std::cout << "\t|   Mirrow Cube : M (again to normal state)    |\n";
+  std::cout << "\t|   on/off velocity and far efect : E          |\n";
   std::cout << "\t|   Velocity of camera change when:            |\n";
   std::cout << "\t|        Shift movement -> slower              |\n";
   std::cout << "\t|        Normal movement -> faster             |\n";
@@ -133,5 +134,7 @@ const int kAroundZRight = -3;
 // special efect
 
 float velocity_cubito = 1.0f;
+float far_of_cubito = 1.0f;
+bool efect_far_velocity = true;
 
 #endif // CUBITO_SETTING_HPP

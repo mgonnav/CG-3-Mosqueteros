@@ -115,9 +115,6 @@ void Cubito::Draw(const Rendered &rendered,
 
   if (this->change_fragment) {
     glActiveTexture(GL_TEXTURE0);
-    texture1.Bind();
-
-    glActiveTexture(GL_TEXTURE0);
     if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
     else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
 
