@@ -44,8 +44,8 @@ class Camera {
          float yaw = YAW,
          float pitch = PITCH);
   Camera(float, float, float, float , float, float, float, float);
-  glm::mat4 GetViewMatrix();
-  glm::mat4 GetViewAirPlane();
+  const glm::mat4 GetViewMatrix();
+  const glm::mat4 GetViewAirPlane();
   void ProcessKeyboard(CameraMovement, float);
   void ProcessMouseMovement(float, float, GLboolean);
   void Automatic(float, double);
@@ -74,11 +74,11 @@ Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float u
   updateCameraVectors();
 }
 
-glm::mat4 Camera::GetViewMatrix() {
+const glm::mat4 Camera::GetViewMatrix() {
   return glm::lookAt(Position, Position + Front, Up);
 }
 
-glm::mat4 Camera::GetViewAirPlane() {
+const glm::mat4 Camera::GetViewAirPlane() {
   return glm::lookAt(Position, Front, Up);
 }
 
@@ -100,9 +100,9 @@ void Camera::Automatic(float distance_f_cube, double time) {
   float cam_y = static_cast<float>(sin(time) * distance_f_cube);
   float cam_z = static_cast<float>(cos(time) * distance_f_cube);
 
-  float target_x = static_cast<float>(sin(time) * (distance_f_cube - 1.0f));
-  float target_y = static_cast<float>(sin(time) * (distance_f_cube - 1.0f));
-  float target_z = static_cast<float>(cos(time) * (distance_f_cube - 1.0f));
+  float target_x = static_cast<float>(sin(time) * (distance_f_cube-1.0f));
+  float target_y = static_cast<float>(sin(time) * (distance_f_cube-1.0f));
+  float target_z = static_cast<float>(cos(time) * (distance_f_cube-1.0f));
 
   this->Position = glm::vec3(cam_x, cam_y, cam_z);
   glm::vec3 target = glm::vec3(target_x, target_y, target_z);

@@ -179,6 +179,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.U_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "U' ";
+        velocity_cubito -= 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
@@ -186,6 +187,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.D_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "D' ";
+        velocity_cubito -= 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -193,6 +195,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.R_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "R' ";
+        velocity_cubito -= 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
@@ -200,6 +203,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.L_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "L' ";
+        velocity_cubito -= 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -207,6 +211,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.F_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "F' ";
+        velocity_cubito -= 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -214,6 +219,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.B_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "B' ";
+        velocity_cubito -= 0.1f;
       }
     
       if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
@@ -234,6 +240,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.U_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "U ";
+        velocity_cubito += 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
@@ -241,6 +248,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.D_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "D ";
+        velocity_cubito += 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -248,6 +256,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.R_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "R ";
+        velocity_cubito += 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
@@ -255,6 +264,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.L_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "L ";
+        velocity_cubito += 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -262,6 +272,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.F_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "F ";
+        velocity_cubito += 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -269,6 +280,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.B_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "B ";
+        velocity_cubito += 0.1f;
       }
     
       if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
@@ -277,6 +289,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
       
       if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
         game_controller.expand_contract_efect = true;
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS) {
+        game_controller.ChangeBackground();
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+        game_controller.ChangeFragCubito();
       }
     }
   }
@@ -320,6 +340,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void AutomaticCamera() {
-  float distance_from_cube = 5.0f;
-  camera.Automatic(distance_from_cube, glfwGetTime());
+  float distance_from_cube = static_cast<float>(5.0f);
+  camera.Automatic(distance_from_cube, glfwGetTime() * velocity_cubito);
 }

@@ -42,7 +42,7 @@ public:
   ~Grass();
 
 	void InitialRender();
-	void Draw(glm::mat4&, glm::mat4&, glm::mat4&);
+	void Draw(const glm::mat4&, const glm::mat4&, const glm::mat4&);
 };
 
 // --------------------------------------------------------------------------------------
@@ -64,9 +64,9 @@ Grass::~Grass() {
 }
 
 void Grass::Draw(
-	glm::mat4& model, 
-	glm::mat4& view, 
-	glm::mat4& projection) {
+	const glm::mat4& model,
+	const glm::mat4& view,
+	const glm::mat4& projection) {
 	
 	this->shader.Use();
 

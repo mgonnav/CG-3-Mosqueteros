@@ -29,7 +29,7 @@ public:
   ~Floor();
 
 	void InitialRender();
-	void Draw(Rendered&, glm::mat4&, glm::mat4&, glm::mat4&);
+	void Draw(const Rendered&, const glm::mat4&, const glm::mat4&, const glm::mat4&);
 };
 
 // --------------------------------------------------------------------------------------
@@ -50,14 +50,13 @@ Floor::~Floor() {
 	glDeleteVertexArrays(1, &this->quadVAO);
 }
 
-void Floor::Draw(Rendered &rendered,
-	glm::mat4& model, 
-	glm::mat4& view, 
-	glm::mat4& projection) {
+void Floor::Draw(const Rendered &rendered,
+	const glm::mat4& model,
+	const glm::mat4& view,
+	const glm::mat4& projection) {
 	
 	this->shader.Use();
 
-	//this->shader.SetMatrix4("model", glm::mat4(1.0f));
 	unsigned int model_location = glGetUniformLocation(this->shader.id, "model");
 	glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
 

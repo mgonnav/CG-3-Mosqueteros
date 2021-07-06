@@ -17,7 +17,6 @@ private:
 	int id = -1;
 	Shader shader;
 	unsigned int quadVAO = -1;
-	unsigned int cubemapTexture = -1;
 	glm::mat4 rotation = glm::mat4(1.0f);
 	glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
 	
@@ -25,13 +24,16 @@ private:
 
 public:
 
-	World(const Shader&, int);
+	World(const Shader&, int, unsigned int&, unsigned int&);
 	World() {}
   ~World();
 
+	unsigned int cube_map_night = -1;
+	unsigned int cube_map_ocean = -1;
+	bool swith_background = true;
 	void InitialRender();
 	unsigned int loadCubemap(std::vector<std::string>);
-	void Draw(glm::mat4&, glm::mat4&, glm::mat4&, glm::mat4&);
+	void Draw(const glm::mat4&, glm::mat4, const glm::mat4&, glm::mat4);
 };
 
 // --------------------------------------------------------------------------------------
@@ -40,32 +42,15 @@ public:
 
 World::World(
 	const Shader& shader,
-	int new_id) :
+	int new_id, unsigned int &new_cube_map, 
+	unsigned int& new_cube_ocen) :
 	shader(shader),
+	cube_map_night(new_cube_map),
+	cube_map_ocean(new_cube_ocen),
 	id(new_id) {
 
 	this->InitialRender();
-
-	std::vector<std::string> night{
-	"src/images/nright.jpg",
-	"src/images/nleft.jpg",
-	"src/images/ntop.jpg",
-	"src/images/nbottom.jpg",
-	"src/images/nfront.jpg",
-	"src/images/nback.jpg"
-	};
-
-	std::vector<std::string> ocean{
-	"src/images/right.jpg",
-	"src/images/left.jpg",
-	"src/images/top.jpg",
-	"src/images/bottom.jpg",
-	"src/images/front.jpg",
-	"src/images/back.jpg"
-	};
-
-	cubemapTexture = loadCubemap(night);
-
+	this->shader.Use();
 	this->shader.SetInteger("skybox", 0);
 }
 
@@ -74,10 +59,10 @@ World::~World() {
 }
 
 void World::Draw(
-	glm::mat4& model, 
-	glm::mat4& view, 
-	glm::mat4& projection,
-	glm::mat4& look_at) {
+	const glm::mat4& model,
+	glm::mat4 view,
+	const glm::mat4& projection,
+	glm::mat4 look_at) {
 	
 	glDepthFunc(GL_LEQUAL); 
 	this->shader.Use();
@@ -87,7 +72,10 @@ void World::Draw(
 	
 	glBindVertexArray(this->quadVAO);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+
+	if (this->swith_background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+	else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);

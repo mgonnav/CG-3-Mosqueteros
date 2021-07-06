@@ -66,8 +66,11 @@ void PrintCommands() {
   std::cout << "\t|   Automatic camera off: Shift + A            |\n";
   std::cout << "\t|   Expand-contract efect ON: Q                |\n";
   std::cout << "\t|   Expand-contract efect OFF: Shift + Q       |\n";
-  std::cout << "\t+----------------------------------------------+" << std::endl;
-  std::cout << "\t|   Don't try press multiple key, please.      |" << std::endl;
+  std::cout << "\t|   Change Background: O                       |\n";
+  std::cout << "\t|   Mirrow Cube : P (again to normal state)    |\n";
+  std::cout << "\t|   Velocity of camera change when:            |\n";
+  std::cout << "\t|        Shift movement -> slower              |\n";
+  std::cout << "\t|        Normal movement -> faster             |\n";
   std::cout << "\t+----------------------------------------------+" << std::endl;
 }
 
@@ -80,7 +83,7 @@ float lastY = 500.0f;
 bool first_time_mouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-bool auto_camera = true;
+bool auto_camera = false;
 float cam_y = -4.0f;
 bool up_down_camera = true;
 
@@ -126,5 +129,9 @@ const int kAroundYLeft = -2;
 const int kAroundYRight = 2;
 const int kAroundZLeft = 3;
 const int kAroundZRight = -3;
+
+// special efect
+
+float velocity_cubito = 1.0f;
 
 #endif // CUBITO_SETTING_HPP
