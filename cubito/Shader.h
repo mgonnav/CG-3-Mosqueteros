@@ -44,7 +44,7 @@ Shader& Shader::Use() {
 }
 
 void Shader::Compile(const char* vertexSource, const char* fragmentSource) {
-  unsigned int sVertex, sFragment, gShader;
+  unsigned int sVertex, sFragment;
   
   // Vertex Shader
   sVertex = glCreateShader(GL_VERTEX_SHADER);

@@ -28,5 +28,12 @@ void main()
 	//FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
 	
 	// Only texture
-	FragColor = texture(main_image_texture, TexCoord);
+	//FragColor = texture(main_image_texture, TexCoord);
+	
+	// reflect
+	vec3 I = normalize(Position - cameraPos);
+    vec3 R = reflect(I, normalize(Normal));
+    FragColor = vec4(texture(skybox, R).rgb, 0.5);
+	//FragColor = texture(main_image_texture, TexCoord) + vec4(texture(skybox, R).rgb, 1.0);
+	//FragColor = mix(texture(main_image_texture, TexCoord), texture(skybox, R), 0.5);
 }

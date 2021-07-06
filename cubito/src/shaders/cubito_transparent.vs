@@ -16,8 +16,12 @@ uniform mat4 projection;
 void main()
 {
 	// Normal vertex shader
-	gl_Position = projection * view * model * vec4(aPos, 1.0);
-	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
-	ourColor = aColor;
-
+	//gl_Position = projection * view * model * vec4(aPos, 1.0);
+	//TexCoord = vec2(aTexCoord.x, aTexCoord.y);
+	//ourColor = aColor;
+	
+	// Reflect
+	Normal = mat3(transpose(inverse(model))) * aNormal;
+    Position = vec3(model * vec4(aPos, 1.0));
+    gl_Position = projection * view * vec4(Position, 1.0);
 }

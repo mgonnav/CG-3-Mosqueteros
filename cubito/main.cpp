@@ -38,6 +38,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
                   int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void AutomaticCamera();
 
 // Create main controller of game
 GameController game_controller(SCR_WIDTH, SCR_HEIGHT);
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
   glfwSetCursorPosCallback(window, mouse_callback);
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetKeyCallback(window, key_callback);
-  
+  glfwSetScrollCallback(window, scroll_callback);
   PrintCommands();
 
   // Init main controller of game
@@ -94,14 +95,25 @@ int main(int argc, char *argv[]) {
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
-    // Camera calculations
-    ProcessInputMouse(window);
+    // Camera automatic
+    if (auto_camera) {
+      projection = glm::perspective(glm::radians(camera.Zoom),
+        (float)SCR_WIDTH / (float)SCR_HEIGHT,
+        0.1f,
+        100.0f);
 
-    projection = glm::perspective(glm::radians(camera.Zoom),
-      (float)SCR_WIDTH / (float)SCR_HEIGHT, 
-      0.1f, 
-      100.0f);
-    view = camera.GetViewMatrix();
+      AutomaticCamera();
+      view = camera.GetViewMatrix();
+
+    } else {
+      ProcessInputMouse(window);
+
+      projection = glm::perspective(glm::radians(camera.Zoom),
+        (float)SCR_WIDTH / (float)SCR_HEIGHT,
+        0.1f,
+        100.0f);
+      view = camera.GetViewMatrix();
+    }
 
     // God actions
     game_controller.ProcessInput(deltaTime);
@@ -111,7 +123,7 @@ int main(int argc, char *argv[]) {
     game_controller.UpdateGame(deltaTime);
 
     // Render All
-    glClearColor(0.0f, 0.9f, 0.6f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     game_controller.Render();
@@ -167,6 +179,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.U_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "U' ";
+        velocity_cubito -= 0.1f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
@@ -174,6 +187,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.D_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "D' ";
+        velocity_cubito -= 0.1f;
+        far_of_cubito -= 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -181,6 +196,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.R_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "R' ";
+        velocity_cubito -= 0.1f;
+        far_of_cubito -= 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
@@ -188,6 +205,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.L_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "L' ";
+        velocity_cubito -= 0.1f;
+        far_of_cubito -= 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -195,6 +214,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.F_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "F' ";
+        velocity_cubito -= 0.1f;
+        far_of_cubito -= 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -202,6 +223,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.B_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "B' ";
+        velocity_cubito -= 0.1f;
+        far_of_cubito -= 0.05f;
+      }
+    
+      if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        auto_camera = false;
+        camera.Pitch = -25.0f;
+        camera.Yaw = -70.0f;
+        camera.Position = glm::vec3(-2.0f, 2.0f, 5.0f);
+        camera.updateCameraVectors();
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        game_controller.expand_contract_efect = false;
       }
     }
     else {
@@ -210,6 +245,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.U_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "U ";
+        velocity_cubito += 0.1f;
+        far_of_cubito += 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
@@ -217,6 +254,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.D_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "D ";
+        velocity_cubito += 0.1f;
+        far_of_cubito += 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -224,6 +263,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.R_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "R ";
+        velocity_cubito += 0.1f;
+        far_of_cubito += 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
@@ -231,6 +272,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.L_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "L ";
+        velocity_cubito += 0.1f;
+        far_of_cubito += 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
@@ -238,6 +281,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.F_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "F ";
+        velocity_cubito += 0.1f;
+        far_of_cubito += 0.05f;
       }
 
       if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -245,17 +290,36 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action,
         game_controller.B_PRIME_ANIM_I = true;
         game_controller.some_movement = true;
         game_controller.str_scramble += "B ";
+        velocity_cubito += 0.1f;
+        far_of_cubito += 0.05f;
+      }
+    
+      if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        auto_camera = true;
+      }
+      
+      if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
+        game_controller.expand_contract_efect = true;
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
+        game_controller.ChangeBackground();
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) {
+        game_controller.ChangeFragCubito();
+      }
+
+      if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+        efect_far_velocity = efect_far_velocity ^= 1;
+        velocity_cubito = 1.0f;
+        far_of_cubito = 1.0f;
       }
     }
   }
 }
 
 void ProcessInputMouse(GLFWwindow* window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-    glfwSetWindowShouldClose(window, true);
-
-  float cameraSpeed = static_cast<float>(2.5 * deltaTime);
-
   if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
 
@@ -285,9 +349,19 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
   lastX = static_cast<float>(xpos);
   lastY = static_cast<float>(ypos);
 
-  camera.ProcessMouseMovement(xoffset, yoffset);
+  camera.ProcessMouseMovement(xoffset, yoffset, false);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
   camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+void AutomaticCamera() {
+  float distance_from_cube = static_cast<float>(5.0f);
+  float velocity_camera = static_cast<float>(glfwGetTime());
+  if (efect_far_velocity) {
+    distance_from_cube *= far_of_cubito;
+    velocity_camera *= far_of_cubito;
+  }
+  camera.Automatic(distance_from_cube, velocity_camera);
 }
