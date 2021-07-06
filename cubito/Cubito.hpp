@@ -16,6 +16,7 @@ private:
 	int id = -1;
   Shader shader;
   Shader shader2;
+  Shader shader3;
 	Texture texture1;
 	Texture texture2;
 	Texture texture3;
@@ -31,7 +32,7 @@ private:
 
 public:
 
-	Cubito(Texture, Texture, Texture, Texture, const Shader&, const Shader&,
+	Cubito(Texture, Texture, Texture, Texture, const Shader&, const Shader&, const Shader&,
 				 glm::vec3, int, glm::vec3, glm::vec3, glm::vec3);
 	Cubito() {}
   ~Cubito();
@@ -57,6 +58,7 @@ Cubito::Cubito (
 	Texture new_texture4,
   const Shader& shader,
   const Shader& shader2,
+  const Shader& shader3,
 	glm::vec3 first_position,
 	int new_id,
 	glm::vec3 color1n = glm::vec3(0.1f, 0.1f, 0.1f),
@@ -69,6 +71,7 @@ Cubito::Cubito (
 	id(new_id),
   shader(shader),
   shader2(shader2),
+  shader3(shader3),
 	position(first_position),
 	color1(color1n),
 	color2(color2n),
@@ -91,6 +94,7 @@ void Cubito::Draw(const Rendered &rendered,
 	
   Shader shader_run = this->shader;
   Shader shader_run2 = this->shader2;
+  Shader shader_run3 = this->shader3;
 
   if (this->change_fragment) shader_run = this->shader2;
 
@@ -368,8 +372,29 @@ void Cubito::Draw(const Rendered &rendered,
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
     
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
     glActiveTexture(GL_TEXTURE0);
-    texture3.Bind();
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
     glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
@@ -390,13 +415,35 @@ void Cubito::Draw(const Rendered &rendered,
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture2.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
   case 27: {
@@ -416,13 +463,35 @@ void Cubito::Draw(const Rendered &rendered,
     texture2.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture3.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
 
@@ -639,13 +708,34 @@ void Cubito::Draw(const Rendered &rendered,
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture2.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
   case 23: {
@@ -665,13 +755,34 @@ void Cubito::Draw(const Rendered &rendered,
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture1.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
   case 26: {
@@ -691,13 +802,35 @@ void Cubito::Draw(const Rendered &rendered,
     texture1.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture2.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+    
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
 
@@ -942,12 +1075,33 @@ void Cubito::Draw(const Rendered &rendered,
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
     glActiveTexture(GL_TEXTURE0);
-    texture3.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
-
-    glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+    
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
   case 22: {
@@ -967,13 +1121,34 @@ void Cubito::Draw(const Rendered &rendered,
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture2.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
   case 25: {
@@ -993,13 +1168,35 @@ void Cubito::Draw(const Rendered &rendered,
     texture2.Bind();
     glDrawArrays(GL_TRIANGLES, 18, 6);
 
-    glActiveTexture(GL_TEXTURE0);
-    texture3.Bind();
-    glDrawArrays(GL_TRIANGLES, 24, 6);
 
     glActiveTexture(GL_TEXTURE0);
     texture4.Bind();
     glDrawArrays(GL_TRIANGLES, 30, 6);
+    
+    shader_run3.Use();
+
+    glm::mat4 position_on_world = glm::translate(model, position);
+
+    position_on_world = position_on_world * rotation;
+
+    unsigned int model_location = glGetUniformLocation(shader_run2.id, "model");
+    glUniformMatrix4fv(model_location, 1, GL_FALSE, glm::value_ptr(position_on_world));
+
+    unsigned int view_location = glGetUniformLocation(shader_run2.id, "view");
+    glUniformMatrix4fv(view_location, 1, GL_FALSE, glm::value_ptr(view));
+
+    unsigned int projection_location = glGetUniformLocation(shader_run2.id, "projection");
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm::value_ptr(projection));
+
+    unsigned int camera_location = glGetUniformLocation(shader_run2.id, "cameraPos");
+    glUniform3f(camera_location, camera_position.x, camera_position.y, camera_position.z);
+
+    glBindVertexArray(this->quadVAO);
+
+    glActiveTexture(GL_TEXTURE0);
+    if (background) glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_night);
+    else glBindTexture(GL_TEXTURE_CUBE_MAP, cube_map_ocean);
+    glDrawArrays(GL_TRIANGLES, 24, 6);
     break;
   }
   }

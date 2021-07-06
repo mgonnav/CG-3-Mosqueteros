@@ -141,6 +141,7 @@ void GameController::Init() {
   
   // Loading programs
   Resources::LoadShader("src/shaders/cubito_mirrow.vs", "src/shaders/cubito_mirrow.fs", nullptr, "cubito_mirrow");
+  Resources::LoadShader("src/shaders/cubito_transparent.vs", "src/shaders/cubito_transparent.fs", nullptr, "cubito_transparent");
   Resources::LoadShader("src/shaders/cubito.vs", "src/shaders/cubito.fs", nullptr, "cubito");
   Resources::LoadShader("src/shaders/floor.vs", "src/shaders/floor.fs", nullptr, "floor");
   Resources::LoadShader("src/shaders/grass.vs", "src/shaders/grass.fs", nullptr, "grass");
@@ -270,6 +271,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, distance_b_cubes, -distance_b_cubes), 3, 
       input_colors[20], input_colors[9], input_colors[0]);
     this->rubick_cube.cubitos[6] = std::make_shared<Cubito>(
@@ -279,6 +281,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, distance_b_cubes, -distance_b_cubes), 6,
       input_colors[19], input_colors[1]);
     this->rubick_cube.cubitos[9] = std::make_shared<Cubito>(
@@ -288,6 +291,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, distance_b_cubes, -distance_b_cubes), 9,
       input_colors[18], input_colors[17], input_colors[2]);
     this->rubick_cube.cubitos[12] = std::make_shared<Cubito>(
@@ -297,6 +301,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, 0.0f, -distance_b_cubes), 12,
       input_colors[32], input_colors[21]);
     this->rubick_cube.cubitos[15] = std::make_shared<Cubito>(
@@ -306,6 +311,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, 0.0f, -distance_b_cubes), 15,
       input_colors[31]);
     this->rubick_cube.cubitos[18] = std::make_shared<Cubito>(
@@ -315,6 +321,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, 0.0f, -distance_b_cubes), 18,
       input_colors[30], input_colors[29]);
     this->rubick_cube.cubitos[21] = std::make_shared<Cubito>(
@@ -324,6 +331,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 21,
       input_colors[44], input_colors[33], input_colors[51]);
     this->rubick_cube.cubitos[24] = std::make_shared<Cubito>(
@@ -333,6 +341,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, -distance_b_cubes, -distance_b_cubes), 24,
       input_colors[43], input_colors[52]);
     this->rubick_cube.cubitos[27] = std::make_shared<Cubito>(
@@ -342,6 +351,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, -distance_b_cubes, -distance_b_cubes), 27,
       input_colors[42], input_colors[41], input_colors[53]);
 
@@ -352,6 +362,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, distance_b_cubes, 0.0f), 2,
       input_colors[10], input_colors[3]);
     this->rubick_cube.cubitos[5] = std::make_shared<Cubito>(
@@ -361,6 +372,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, distance_b_cubes, 0.0f), 5,
       input_colors[4]);
     this->rubick_cube.cubitos[8] = std::make_shared<Cubito>(
@@ -370,6 +382,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, distance_b_cubes, 0.0f), 8,
       input_colors[16], input_colors[5]);
     this->rubick_cube.cubitos[11] = std::make_shared<Cubito>(
@@ -379,6 +392,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, 0.0f, 0.0f), 11,
       input_colors[22]);
     this->rubick_cube.cubitos[14] = std::make_shared<Cubito>(
@@ -388,6 +402,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, 0.0f, 0.0f), 14);
     this->rubick_cube.cubitos[17] = std::make_shared<Cubito>(
       Resources::GetTexture("yi5"),
@@ -396,6 +411,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, 0.0f, 0.0f), 17,
       input_colors[28]);
     this->rubick_cube.cubitos[20] = std::make_shared<Cubito>(
@@ -405,6 +421,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, -distance_b_cubes, 0.0f), 20,
       input_colors[34], input_colors[48]);
     this->rubick_cube.cubitos[23] = std::make_shared<Cubito>(
@@ -414,6 +431,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, -distance_b_cubes, 0.0f), 23,
       input_colors[49]);
     this->rubick_cube.cubitos[26] = std::make_shared<Cubito>(
@@ -423,6 +441,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, -distance_b_cubes, 0.0f), 26,
       input_colors[40], input_colors[50]);
 
@@ -433,6 +452,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, distance_b_cubes, distance_b_cubes), 1,
       input_colors[12], input_colors[11], input_colors[6]);
     this->rubick_cube.cubitos[4] = std::make_shared<Cubito>(
@@ -442,6 +462,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, distance_b_cubes, distance_b_cubes), 4,
       input_colors[13], input_colors[7]);
     this->rubick_cube.cubitos[7] = std::make_shared<Cubito>(
@@ -451,6 +472,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, distance_b_cubes, distance_b_cubes), 7,
       input_colors[14], input_colors[15], input_colors[8]);
     this->rubick_cube.cubitos[10] = std::make_shared<Cubito>(
@@ -460,6 +482,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, 0.0f, distance_b_cubes), 10,
       input_colors[24], input_colors[23]);
     this->rubick_cube.cubitos[13] = std::make_shared<Cubito>(
@@ -469,6 +492,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, 0.0f, distance_b_cubes), 13,
       input_colors[25]);
     this->rubick_cube.cubitos[16] = std::make_shared<Cubito>(
@@ -478,6 +502,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, 0.0f, distance_b_cubes), 16,
       input_colors[26], input_colors[27]);
     this->rubick_cube.cubitos[19] = std::make_shared<Cubito>(
@@ -487,6 +512,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(-distance_b_cubes, -distance_b_cubes, distance_b_cubes), 19,
       input_colors[36], input_colors[35], input_colors[45]);
     this->rubick_cube.cubitos[22] = std::make_shared<Cubito>(
@@ -496,6 +522,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(0.0f, -distance_b_cubes, distance_b_cubes), 22,
       input_colors[37], input_colors[46]);
     this->rubick_cube.cubitos[25] = std::make_shared<Cubito>(
@@ -505,6 +532,7 @@ void GameController::Init() {
       Resources::GetTexture("negro"),
       Resources::GetShader("cubito"),
       Resources::GetShader("cubito_mirrow"),
+      Resources::GetShader("cubito_transparent"),
       glm::vec3(distance_b_cubes, -distance_b_cubes, distance_b_cubes), 25,
       input_colors[38], input_colors[39], input_colors[47]);
   }
@@ -648,9 +676,11 @@ void GameController::Render() {
     this->cube_map_ocean,
     this->world->swith_background);
 
-  // Here We render all things of game
-  this->floor->Draw(*Renderer_floor, this->model, this->view, this->projection);
-  this->grass->Draw(this->model, this->view, this->projection);
+  // 1st ideas to game
+  //this->floor->Draw(*Renderer_floor, this->model, this->view, this->projection);
+  //this->grass->Draw(this->model, this->view, this->projection);
+  
+  // Cubemap World It must be the last to render
   this->world->Draw(this->model, this->view, this->projection, camera.GetViewMatrix());
 }
 
