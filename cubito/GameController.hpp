@@ -131,6 +131,10 @@ GameController::GameController(unsigned int width, unsigned int height)
 
 GameController::~GameController() {
   delete Renderer;
+  delete Renderer_floor;
+  delete floor;
+  delete grass;
+  delete world;
 }
 
 void GameController::Init() {
@@ -645,8 +649,8 @@ void GameController::Render() {
     this->world->swith_background);
 
   // Here We render all things of game
-  //this->floor->Draw(*Renderer_floor, this->model, this->view, this->projection);
-  //this->grass->Draw(this->model, this->view, this->projection);
+  this->floor->Draw(*Renderer_floor, this->model, this->view, this->projection);
+  this->grass->Draw(this->model, this->view, this->projection);
   this->world->Draw(this->model, this->view, this->projection, camera.GetViewMatrix());
 }
 
